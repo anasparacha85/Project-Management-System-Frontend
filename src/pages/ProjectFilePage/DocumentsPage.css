@@ -1,0 +1,87 @@
+/* Container */
+.documents-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Page Title */
+.pg-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: white;
+}
+
+/* Grid Layout */
+.documents-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Card */
+.document-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.document-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Title */
+.document-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2a4d9b;
+  margin-bottom: 10px;
+}
+
+/* Description */
+.document-description {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Table */
+.files-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.files-table th, 
+.files-table td {
+  border: 1px solid #e5e5e5;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.files-table th {
+  background: #f5f7fa;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Download Button */
+.download-btn {
+  background: #2a4d9b;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s ease;
+}
+
+.download-btn:hover {
+  background: #1d3570;
+}
