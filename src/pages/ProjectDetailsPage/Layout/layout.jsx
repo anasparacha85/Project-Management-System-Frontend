@@ -34,7 +34,7 @@ setInviteTeamModalOpen(true)
   useEffect(()=>{
     dispatch(FetchProjectDetailsById(params.id))
 
-  },[params.id])
+  },[])
     
  const navigations = [
     // {

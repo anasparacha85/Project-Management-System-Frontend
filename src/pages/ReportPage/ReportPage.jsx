@@ -131,7 +131,7 @@ export default function ProjectReport() {
 
   useEffect(() => {
     fetchProjectById();
-  }, [params.id]);
+  }, []);
   useEffect(() => {
   if (report?.progressHistory) {
     let lastVal = 0;

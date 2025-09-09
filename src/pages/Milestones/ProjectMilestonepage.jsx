@@ -170,7 +170,7 @@ const navigate=useNavigate()
       }
     };
     fetchMilestones();
-  }, [params.id]);
+  }, []);
   // Mock data matching your structure
   const mockMilestones = [
     {
