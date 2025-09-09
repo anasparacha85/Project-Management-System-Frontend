@@ -130,6 +130,7 @@ const team=ProjectDetails.team
     alert('MileStone created')
     console.log("Task created: ", res);
     
+    
     onClose()
   } catch (error) {
     dispatch(setError(error.message))

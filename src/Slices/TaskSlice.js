@@ -77,6 +77,9 @@ const taskSlice = createSlice({
     },
     setTaskReport:(state,action)=>{
       state.TaskReport=action.payload
+    },
+    setSubTasks:(state,action)=>{
+      state.SubTasks=action.payload.subTasks
     }
 
 
@@ -116,7 +119,9 @@ const taskSlice = createSlice({
       })
       .addCase(fetchSubTasksBytaskId.fulfilled, (state, action) => {
         state.loading = false;
-        state.SubTasks=action.payload
+        console.log(action.payload);
+        
+        state.SubTasks=action.payload.subTasks
       })
       .addCase(fetchSubTasksBytaskId.rejected, (state, action) => {
         state.loading = false;
@@ -130,5 +135,5 @@ const taskSlice = createSlice({
     });
   },
 });
-export const  {setTasks,setTaskDetails,setError,setTaskReport}=taskSlice.actions;
+export const  {setTasks,setTaskDetails,setError,setTaskReport,setSubTasks}=taskSlice.actions;
 export default taskSlice.reducer;

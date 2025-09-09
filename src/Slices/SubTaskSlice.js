@@ -27,7 +27,8 @@ const SubTaskSlice=createSlice(
         reducers:{
             setSubTaskDetails:(state,action)=>{
                 state.SubTask=action.payload
-            }
+            },
+         
         },
         extraReducers:(builder)=>{
             builder

@@ -53,6 +53,10 @@ export const FetchDocumentsByProjectId=createAsyncThunk(
         }
     }
 )
+export const fetchProjectMilestones=createAsyncThunk(
+    "/project/milestones",
+    // async(project)
+)
 
 const projectSlice=createSlice(
     {name:'projects',

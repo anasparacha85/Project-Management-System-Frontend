@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import TaskModal from "../../modals/TaskModal";
 import ApiServices from "../../ApiService/ApiService";
 import { useDispatch } from "react-redux";
-import { fetchSubTasksBytaskId, fetchTasks } from "../../Slices/TaskSlice";
+import { fetchSubTasksBytaskId, fetchTasks, setSubTasks } from "../../Slices/TaskSlice";
 import { Draggable, Droppable, DragDropContext } from "react-beautiful-dnd";
 import { useSelector } from "react-redux";
 import { fetchSubTaskById } from "../../Slices/SubTaskSlice";
@@ -71,7 +71,7 @@ const groupTasksByStatus = (tasks = []) => {
   useEffect(() => {
     // fetch tasks for this project (keeps your existing behavior)
     if (params.id)   dispatch(fetchSubTasksBytaskId(params.id));
-  }, [ dispatch]);
+  }, [ dispatch,params.id]);
 
 
 
@@ -97,7 +97,7 @@ const groupTasksByStatus = (tasks = []) => {
     }
   };
 // ensure SubTasks exists, otherwise default to []
-const tasks = SubTasks?.subTasks || [];
+const tasks = SubTasks || []
 
 const groupedTasks = groupTasksByStatus(tasks);
 
@@ -165,6 +165,7 @@ try {
   console.log(response);
 
   dispatch(fetchSubTasksBytaskId(params.id))
+
   // window.location.reload()
   
 } catch (error) {

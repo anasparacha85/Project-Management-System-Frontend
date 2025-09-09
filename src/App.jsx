@@ -31,6 +31,7 @@ function App() {
 
   return (
     <>
+    
      <ScrollToTop />
       <Routes>
       <Route path='/' element={<ManagerLoginPage/>}/>

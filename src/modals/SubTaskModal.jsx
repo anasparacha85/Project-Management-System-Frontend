@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./SubtaskModal.css";
 import ApiServices from "../ApiService/ApiService";
 import { useDispatch, useSelector } from "react-redux";
-import { setError } from "../Slices/TaskSlice";
+import { fetchSubTasksBytaskId, setError } from "../Slices/TaskSlice";
 import { FetchTeamByProjectId } from "../Slices/ProjectSlice";
 import { setSubTaskModalOpen } from "../Slices/UiSlice";
 import { useParams } from "react-router-dom";
+
 
 const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -139,6 +140,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
     //   if (onSubTaskCreated) {
     //     onSubTaskCreated(res);
     //   }
+      dispatch(fetchSubTasksBytaskId(params.id))
       
       dispatch(setSubTaskModalOpen(false));
     } catch (error) {
