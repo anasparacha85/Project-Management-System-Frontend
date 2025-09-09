@@ -49,17 +49,14 @@ const navigate=useNavigate()
     >
       {/* Priority Line */}
       <div className="task-priority" style={{ backgroundColor: getPriorityColor(task.priority) }}></div>
-        <button onClick={()=>navigate(`/dashboard/subTask/${task._id}`)} className="task-action-btn">
-            <Eye size={14} />
-          </button>
+       
       {/* Header */}
       <div className="task-header">
         <div className="task-status">{getStatusIcon(task.status)}</div>
         <div className="task-actions">
-          <button className="task-action-btn">
-            <MoreHorizontal size={14} />
+           <button onClick={()=>navigate(`/dashboard/subTask/${task._id}`)} className="task-action-btn">
+            <Eye size={18} />
           </button>
-         
         </div>
       </div>
       
