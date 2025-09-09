@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./SubTaskModal.css";
+import "./SubtaskModal.css";
 import ApiServices from "../ApiService/ApiService";
 import { useDispatch, useSelector } from "react-redux";
 import { setError } from "../Slices/TaskSlice";
