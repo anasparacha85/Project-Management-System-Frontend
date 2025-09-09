@@ -717,6 +717,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
 import './SubTaskDetailPage.css';
 import { fetchSubTaskById,setSubTaskDetails } from "../../Slices/SubTaskSlice";
+import { ArrowLeft } from "lucide-react";
 
 const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -1102,13 +1103,13 @@ const team=taskDetails.assignees
         <div className="task-details-breadcrumb">
           Team Space / Projects / {subTaskData.task?.project || 'Project'} / {subTaskData.task?.title || 'Task'} / Subtasks
         </div>
-
+   
         <div className="task-details-task-header">
           <span className="task-details-task-badge">Subtask</span>
           <span className="task-details-task-id">{subTaskData._id?.slice(-8) || '86et84ncr'}</span>
-          <button className="task-details-ask-ai-btn">
-            <span className="task-details-ai-icon">🤖</span>
-            Ask AI
+          <button onClick={()=>navigate(-1)} className="task-details-ask-ai-btn">
+            <span className="task-details-ai-icon"><ArrowLeft size={16}/></span>
+            Go Back
           </button>
         </div>
 
