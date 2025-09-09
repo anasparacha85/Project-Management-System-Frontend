@@ -7,10 +7,12 @@ import { fetchTasks, setError } from "../Slices/TaskSlice";
 import { FetchTeamByProjectId } from "../Slices/ProjectSlice";
 import { StepForward } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { setTaskModalOpen } from "../Slices/UiSlice";
 
-const TaskModal = ({ isOpen, onClose, projectId, onTaskCreated }) => {
+const TaskModal = ({  projectId, onTaskCreated }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [searchAssignee, setSearchAssignee] = useState("");
+  const {TaskModalOpen}=useSelector((state)=>state.UserInterface)
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -47,7 +49,9 @@ const TaskModal = ({ isOpen, onClose, projectId, onTaskCreated }) => {
   
   const totalSteps = 3;
   const priorities = ["Low", "Medium", "High", "Critical"];
-  
+  const onClose=()=>{
+    dispatch(setTaskModalOpen(false))
+  }
   useEffect(() => {
     dispatch(FetchTeamByProjectId(projectId)).unwrap()
     .then((data) => {
@@ -473,7 +477,7 @@ const team=ProjectDetails.team
     }
   };
 
-  if (!isOpen) return null;
+  if (!TaskModalOpen) return null;
 
   return (
     <div className="create-task-modal-backdrop" >

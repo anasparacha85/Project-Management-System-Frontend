@@ -1,6 +1,6 @@
 // src/layouts/ProjectLayout.jsx
-import { NavLink, Outlet, useParams } from "react-router-dom";
-import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, MilestoneIcon, CircuitBoardIcon, AlignVerticalDistributeEnd } from "lucide-react";
+import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
+import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, MilestoneIcon, CircuitBoardIcon, AlignVerticalDistributeEnd, ArrowLeft, LogIn } from "lucide-react";
 import "./milestonelayout.css";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
@@ -9,17 +9,24 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { setSubTaskModalOpen } from "../../../Slices/UiSlice";
 import SubTaskModal from "../../../modals/SubTaskModal";
+import { fetchSubTasksBytaskId } from "../../../Slices/TaskSlice";
 
 const MileStoneLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
     const [ProjectId, setProjectId] = useState('')
     const dispatch=useDispatch()
     const { SubTaskModalOpen}=useSelector((state)=>state.UserInterface)
-    const {taskDetails}=useSelector((state)=>state.Task)
+    const {taskDetails,SubTasks}=useSelector((state)=>state.Task)
+    console.log(SubTasks);
+    
+    const navigate=useNavigate()
   const params=useParams()
   useEffect(()=>{
     setSubTaskModalOpen(false)
   },[])
+  useEffect(()=>{
+    dispatch(fetchSubTasksBytaskId(params.id))
+  },[params.id,dispatch])
 //      const onOpenTaskModal=()=>{
 //     setShowTaskModal(true)
 //     setProjectId(params.id)
@@ -98,14 +105,12 @@ const MileStoneLayout = () => {
 
   return (
     <div className="project-layout">
-     {
-        SubTaskModalOpen&&(
+ 
         
                <SubTaskModal parentTask={taskDetails}  />
         
        
-        )
-      }
+       
       {/* Page Header */}
     
 
@@ -144,10 +149,10 @@ const MileStoneLayout = () => {
             <Plus size={16} />
             <span>Create Subtask</span>
           </button>
-            {/* <button  className="mile-action-btn primary">
-            <Plus size={16} />
-            <span>Edit Milestone</span>
-          </button> */}
+            <button onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} className="mile-action-btn primary">
+            <ArrowLeft size={16} />
+            <span>Back to Project</span>
+          </button>
         </div>
       </div>
          

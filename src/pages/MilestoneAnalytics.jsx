@@ -12,6 +12,7 @@ import {
 import { useParams } from "react-router-dom";
 import ApiServices from "../ApiService/ApiService";
 import "./MilestoneAnalytics.css";
+import { useSelector } from "react-redux";
 
 const COLORS = {
   primary: "#3b82f6",
@@ -171,6 +172,8 @@ function MilestoneAnalytics() {
   const [loading, setLoading] = useState(true);
   const [showDetails, setShowDetails] = useState({});
   const [chartAnimations, setChartAnimations] = useState(true);
+//   const { TaskReport,tasks,taskDetails}=useSelector((state)=>state.Task)
+// console.log( TaskReport,tasks,taskDetails);
 
   const fetchMilestoneById = async () => {
     try {
@@ -244,14 +247,14 @@ function MilestoneAnalytics() {
 
   if (error) {
     return (
-      <div className="error-container">
-        <div className="error-content">
-          <AlertCircle className="error-icon" />
-          <h3 className="error-title">Error Loading Report</h3>
-          <p className="error-message">{error}</p>
+      <div className="e-container">
+        <div className="e-content">
+          <AlertCircle className="e-icon" />
+          <h3 className="e-title">Error Loading Report</h3>
+          <p className="e-message">{error}</p>
           <button 
             onClick={fetchMilestoneById}
-            className="error-retry-btn"
+            className="e-retry-btn"
           >
             Try Again
           </button>

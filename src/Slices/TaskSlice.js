@@ -28,6 +28,18 @@ export const fetchTasksById=createAsyncThunk(
 
   }
 )
+export const fetchSubTasksBytaskId=createAsyncThunk(
+  "task/getSubTaskById",
+    async(TaskId,{rejectWithValue})=>{
+    try {
+      const response=await ApiServices.getSubTaskByTaskid(TaskId)
+      return response
+    } catch (error) {
+       return rejectWithValue(error.message || "Failed to fetch SUb Tasks SUbTasks");
+    }
+
+  }
+)
 // const fetchTeamByTaskId=createAsyncThunk(
 //   "task/getTeamByTask",
 //   async(TaskId,{rejectWithValue})=>{
@@ -49,6 +61,8 @@ const taskSlice = createSlice({
     loading: false,
     error: null,
     taskDetails:{},
+    TaskReport:{},
+    SubTasks:[],
     
   },
   reducers: {
@@ -61,6 +75,9 @@ const taskSlice = createSlice({
     setError:(state,action)=>{
       state.error=action.payload
     },
+    setTaskReport:(state,action)=>{
+      state.TaskReport=action.payload
+    }
 
 
   },
@@ -91,8 +108,27 @@ const taskSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.taskDetails={}
-      });
+      })
+      //
+         .addCase(fetchSubTasksBytaskId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSubTasksBytaskId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.SubTasks=action.payload
+      })
+      .addCase(fetchSubTasksBytaskId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.SubTasks=[]
+      })
+       .addCase("Task/updateSubTaskStatus", (state, action) => {
+      const { id, status } = action.payload;
+      const task = state.SubTasks.subTasks.find(t => t._id === id);
+      if (task) task.status = status; // local update
+    });
   },
 });
-export const  {setTasks,setTaskDetails,setError}=taskSlice.actions;
+export const  {setTasks,setTaskDetails,setError,setTaskReport}=taskSlice.actions;
 export default taskSlice.reducer;

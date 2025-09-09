@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FetchProjectDetailsById } from "../../../Slices/ProjectSlice";
 import EditProjectModal from "../../../modals/EditProjectModal";
 import AddTeamModal from "../../../modals/AddteamModal";
+import { setTaskModalOpen } from "../../../Slices/UiSlice";
 
 const ProjectLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
@@ -16,7 +17,7 @@ const ProjectLayout = () => {
     const [showEditProjectModal, setShowEditProjectModal] = useState(false)
     const [InviteTeamModalOpen, setInviteTeamModalOpen] = useState(false)
     const {ProjectDetails}=useSelector((state)=>state.Project)
-    // console.log(ProjectDetails);
+    console.log(ProjectDetails);
     
     const onOpenInviteTeamModal=()=>{
 setInviteTeamModalOpen(true)
@@ -28,7 +29,7 @@ setInviteTeamModalOpen(true)
     }
     
      const onOpenTaskModal=()=>{
-    setShowTaskModal(true)
+   dispatch(setTaskModalOpen(true))
     setProjectId(params.id)
   }
   useEffect(()=>{
@@ -68,14 +69,12 @@ setInviteTeamModalOpen(true)
 
   return (
     <div className="project-layout">
-     {
-        ShowTaskModal&&(
+   
         
-               <TaskModal isOpen={ShowTaskModal}  onClose={()=>setShowTaskModal(false)} projectId={ProjectId}/>
+               <TaskModal  projectId={ProjectId}/>
         
        
-        )
-      }
+       
         {
         showEditProjectModal&&(
         

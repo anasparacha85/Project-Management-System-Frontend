@@ -118,7 +118,13 @@ const ApiServices = {
     return apiClient(`/api/subTask/deleteSubTaskById/${SubTaskId}`,{
       method:'DELETE',
     
-  })}
+  })},
+  updateSubTaskStatusById(data){
+    return apiClient(`/api/subTask/updateSubTaskStatus`,{
+      method:'PATCH',
+      body:data
+    })
+  }
     
 };
 

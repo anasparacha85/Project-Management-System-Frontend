@@ -4,6 +4,9 @@ import "./ProjectMilestone.css";
 import { Calendar, Plus, Filter, Search, ChevronDown, Edit3, Save, X, Target, Clock, Users } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
+import { useDispatch } from "react-redux";
+import { setTaskModalOpen } from "../../Slices/UiSlice";
+import TaskModal from "../../modals/TaskModal";
 
 const EditableCell = ({ value, onSave, type = "text", options = [], placeholder = "Click to edit" }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -150,7 +153,8 @@ const ProjectMilestonesPage = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const params = useParams();
- 
+ const dispatch=useDispatch()
+ const [ProjectId, setProjectId] = useState('')
 
 const navigate=useNavigate()
 
@@ -251,7 +255,10 @@ const navigate=useNavigate()
   };
 
   const stats = getStatusStats();
-
+const openMilestoneModal=()=>{
+  setProjectId(params.id)
+  dispatch(setTaskModalOpen(true))
+}
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -292,7 +299,7 @@ const navigate=useNavigate()
           </h1>
           <p style={{color:"#1e293b"}} className="project-milestone-page-subtitle">Track and manage project milestones with real-time progress</p>
         </div>
-        <button className="project-milestone-create-btn" title="new milestone" onClick={() => setShowCreateModal(true)}>
+        <button onClick={openMilestoneModal} className="project-milestone-create-btn" title="new milestone" >
           <Plus size={16} />
           New Milestone
         </button>
@@ -540,7 +547,7 @@ const navigate=useNavigate()
                   : "Start by creating your first milestone"
               }
             </p>
-            <button className="project-milestone-create-first-btn" onClick={() => setShowCreateModal(true)}>
+            <button onClick={openMilestoneModal} className="project-milestone-create-first-btn" >
               <Plus size={16} />
               Create First Milestone
             </button>
@@ -569,7 +576,9 @@ const navigate=useNavigate()
           </div>
         </div>
       </div>
+        <TaskModal  projectId={ProjectId}/>
     </div>
+    
   );
 };
 

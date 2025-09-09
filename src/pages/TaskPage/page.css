@@ -545,3 +545,83 @@
           background: rgba(255, 255, 255, 0.5);
         }
       
+.tasks-page {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.kanban-board {
+  display: flex;
+  gap: 20px;
+  min-height: 70vh;
+}
+
+.kanban-column-wrapper {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+  min-width: 280px;
+  min-height: 500px;
+}
+
+.kanban-column-wrapper.dragging-over {
+  background-color: #e0e0e0;
+}
+
+.kanban-column {
+  height: 100%;
+}
+
+.column-header {
+  margin-bottom: 15px;
+}
+
+.column-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.column-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.task-count {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
+/* good */
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tasks-container {
+  flex: 1;
+  overflow-y: auto; /* put scroll here only */
+}
+
+
+.task-draggable {
+  margin-bottom: 12px;
+}
+
+.task-draggable.is-dragging {
+  opacity: 0.8;
+  transform: rotate(5deg);
+}
+
+.loading, .error {
+  padding: 20px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.error {
+  color: #d32f2f;
+}

@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ApiServices from "../ApiService/ApiService";
 import { FetchProjectDetailsById, setProjectDetails } from "../Slices/ProjectSlice";
 import SubTaskTable from "../components/SubTaskstable";
+import { AlertCircle } from "lucide-react";
 
 const AssigneesSelector = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -461,12 +462,28 @@ const handleDeleteTask=async()=>{
       </div>
     );
   }
-
   if (error) {
     return (
-      <div className="task-details-error-container">
-        <h3>Error loading task</h3>
-        <p>{error}</p>
+      <div className="error-task-container">
+        <div className="error-task-content">
+          <AlertCircle className="error-task-icon" />
+          <h3 className="error-task-title">Error Loading Task</h3>
+          <p className="error-task-message">{error}</p>
+          <button 
+            onClick={()=> dispatch(fetchTasksById(params.id))
+    .unwrap().then((data)=>{
+    console.log("hi2",data);
+    
+      setprojectId(data.project)
+      //  dispatch(FetchProjectDetailsById(data.project))
+      
+
+    })}
+            className="error-task-retry-btn"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }

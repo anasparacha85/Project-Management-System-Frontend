@@ -20,6 +20,60 @@ body {
   max-width: 1400px;
 }
 
+/* Error States */
+.error-task-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+ 
+}
+
+.error-task-content {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #fecaca;
+  max-width: 28rem;
+  text-align: center;
+}
+
+.error-task-icon {
+  width: 3rem;
+  height: 3rem;
+  color: #ef4444;
+  margin: 0 auto 1rem;
+}
+
+.error-task-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.error-task-message {
+  color: #6b7280;
+  margin: 0 0 1rem 0;
+}
+
+.error-task-retry-btn {
+  background: #ef4444;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.error-task-retry-btn:hover {
+  background: #dc2626;
+}
+
+
 /* Loading and Error States */
 .task-details-loading-container {
   display: flex;

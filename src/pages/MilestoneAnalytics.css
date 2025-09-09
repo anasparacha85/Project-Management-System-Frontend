@@ -593,7 +593,7 @@
 }
 
 /* Error States */
-.error-container {
+.e-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -601,7 +601,7 @@
   background: linear-gradient(135deg, #fef2f2 0%, #fce7f3 100%);
 }
 
-.error-content {
+.e-content {
   background: #ffffff;
   padding: 2rem;
   border-radius: 1rem;
@@ -611,26 +611,26 @@
   text-align: center;
 }
 
-.error-icon {
+.e-icon {
   width: 3rem;
   height: 3rem;
   color: #ef4444;
   margin: 0 auto 1rem;
 }
 
-.error-title {
+.e-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: #111827;
   margin: 0 0 0.5rem 0;
 }
 
-.error-message {
+.e-message {
   color: #6b7280;
   margin: 0 0 1rem 0;
 }
 
-.error-retry-btn {
+.e-retry-btn {
   background: #ef4444;
   color: #ffffff;
   padding: 0.5rem 1rem;
@@ -641,7 +641,7 @@
   transition: background-color 0.2s ease;
 }
 
-.error-retry-btn:hover {
+.e-retry-btn:hover {
   background: #dc2626;
 }
 

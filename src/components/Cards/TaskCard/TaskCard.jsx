@@ -1,10 +1,11 @@
-import { Calendar, CheckCircle2, Circle, Clock, MoreHorizontal, Paperclip } from "lucide-react";
+import { Calendar, CheckCircle2, Circle, Clock, Eye, MoreHorizontal, Paperclip } from "lucide-react";
 import './TaskCard.css'
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const TaskCard = ({ task, index }) => {
   const [isHovered, setIsHovered] = useState(false);
-
+const navigate=useNavigate()
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase()) {
       case 'high': return '#ef4444';
@@ -48,7 +49,9 @@ export const TaskCard = ({ task, index }) => {
     >
       {/* Priority Line */}
       <div className="task-priority" style={{ backgroundColor: getPriorityColor(task.priority) }}></div>
-      
+        <button onClick={()=>navigate(`/dashboard/subTask/${task._id}`)} className="task-action-btn">
+            <Eye size={14} />
+          </button>
       {/* Header */}
       <div className="task-header">
         <div className="task-status">{getStatusIcon(task.status)}</div>
@@ -56,6 +59,7 @@ export const TaskCard = ({ task, index }) => {
           <button className="task-action-btn">
             <MoreHorizontal size={14} />
           </button>
+         
         </div>
       </div>
       
