@@ -6,13 +6,18 @@ import { FetchDocumentsByProjectId } from "../../Slices/ProjectSlice";
 
 const DocumentsPage = () => {
 const params=useParams()
-const {projectError,ProjectDocuments,ProjectLoading}=useSelector((state)=>state.Project)
-const dispatch=useDispatch()
-useEffect(()=>{
-  dispatch(FetchDocumentsByProjectId(params.id))
+const {projectError,ProjectDocuments,ProjectLoading,ProjectDetails}=useSelector((state)=>state.Project)
+// const dispatch=useDispatch()
+// console.log(ProjectDetails);
 
-},[params.id])
+// useEffect(()=>{
+//   dispatch(FetchDocumentsByProjectId(params.id))
+
+// },[params.id])
 console.log("hi",ProjectDocuments);
+// if(!ProjectDocuments.files){
+//   return "no files uploaded"
+// }
 
   return (
     <div className="documents-container">
@@ -20,7 +25,7 @@ console.log("hi",ProjectDocuments);
       <div className="documents-grid">
       
           <div  className="document-card">
-            <h2 className="document-title">{ProjectDocuments.name}</h2>
+            <h2 className="document-title">{ProjectDetails.name}</h2>
             <p className="document-description">{ProjectDocuments.description}</p>
             
             <table className="files-table">
@@ -32,7 +37,8 @@ console.log("hi",ProjectDocuments);
                 </tr>
               </thead>
               <tbody>
-                {ProjectDocuments.files.map((file) => (
+
+                {ProjectDetails?.files?.map((file) => (
                   <tr key={file._id}>
                     <td>{file.filename}</td>
                     <td>{new Date(file.uploadedAt).toLocaleString()}</td>

@@ -248,7 +248,7 @@ export default function ProjectModal({ onClose, onSubmit }) {
                   <polyline points="7,10 12,15 17,10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <p>Click to upload files or drag and drop</p>
+                <p>Click to upload files </p>
                 <span>PNG, JPEG, PDF, DOC, XLS up to 10MB</span>
               </div>
               <input
