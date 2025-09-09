@@ -112,7 +112,7 @@ console.log("babab",taskDetails);
                   <td>
                     <button 
                       className="view-detail-btn"
-                      onClick={() => handleViewDetail(member)}
+                      // onClick={() => handleViewDetail(member)}
                     >
                       View Details
                     </button>
