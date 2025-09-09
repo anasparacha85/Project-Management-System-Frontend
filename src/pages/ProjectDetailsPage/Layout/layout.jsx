@@ -9,15 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { FetchProjectDetailsById } from "../../../Slices/ProjectSlice";
 import EditProjectModal from "../../../modals/EditProjectModal";
 import AddTeamModal from "../../../modals/AddteamModal";
-import { setTaskModalOpen } from "../../../Slices/UiSlice";
 
 const ProjectLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
     const [ProjectId, setProjectId] = useState('')
     const [showEditProjectModal, setShowEditProjectModal] = useState(false)
     const [InviteTeamModalOpen, setInviteTeamModalOpen] = useState(false)
-    const {ProjectDetails}=useSelector((state)=>state.Project)
-    console.log(ProjectDetails);
+    const {ProjectDetails,ProjectError,ProjectLoading}=useSelector((state)=>state.Project)
+    // console.log(ProjectDetails);
     
     const onOpenInviteTeamModal=()=>{
 setInviteTeamModalOpen(true)
@@ -29,13 +28,13 @@ setInviteTeamModalOpen(true)
     }
     
      const onOpenTaskModal=()=>{
-   dispatch(setTaskModalOpen(true))
+    setShowTaskModal(true)
     setProjectId(params.id)
   }
   useEffect(()=>{
     dispatch(FetchProjectDetailsById(params.id))
 
-  },[])
+  },[params.id,dispatch])
     
  const navigations = [
     // {
@@ -65,16 +64,28 @@ setInviteTeamModalOpen(true)
       icon: <DownloadCloud size={16} />,
     },
   ];
+// if (ProjectLoading) {
+//   return <div className="loading">Loading project...</div>;
+// }
 
+if (ProjectError) {
+  return <div className="error">Failed to load project. Please try again.</div>;
+}
+
+if (!ProjectDetails) {
+  return <div className="empty">No project found.</div>;
+}
 
   return (
     <div className="project-layout">
-   
+     {
+        ShowTaskModal&&(
         
-               <TaskModal  projectId={ProjectId}/>
+               <TaskModal isOpen={ShowTaskModal}  onClose={()=>setShowTaskModal(false)} projectId={ProjectId}/>
         
        
-       
+        )
+      }
         {
         showEditProjectModal&&(
         
