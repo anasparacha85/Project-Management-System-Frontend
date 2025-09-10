@@ -12,12 +12,12 @@ export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState(null);
 console.log(ProjectDetails);
 
-  // useEffect(() => {
-  //   dispatch(FetchTeamByProjectId(projectId)).unwrap()
-  //     .then((data) => {
-  //       console.log(data);
-  //     });
-  // }, [projectId]);
+  useEffect(() => {
+    dispatch(FetchTeamByProjectId(projectId)).unwrap()
+      .then((data) => {
+        console.log(data);
+      });
+  }, [projectId,dispatch]);
 
   const handleViewDetail = (member) => {
     setSelectedMember(member);
@@ -59,11 +59,11 @@ console.log(ProjectDetails);
   return (
     <div className="team-container">
       <div className="team-header">
-        <h1 className="team-title">Team Members ({ProjectDetails.team.length})</h1>
+        <h1 className="team-title">Team Members ({team.length})</h1>
         <p className="team-subtitle">Project team overview and member details</p>
       </div>
 
-      {ProjectDetails.team && ProjectDetails.team.length > 0 ? (
+      {team &&team.length > 0 ? (
         <div className="table-wrapper">
           <table className="team-table">
             <thead>
@@ -76,7 +76,7 @@ console.log(ProjectDetails);
               </tr>
             </thead>
             <tbody>
-              {ProjectDetails.team.map((member) => (
+              {team.map((member) => (
                 <tr key={member._id} className="table-row">
                   <td className="member-cell">
                     <div className="member-info">

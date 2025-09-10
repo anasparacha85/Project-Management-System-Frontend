@@ -1,18 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./TaskModal.css";
 import ApiServices from "../ApiService/ApiService";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks, setError } from "../Slices/TaskSlice";
+import { fetchTasks } from "../Slices/TaskSlice";
 import { FetchTeamByProjectId } from "../Slices/ProjectSlice";
-import { StepForward } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { setTaskModalOpen } from "../Slices/UiSlice";
 
-const TaskModal = ({  projectId, onTaskCreated }) => {
+// Constants for better maintainability
+const PRIORITIES = ["Low", "Medium", "High", "Critical"];
+const TOTAL_STEPS = 3;
+const ALLOWED_FILE_TYPES = "image/*,.pdf,.doc,.docx";
+const MAX_FILE_SIZE_MB = 10;
+
+const TaskModal=({ projectId, onTaskCreated }) => {
+  const dispatch = useDispatch();
+  const params = useParams();
+  
+  // Redux state selectors
+  const { TaskModalOpen } = useSelector((state) => state.UserInterface);
+  const { tasks, error: tasksError, loading: tasksLoading } = useSelector((state) => state.Task);
+  const { projectError, ProjectLoading, ProjectDetails } = useSelector((state) => state.Project);
+  
+  // Local state
   const [currentStep, setCurrentStep] = useState(1);
   const [searchAssignee, setSearchAssignee] = useState("");
-  const {TaskModalOpen}=useSelector((state)=>state.UserInterface)
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Task form state with better validation defaults
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -24,134 +41,130 @@ const TaskModal = ({  projectId, onTaskCreated }) => {
     milestone: "",
     attachments: []
   });
-  const params=useParams()
-  useEffect(()=>{
-    const savedform=localStorage.getItem('create-milestone-form')
-    if(savedform){
-      setTask(JSON.parse(savedform))
-    }
-   
-  },[])
-  useEffect(()=>{
-    localStorage.setItem('create-milestone-form',JSON.stringify(task))
-  },[task])
 
-  const [Tasks, setTasks] = useState([])
-  const {tasks, error, loading} = useSelector((state) => state.Task)
-  const dispatch = useDispatch()
+  // Derived state
+  const projectStartDate = new Date(ProjectDetails.startDate);
+  const projectEndDate = new Date(ProjectDetails.endDate);
+  const team = ProjectDetails.team || [];
 
-  const [members, setMembers] = useState([])
-  // const [Error, setError] = useState(null)
-  const {projectError,  ProjectLoading,ProjectDetails} = useSelector((state) => state.Project)
-  console.log("i am project details",ProjectDetails);
-  const projectStartDate=new Date(ProjectDetails.startDate);
-  const ProjectEdnDate=new Date(ProjectDetails.endDate);
-  
-  const totalSteps = 3;
-  const priorities = ["Low", "Medium", "High", "Critical"];
-  const onClose=()=>{
-    dispatch(setTaskModalOpen(false))
-  }
+  // Load saved form data from localStorage
   useEffect(() => {
-    dispatch(FetchTeamByProjectId(projectId)).unwrap()
-    .then((data) => {
-      console.log("hi",data);
-    }).catch((error)=>{
-      console.log("bye",error);
-      
-    })
-    dispatch(fetchTasks(projectId))
-    .unwrap()
-    .then((data) => {
-      console.log(data);
-    })
-  }, [params.id])
-const team=ProjectDetails.team
+    try {
+      const savedForm = localStorage.getItem('create-milestone-form');
+      if (savedForm) {
+        setTask(JSON.parse(savedForm));
+      }
+    } catch (err) {
+      console.error("Failed to load saved form data:", err);
+    }
+  }, []);
 
-  const filteredAssignees = team.filter(
-    (m) =>
-      m.user.name.toLowerCase().includes(searchAssignee.toLowerCase()) ||
-      m.user.email.toLowerCase().includes(searchAssignee.toLowerCase())
-  );
+  // Save form data to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('create-milestone-form', JSON.stringify(task));
+    } catch (err) {
+      console.error("Failed to save form data:", err);
+    }
+  }, [task]);
 
-  const toggleAssignee = (id) => {
+  // Fetch project data and tasks
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(FetchTeamByProjectId(projectId)).unwrap();
+        await dispatch(fetchTasks(projectId)).unwrap();
+      } catch (error) {
+        console.error("Failed to fetch project data:", error);
+        // setError("Failed to load project data. Please try again.");
+      }
+    };
+
+    if (TaskModalOpen && params.id) {
+      fetchData();
+    }
+  }, [TaskModalOpen, params.id, projectId, dispatch]);
+
+  // Filter assignees based on search
+  const filteredAssignees = useCallback(() => {
+    if (!searchAssignee.trim()) return [];
+    
+    return team.filter(
+      (m) =>
+        m.user.name.toLowerCase().includes(searchAssignee.toLowerCase()) ||
+        m.user.email.toLowerCase().includes(searchAssignee.toLowerCase())
+    );
+  }, [searchAssignee, team]);
+
+  // Toggle assignee selection
+  const toggleAssignee = useCallback((id) => {
     setTask((prev) => ({
       ...prev,
       assigneeIds: prev.assigneeIds.includes(id)
         ? prev.assigneeIds.filter((a) => a !== id)
         : [...prev.assigneeIds, id],
     }));
-  };
+  }, []);
 
-  const getSelectedAssignees = () => {
+  // Get selected assignees
+  const getSelectedAssignees = useCallback(() => {
     return team.filter((m) => task.assigneeIds.includes(m.user._id));
-  };
+  }, [team, task.assigneeIds]);
 
-  const handleChange = (e) => {
+  // Handle form field changes
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setTask({ ...task, [name]: value });
-  };
+    setTask((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
- const handleFileChange = (e) => {
-  const newFiles = Array.from(e.target.files);
-  setTask((prev) => ({
-    ...prev,
-    attachments: [...prev.attachments, ...newFiles]
-  }));
-};
-
-  const handleSubmit =async (e) => {
-    e.preventDefault();
-   try {
-    console.log(task);
+  // Handle file uploads with validation
+  const handleFileChange = useCallback((e) => {
+    const newFiles = Array.from(e.target.files);
     
-    const formdata = new FormData();
+    // Validate file size
+    const oversizedFiles = newFiles.filter(file => file.size > MAX_FILE_SIZE_MB * 1024 * 1024);
+    if (oversizedFiles.length > 0) {
+      setError(`Some files exceed the maximum size of ${MAX_FILE_SIZE_MB}MB`);
+      return;
+    }
+    
+    setTask((prev) => ({
+      ...prev,
+      attachments: [...prev.attachments, ...newFiles]
+    }));
+    
+    // Clear the input to allow selecting the same file again
+    e.target.value = null;
+  }, []);
 
-    // simple fields append karo
-    formdata.append("title", task.title);
-    formdata.append("description", task.description);
-    formdata.append("priority", task.priority);
-    formdata.append("startDate", task.startDate);
-    formdata.append("dueDate", task.dueDate);
-    formdata.append("milestone", task.milestone);
-
-    // array fields (assigneeIds, dependencies) ko JSON stringify karke bhejna behtar hoga
-    formdata.append("assigneeIds", JSON.stringify(task.assigneeIds));
-    formdata.append("dependencies", JSON.stringify(task.dependencies));
-
-    // attachments agar multiple files hain
-    task.attachments.forEach((file) => {
-      formdata.append("attachments", file);
+  // Remove a file from attachments
+  const removeFile = useCallback((index) => {
+    setTask((prev) => {
+      const newFiles = [...prev.attachments];
+      newFiles.splice(index, 1);
+      return { ...prev, attachments: newFiles };
     });
-// console.log(projectId,"h");
-     
-    // ab api call
-    const res = await ApiServices.createTask(formdata, params.id);
-    alert('MileStone created')
-    console.log("Task created: ", res);
-    
-    
-    onClose()
-  } catch (error) {
-    dispatch(setError(error.message))
-    // alert(error.message)
-    console.error("Task creation error: ", error.message);
-  }
-    localStorage.removeItem('create-milestone-form')
-    
-  };
+  }, []);
 
-  const validateStep = (step) => {
+  // Remove an assignee
+  const removeAssignee = useCallback((id) => {
+    toggleAssignee(id);
+  }, [toggleAssignee]);
+
+  // Validate current step
+  const validateStep = useCallback((step) => {
+    setError(null);
+    
     switch (step) {
       case 1:
         if (!task.title.trim()) {
-          dispatch(setError("Please enter a milestone title"));
+          setError("Please enter a milestone title");
           return false;
         }
         break;
       case 2:
         if (!task.startDate) {
-            dispatch(setError("Please select a start date"));
+          setError("Please select a start date");
           return false;
         }
 
@@ -160,60 +173,125 @@ const team=ProjectDetails.team
         const startDate = new Date(task.startDate);
 
         if (startDate < today) {
-          dispatch(setError("Start date cannot be in the past"));
+          setError("Start date cannot be in the past");
           return false;
         }
 
-        if (task.endDate) {
-          const endDate = new Date(task.endDate);
-          if (endDate < startDate) {
-              dispatch(setError("End date should be after the start date"));
+        if (task.dueDate) {
+          const dueDate = new Date(task.dueDate);
+          if (dueDate < startDate) {
+            setError("Due date should be after the start date");
             return false;
           }
         }
         break;
-     
+      case 3:
+        if (task.assigneeIds.length === 0) {
+          setError("Please assign at least one team member");
+          return false;
+        }
+        break;
+      default:
+        return true;
     }
-    setError(null);
+    
     return true;
-  };
-  
-  const nextStep = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
-    }
-  };
+  }, [task]);
 
-  const prevStep = () => {
+  // Navigation functions
+  const nextStep = useCallback(() => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+    }
+  }, [currentStep, validateStep]);
+
+  const prevStep = useCallback(() => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
     setError(null);
-  };
+  }, []);
 
+  // Close modal
+  const onClose = useCallback(() => {
+    dispatch(setTaskModalOpen(false));
+  }, [dispatch]);
 
-  const handleBackdropClick = (e) => {
+  // Handle backdrop click
+  const handleBackdropClick = useCallback((e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
+  }, [onClose]);
+
+  // Submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateStep(currentStep)) return;
+    
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      const formData = new FormData();
+
+      // Append simple fields
+      formData.append("title", task.title);
+      formData.append("description", task.description);
+      formData.append("priority", task.priority);
+      formData.append("startDate", task.startDate);
+      formData.append("dueDate", task.dueDate);
+      formData.append("milestone", task.milestone);
+
+      // Append array fields as JSON strings
+      formData.append("assigneeIds", JSON.stringify(task.assigneeIds));
+      formData.append("dependencies", JSON.stringify(task.dependencies));
+
+      // Append attachments
+      task.attachments.forEach((file) => {
+        formData.append("attachments", file);
+      });
+
+      // API call
+      const res = await ApiServices.createTask(formData, params.id);
+      
+      // Notify parent component and close modal
+      if (onTaskCreated) onTaskCreated(res);
+      
+      // Clear saved form data
+      localStorage.removeItem('create-milestone-form');
+      
+      // Close modal
+      onClose();
+      
+    } catch (error) {
+      console.error("Task creation error:", error);
+      setError(error.message || "Failed to create task. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
+  // Render step content
   const renderStepContent = () => {
+    const selectedAssignees = getSelectedAssignees();
+    const filteredAssigneeList = filteredAssignees();
+
     switch (currentStep) {
       case 1:
         return (
           <div className="create-task-step-content">
-          <div className="projectInfo">
-          <div className="create-task-parent-info">
-                  <span>Project: {ProjectDetails.name}</span>
-                  
-                </div>
-                  <div className="create-task-parent-info">
-                       <span> start date: {projectStartDate.toLocaleDateString()}</span>
-                  </div>
-              
-                    <div className="create-task-parent-info">
-                       <span> Project End date: {ProjectEdnDate.toLocaleDateString()}</span>
-                  </div>
-</div>
+            <div className="projectInfo">
+              <div className="create-task-parent-info">
+                <span>Project: {ProjectDetails.name}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Start date: {projectStartDate.toLocaleDateString()}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+              </div>
+            </div>
+            
             <div className="create-task-step-header">
               <h3>Milestone Information</h3>
               <p>Tell us about your Milestone's basic details</p>
@@ -246,14 +324,17 @@ const team=ProjectDetails.team
 
             <div className="create-task-form-field">
               <label>Attach Documents</label>
-              <div className="create-task-file-upload-area" onClick={() => document.getElementById('create-task-file-input')?.click()}>
+              <div 
+                className="create-task-file-upload-area" 
+                onClick={() => document.getElementById('create-task-file-input')?.click()}
+              >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="7,10 12,15 17,10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <p>Click to upload files </p>
-                <span>PNG, JPEG, PDF, DOC, XLS up to 10MB</span>
+                <p>Click to upload files</p>
+                <span>PNG, JPEG, PDF, DOC, XLS up to {MAX_FILE_SIZE_MB}MB</span>
               </div>
               <input
                 id="create-task-file-input"
@@ -261,7 +342,7 @@ const team=ProjectDetails.team
                 multiple
                 hidden
                 onChange={handleFileChange}
-                accept="image/*,.pdf,.doc,.docx"
+                accept={ALLOWED_FILE_TYPES}
               />
 
               {task.attachments.length > 0 && (
@@ -271,16 +352,14 @@ const team=ProjectDetails.team
                       <div className="create-task-file-icon">📄</div>
                       <div className="create-task-file-details">
                         <span className="create-task-file-name">{file.name}</span>
-                        <span className="create-task-file-size">{(file.size / 1024).toFixed(1)} KB</span>
+                        <span className="create-task-file-size">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </span>
                       </div>
                       <button
                         type="button"
                         className="create-task-file-remove"
-                        onClick={() => {
-                          const newFiles = [...task.attachments];
-                          newFiles.splice(i, 1);
-                          setTask({ ...task, attachments: newFiles });
-                        }}
+                        onClick={() => removeFile(i)}
                       >
                         ✕
                       </button>
@@ -295,19 +374,18 @@ const team=ProjectDetails.team
       case 2:
         return (
           <div className="create-task-step-content">
-           <div className="projectInfo">
-          <div className="create-task-parent-info">
-                  <span>Project: {ProjectDetails.name}</span>
-                  
-                </div>
-                  <div className="create-task-parent-info">
-                       <span> start date: {projectStartDate.toLocaleDateString()}</span>
-                  </div>
-              
-                    <div className="create-task-parent-info">
-                       <span> Project End date: {ProjectEdnDate.toLocaleDateString()}</span>
-                  </div>
-</div>
+            <div className="projectInfo">
+              <div className="create-task-parent-info">
+                <span>Project: {ProjectDetails.name}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Start date: {projectStartDate.toLocaleDateString()}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+              </div>
+            </div>
+            
             <div className="create-task-step-header">
               <h3>Timeline & Priority</h3>
               <p>Set your Milestone timeline and priority details</p>
@@ -322,6 +400,8 @@ const team=ProjectDetails.team
                   value={task.startDate}
                   onChange={handleChange}
                   className="create-task-form-input"
+                  min={projectStartDate.toISOString().split('T')[0]}
+                  max={projectEndDate.toISOString().split('T')[0]}
                 />
               </div>
               <div className="create-task-form-field">
@@ -332,6 +412,8 @@ const team=ProjectDetails.team
                   value={task.dueDate}
                   onChange={handleChange}
                   className="create-task-form-input"
+                  min={task.startDate || projectStartDate.toISOString().split('T')[0]}
+                  max={projectEndDate.toISOString().split('T')[0]}
                 />
               </div>
             </div>
@@ -344,25 +426,13 @@ const team=ProjectDetails.team
                 onChange={handleChange}
                 className="create-task-form-select"
               >
-                {priorities.map((p) => (
+                {PRIORITIES.map((p) => (
                   <option key={p} value={p}>
                     {p}
                   </option>
                 ))}
               </select>
             </div>
-
-            {/* <div className="create-task-form-field">
-              <label>Milestone</label>
-              <input
-                type="text"
-                name="milestone"
-                value={task.milestone}
-                onChange={handleChange}
-                placeholder="Optional milestone"
-                className="create-task-form-input"
-              />
-            </div> */}
 
             <div className="create-task-pri-indicator">
               <span className={`create-task-pri-badge create-task-priority-${task.priority.toLowerCase()}`}>
@@ -375,19 +445,18 @@ const team=ProjectDetails.team
       case 3:
         return (
           <div className="create-task-step-content">
-           <div className="projectInfo">
-          <div className="create-task-parent-info">
-                  <span>Project: {ProjectDetails.name}</span>
-                  
-                </div>
-                  <div className="create-task-parent-info">
-                       <span> start date: {projectStartDate.toLocaleDateString()}</span>
-                  </div>
-              
-                    <div className="create-task-parent-info">
-                       <span> Project End date: {ProjectEdnDate.toLocaleDateString()}</span>
-                  </div>
-</div>
+            <div className="projectInfo">
+              <div className="create-task-parent-info">
+                <span>Project: {ProjectDetails.name}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Start date: {projectStartDate.toLocaleDateString()}</span>
+              </div>
+              <div className="create-task-parent-info">
+                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+              </div>
+            </div>
+            
             <div className="create-task-step-header">
               <h3>Assignment & Dependencies</h3>
               <p>Assign team members and set Milestone dependencies</p>
@@ -403,9 +472,9 @@ const team=ProjectDetails.team
                 className="create-task-form-input create-task-search-input"
               />
 
-              {searchAssignee?.trim() && filteredAssignees?.length > 0 && (
+              {searchAssignee.trim() && filteredAssigneeList.length > 0 && (
                 <div className="create-task-member-search-results">
-                  {filteredAssignees?.map((m) => (
+                  {filteredAssigneeList.map((m) => (
                     <label key={m.user._id} className="create-task-member-item">
                       <input
                         type="checkbox"
@@ -424,11 +493,11 @@ const team=ProjectDetails.team
                 </div>
               )}
 
-              {getSelectedAssignees()?.length > 0 && (
+              {selectedAssignees.length > 0 && (
                 <div className="create-task-selected-members">
-                  <h4>Assigned Members ({getSelectedAssignees().length})</h4>
+                  <h4>Assigned Members ({selectedAssignees.length})</h4>
                   <div className="create-task-selected-member-list">
-                    {getSelectedAssignees().map((m) => (
+                    {selectedAssignees.map((m) => (
                       <div key={m.user._id} className="create-task-selected-member">
                         <div className="create-task-member-avatar">
                           {m.user.name.charAt(0).toUpperCase()}
@@ -440,7 +509,7 @@ const team=ProjectDetails.team
                         <button
                           type="button"
                           className="create-task-remove-member"
-                          onClick={() => toggleAssignee(m.user._id)}
+                          onClick={() => removeAssignee(m.user._id)}
                         >
                           ✕
                         </button>
@@ -456,9 +525,9 @@ const team=ProjectDetails.team
                 <label>Dependencies</label>
                 <Select
                   isMulti
-                  options={tasks?.map((t) => ({ value: t._id, label: t.title }))}
+                  options={tasks.map((t) => ({ value: t._id, label: t.title }))}
                   value={tasks
-                    .filter((t) => task.dependencies?.includes(t._id))
+                    .filter((t) => task.dependencies.includes(t._id))
                     .map((t) => ({ value: t._id, label: t.title }))}
                   onChange={(selectedOptions) =>
                     setTask({ 
@@ -467,6 +536,7 @@ const team=ProjectDetails.team
                     })
                   }
                   className="create-task-dependencies-select"
+                  placeholder="Select dependent tasks..."
                 />
               </div>
             )}
@@ -481,7 +551,7 @@ const team=ProjectDetails.team
   if (!TaskModalOpen) return null;
 
   return (
-    <div className="create-task-modal-backdrop" >
+    <div className="create-task-modal-backdrop" onClick={handleBackdropClick}>
       <div className="create-task-modal-container">
         <div className="create-task-modal-header">
           <h2>Create New Milestone</h2>
@@ -497,23 +567,27 @@ const team=ProjectDetails.team
           <div className="create-task-progress-bar">
             <div
               className="create-task-progress-fill"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
             />
           </div>
           <div className="create-task-step-indicators">
-            {Array.from({ length: totalSteps }, (_, i) => (
-              <div key={i + 1} className={`create-task-step-indicator ${currentStep >= i + 1 ? 'create-task-active' : ''} ${currentStep > i + 1 ? 'create-task-completed' : ''}`}>
+            {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+              <div 
+                key={i + 1} 
+                className={`create-task-step-indicator ${currentStep >= i + 1 ? 'create-task-active' : ''} ${currentStep > i + 1 ? 'create-task-completed' : ''}`}
+              >
                 {currentStep > i + 1 ? '✓' : i + 1}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="create-task-modal-form" >
+        <form className="create-task-modal-form" onSubmit={handleSubmit}>
           <div className="create-task-modal-content">
             {renderStepContent()}
           </div>
-             {error && (
+          
+          {error && (
             <div className="create-project-error-message">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
@@ -527,7 +601,12 @@ const team=ProjectDetails.team
           <div className="create-task-modal-footer">
             <div className="create-task-footer-left">
               {currentStep > 1 && (
-                <button type="button" className="create-task-btn-secondary" onClick={prevStep}>
+                <button 
+                  type="button" 
+                  className="create-task-btn-secondary" 
+                  onClick={prevStep}
+                  disabled={isSubmitting}
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="15,18 9,12 15,6" />
                   </svg>
@@ -537,28 +616,48 @@ const team=ProjectDetails.team
             </div>
 
             <div className="create-task-footer-right">
-              <button type="button" className="create-task-btn-ghost" onClick={onClose}>
+              <button 
+                type="button" 
+                className="create-task-btn-ghost" 
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
                 Cancel
               </button>
 
-              {currentStep < totalSteps ? (
-                <button type="button" className="create-task-btn-primary" onClick={nextStep}>
+              {currentStep < TOTAL_STEPS ? (
+                <button 
+                  type="button" 
+                  className="create-task-btn-primary" 
+                  onClick={nextStep}
+                  disabled={isSubmitting}
+                >
                   Next
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="9,18 15,12 9,6" />
                   </svg>
                 </button>
               ) : (
-                <button onClick={handleSubmit} type="submit" className="create-task-btn-primary">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20,6 9,17 4,12" />
-                  </svg>
-                  Create Task
+                <button 
+                  type="submit" 
+                  className="create-task-btn-primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    "Creating..."
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="20,6 9,17 4,12" />
+                      </svg>
+                      Create Task
+                    </>
+                  )}
                 </button>
               )}
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

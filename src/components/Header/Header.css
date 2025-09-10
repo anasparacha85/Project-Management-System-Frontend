@@ -270,7 +270,7 @@
 }
 
 .logout-btn {
-  display: none;
+  /* display: none; */
   padding: 8px 12px;
   background: var(--gray-100);
   border: 1px solid var(--gray-200);

@@ -3,9 +3,9 @@ import "./ProjectModal.css";
 import useDebounce from "../hooks/usedebounce";
 import ApiServices from "../ApiService/ApiService";
 import { useDispatch, useSelector } from "react-redux";
-import { setUsers } from "../Slices/ProjectSlice";
+import { FetchAllProjects, setUsers } from "../Slices/ProjectSlice";
 
-export default function ProjectModal({ onClose, onSubmit }) {
+export default function ProjectModal({ onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState({
     name: "",
@@ -39,6 +39,7 @@ export default function ProjectModal({ onClose, onSubmit }) {
   const [searchMember, setSearchMember] = useState("");
   const debounceQuery = useDebounce(searchMember, 500)
   const [filteredUsers, setFilteredUsers] = useState(null)
+  const [IsSubmitting, setIsSubmitting] = useState(false)
   // const {users}=useSelector((state)=>state.Project)
   const dispatch=useDispatch()
 
@@ -118,24 +119,68 @@ export default function ProjectModal({ onClose, onSubmit }) {
     });
   }
 
-  const handleSubmit = () => {
+  const handleSubmit =async () => {
     if (!form.name.trim()) {
-      alert("Please enter a project title");
+      setError("Please enter a project title");
       return;
     }
     if (!form.managerId) {
-      alert("Please select a manager");
+      setError("Please select a manager");
       return;
     }
     if (form.files.length >= 4) {
-      alert('you can only select 3 files at a time')
+      setError('you can only select 3 files at a time')
       return
     }
     if (form.memberIds.length === 0) {
-      alert("Please select at least one team member");
+      setError("Please select at least one team member");
       return;
     }
-    onSubmit(form);
+    setIsSubmitting(true)
+    const projectData=form;
+      const formData = new FormData();
+
+    // append normal fields
+    formData.append("name", projectData.name);
+    formData.append("description", projectData.description);
+    formData.append("startDate", projectData.startDate);
+    formData.append("endDate", projectData.endDate);
+    formData.append("budget", projectData.budget);
+    formData.append("priority", projectData.priority);
+    formData.append("managerId", projectData.managerId);
+      formData.append("teamName", projectData.teamName);
+
+    // memberIds ek array hai → isko loop se bhejna hoga
+    projectData.memberIds.forEach((id) => {
+      formData.append("memberIds[]", id);
+    });
+
+    // files bhi ek array hai
+    projectData.files.forEach((file) => {
+      
+      formData.append("files", file);
+    });
+    
+    try {
+      const data=await ApiServices.createProject(formData)
+   
+    console.log("data",data);
+   
+      alert(data.SuccessMessage)
+     onClose()
+      dispatch(FetchAllProjects())
+   
+    
+    } catch (error) {
+      console.log(error.message);
+      
+      // alert(error.FailureMessage)
+    setError(error.message)
+    }
+    finally{
+      setIsSubmitting(false)
+    }
+    
     localStorage.removeItem('create-project-form')
   }
 
@@ -534,11 +579,11 @@ export default function ProjectModal({ onClose, onSubmit }) {
                   </svg>
                 </button>
               ) : (
-                <button type="submit" onClick={handleSubmit} className="create-project-btn-primary">
+                <button disabled={IsSubmitting} type="submit" onClick={handleSubmit} className="create-project-btn-primary">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="20,6 9,17 4,12" />
                   </svg>
-                  Create Project
+              {IsSubmitting ? "creating project...":"Create Project"}    
                 </button>
               )}
             </div>
