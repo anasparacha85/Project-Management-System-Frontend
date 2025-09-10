@@ -158,20 +158,24 @@ if (!ProjectDetails) {
         </div>
         <div className="controls-right">
           <div className="team-avatars">
-            {ProjectDetails.team.map((member, idx) => (
-              <div key={idx} title={member.user.name} className="team-avatar" style={{ zIndex: 4 - idx }}>
-              <img 
-                        src={member?.user?.avatarUrl} 
-                        alt={member?.user?.name?.slice(0,2)} 
-                        className="member-avatar"
-                        onError={(e) => {
-                          e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
-                        }}
-                      />
-              </div>
-            ))}
-            {/* <div className="team-avatar-more">+12</div> */}
-          </div>
+  {ProjectDetails?.team?.length > 0 ? (
+    ProjectDetails.team.map((member, idx) => (
+      <div key={idx} title={member?.user?.name} className="team-avatar" style={{ zIndex: 4 - idx }}>
+        <img 
+          src={member?.user?.avatarUrl} 
+          alt={member?.user?.name?.slice(0,2)} 
+          className="member-avatar"
+          onError={(e) => {
+            e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
+          }}
+        />
+      </div>
+    ))
+  ) : (
+    <span className="no-members">No team members</span>
+  )}
+</div>
+
         </div>
       </div>
          
