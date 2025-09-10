@@ -57,8 +57,8 @@ export const Header = ({ onToggleSidebar, isMobileMenuOpen }) => {
             <div className="status-indicator"></div>
           </div>
           <div className="user-info">
-            <span className="user-name">Anima Agrawal</span>
-            <span className="user-location">UP, India</span>
+            <span className="user-name">Anas</span>
+            <span className="user-location">karachi ,pakistan</span>
           </div>
           <ChevronDown size={14} className="dropdown-icon" />
         </div>
