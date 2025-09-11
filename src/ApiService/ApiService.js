@@ -45,6 +45,12 @@ const ApiServices = {
       body:data
     })
   },
+  uploadFilesByProjectId(selectedFiles,id){
+    return apiClient(`/api/project/uploadFiles/${id}`,{
+      method:'POST',
+      body:selectedFiles
+    })
+  },
  
   getMembersByProjectId(projectId){
     return apiClient(`/api/tasks/getTeam/${projectId}`,{

@@ -25,6 +25,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import SubTaskDetailPage from './pages/SubTaskDetailsPage/SubTaskDetailPage'
 import MilestoneTeam from './pages/MilestoneTeams/MilestoneTeam'
 import MilestoneAnalytics from './pages/MilestoneAnalytics'
+import EmployeeReport from './pages/EmployeesReport/EmployeeReport'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -47,6 +48,7 @@ function App() {
           
            <Route path='milestone' element={<ProjectMilestonesPage/>}/>
            <Route path='attachments' element={<DocumentsPage/>}/>
+           <Route path='employees-report' element={<EmployeeReport/>}/>
           </Route>
           
            <Route path='milestone/:id' element={<MileStoneLayout/>}>

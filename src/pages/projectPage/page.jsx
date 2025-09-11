@@ -17,6 +17,7 @@ export default function ProjectPage() {
  const dispatch=useDispatch()
  const {projects,projectError,projectLoading}=useSelector((state)=>state.Project)
   const handleProjectCreate = async(projectData) => {
+     
       const formData = new FormData();
 
     // append normal fields

@@ -199,11 +199,20 @@ const TaskModal=({ projectId, onTaskCreated }) => {
   }, [task]);
 
   // Navigation functions
-  const nextStep = useCallback(() => {
-    if (validateStep(currentStep)) {
-      setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
-    }
-  }, [currentStep, validateStep]);
+const nextStep = useCallback(() => {
+  // Agar current step last step (3) hai, to validation skip karega
+  if (currentStep === TOTAL_STEPS) return;
+
+  // ✅ Sirf Step 1 aur Step 2 validate honge
+  if (currentStep < TOTAL_STEPS - 1) {
+    const isValid = validateStep(currentStep);
+    if (!isValid) return;
+  }
+
+  setError(null);
+  setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+}, [currentStep, validateStep]);
+
 
   const prevStep = useCallback(() => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -227,7 +236,7 @@ const TaskModal=({ projectId, onTaskCreated }) => {
     e.preventDefault();
     
     if (!validateStep(currentStep)) return;
-    
+    // if (!validateStep(3)) return;
     setIsSubmitting(true);
     setError(null);
     

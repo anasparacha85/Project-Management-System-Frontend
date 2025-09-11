@@ -1,6 +1,6 @@
 // src/layouts/ProjectLayout.jsx
 import { NavLink, Outlet, useParams } from "react-router-dom";
-import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, Edit } from "lucide-react";
+import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, Edit, Antenna } from "lucide-react";
 import "./Layout.css";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
@@ -64,6 +64,11 @@ setInviteTeamModalOpen(true)
       path: `/dashboard/project/${params.id}/attachments`,
       label: "Attachments",
       icon: <DownloadCloud size={16} />,
+    },
+     {
+      path: `/dashboard/project/${params.id}/employees-report`,
+      label: "Employees analysis",
+      icon: <Antenna size={16} />,
     },
   ];
 // if (ProjectLoading) {
