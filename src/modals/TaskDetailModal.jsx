@@ -587,7 +587,7 @@ const handleDeleteTask=async()=>{
             <span className="task-details-label">Description</span>
           <textarea
   ref={descriptionRef}
-  disabled={false} // disable ka chakkar mat rakho
+  disabled={true} // disable ka chakkar mat rakho
   className="task-details-description-content"
   value={taskDetails.description || ""}
   onChange={(e) =>

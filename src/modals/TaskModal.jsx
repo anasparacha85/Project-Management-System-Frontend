@@ -197,8 +197,8 @@ const TaskModal=({ projectId, onTaskCreated }) => {
     
     return true;
   }, [task]);
-
-  // Navigation functions
+//
+  //Navigation functions
 const nextStep = useCallback(() => {
   // Agar current step last step (3) hai, to validation skip karega
   if (currentStep === TOTAL_STEPS) return;
