@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useDebounce from "../hooks/usedebounce";
 import ApiServices from "../ApiService/ApiService";
-import "./AddTeamModal.css";
+import "./AddteamModal.css";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FetchProjectDetailsById } from "../Slices/ProjectSlice";
