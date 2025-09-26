@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./ManagerLogin.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import ApiServices from "../../../../ApiService/ApiService";
+import { setUser } from "../../../../Slices/UserSlice";
 
 const ManagerLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -9,13 +12,15 @@ const ManagerLoginPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const [Loading, setLoading] = useState(false)
   const navigate=useNavigate()
-
+const dispatch=useDispatch()
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
     const handleSubmit = async(e) => {
+      setLoading(true)
     e.preventDefault();
     try {
         
@@ -31,6 +36,7 @@ const ManagerLoginPage = () => {
     })
     const data=await res.json()
     if(res.ok){
+      
         alert(data.SuccessMessage)
         navigate('/dashboard')
     }
@@ -43,6 +49,9 @@ const ManagerLoginPage = () => {
         
         console.log(error);
         
+    }
+    finally{
+      setLoading(false)
     }
     
 
@@ -82,8 +91,8 @@ const ManagerLoginPage = () => {
           />
 
          
-          <button type="submit" className="login-btn">
-            Login
+           <button disabled={Loading} type="submit" className="login-btn">
+          {Loading?"Loading...":"Login"} 
           </button>
         </form>
           <p className="login-subheading">

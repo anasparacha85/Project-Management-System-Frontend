@@ -28,6 +28,8 @@ export const FetchAllProjects=createAsyncThunk(
         }
     }
 )
+
+
 export const FetchProjectDetailsById=createAsyncThunk(
      "/project/details",
     async(projectId,{rejectWithValue})=>{
@@ -79,6 +81,12 @@ const projectSlice=createSlice(
             },
             setUsers:(state,action)=>{
                 state.users=action.payload
+            },
+            setProjects:(state,action)=>{
+                state.projects=action.payload
+            },
+            setProjectError:(state,action)=>{
+                state.projectError=action.payload
             }
             
         },
@@ -149,5 +157,5 @@ const projectSlice=createSlice(
         }
     }
 )
-export const  {setProjectDetails,setTeam,setUsers}=projectSlice.actions;
+export const  {setProjectDetails,setTeam,setUsers,setProjects,setProjectError}=projectSlice.actions;
 export default projectSlice.reducer

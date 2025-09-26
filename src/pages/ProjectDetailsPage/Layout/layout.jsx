@@ -18,6 +18,9 @@ const ProjectLayout = () => {
     const [InviteTeamModalOpen, setInviteTeamModalOpen] = useState(false)
     const {ProjectDetails,ProjectError,ProjectLoading}=useSelector((state)=>state.Project)
     // console.log(ProjectDetails);
+    const {user}=useSelector((state)=>state.User)
+    console.log("user in project",user);
+    const role=user.role
     
     const onOpenInviteTeamModal=()=>{
 setInviteTeamModalOpen(true)
@@ -118,8 +121,9 @@ if (!ProjectDetails) {
           <h1 className="page-title">Project Workspace</h1>
           <p className="page-subtitle">Manage tasks, team members & progress</p>
         </div>
-
-        <div className="proj-page-actions">
+ {role==='manager' &&
+ <div className="proj-page-actions">
+       
           <button onClick={onOpenInviteTeamModal} className="proj-action-btn secondary">
             <Users size={16} />
             <span>Invite Team</span>
@@ -132,7 +136,8 @@ if (!ProjectDetails) {
             <Edit size={16} />
             <span>Edit Project</span>
           </button>
-        </div>
+        </div>}
+        
       </div>
 
       {/* Page Controls */}

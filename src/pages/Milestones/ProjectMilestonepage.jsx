@@ -7,6 +7,7 @@ import ApiServices from "../../ApiService/ApiService";
 import { useDispatch } from "react-redux";
 import { setTaskModalOpen } from "../../Slices/UiSlice";
 import TaskModal from "../../modals/TaskModal";
+import { useSelector } from "react-redux";
 
 const EditableCell = ({ value, onSave, type = "text", options = [], placeholder = "Click to edit" }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -155,12 +156,14 @@ const ProjectMilestonesPage = () => {
   const params = useParams();
  const dispatch=useDispatch()
  const [ProjectId, setProjectId] = useState('')
+const {user}=useSelector((state)=>state.User)
+const role=user.role
+;
+
 
 const navigate=useNavigate()
 
-
-  useEffect(() => {
-    const fetchMilestones = async () => {
+ const fetchMilestones = async () => {
         setLoading(true);
       try {
         const data = await ApiServices.getMilestonesByProjectId(params.id);
@@ -173,7 +176,29 @@ const navigate=useNavigate()
         setLoading(false)
       }
     };
-    fetchMilestones();
+     const fetchEmployeeMilestones = async () => {
+        setLoading(true);
+      try {
+        const data = await ApiServices.getEmployeeMilestonesByProjectid(params.id)
+        console.log(data);
+        setMilestones(data.tasks || []);
+      } catch (error) {
+        console.log(error);
+      }
+      finally{
+        setLoading(false)
+      }
+    };
+  useEffect(() => {
+if(role==='manager'){
+   fetchMilestones();
+
+}
+else{
+  fetchEmployeeMilestones()
+}
+   
+   
   }, []);
   // Mock data matching your structure
   const mockMilestones = [
@@ -299,10 +324,11 @@ const openMilestoneModal=()=>{
           </h1>
           <p style={{color:"#1e293b"}} className="project-milestone-page-subtitle">Track and manage project milestones with real-time progress</p>
         </div>
-        <button onClick={openMilestoneModal} className="project-milestone-create-btn" title="new milestone" >
+     {role==='manager' &&
+      <button onClick={openMilestoneModal} className="project-milestone-create-btn" title="new milestone" >
           <Plus size={16} />
           New Milestone
-        </button>
+        </button>}  
       </div>
 
       {/* Stats Overview */}
@@ -357,9 +383,10 @@ const openMilestoneModal=()=>{
             className="project-milestone-search-input"
           />
         </div> */}
-
-        <div className="project-milestone-filter-container">
+            {role==="manager "?
+            <div className="project-milestone-filter-container">
           <Filter size={16} className="project-milestone-filter-icon" />
+        
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -368,11 +395,30 @@ const openMilestoneModal=()=>{
             <option value="All">All Status</option>
             <option value="pending">todo</option>
             <option value="inprogress">In Progress</option>
+            <option value="review">Review</option>
+
             <option value="completed">Completed</option>
-            <option value="onhold">On Hold</option>
           </select>
           <ChevronDown size={16} className="project-milestone-select-arrow" />
-        </div>
+        </div>:
+        <div className="project-milestone-filter-container">
+          <Filter size={16} className="project-milestone-filter-icon" />
+        
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="project-milestone-filter-select"
+          >
+            <option value="All">All Status</option>
+            <option value="pending">todo</option>
+            <option value="inprogress">In Progress</option>
+              <option value="review">Ready for Review</option>
+            <option value="completed">Completed</option>
+            {/* <option value="onhold">On Hold</option> */}
+          </select>
+          <ChevronDown size={16} className="project-milestone-select-arrow" />
+        </div>}
+        
       </div>
 
       {/* Table Section */}
@@ -431,17 +477,30 @@ const openMilestoneModal=()=>{
                 <td className="project-milestone-status-cell">
                   <div className={`project-milestone-status-badge project-milestone-status-${milestone.status}`}>
                     <span className="project-milestone-status-dot"></span>
-                    <EditableCell
+                  {role==="manager"?  <EditableCell
                       value={milestone.status}
                       onSave={(newValue) => handleUpdateMilestone(milestone._id, 'status', newValue)}
                       type="select"
                       options={[
                         { value: 'pending', label: 'Pending' },
                         { value: 'inprogress', label: 'In Progress' },
+                         { value: 'review', label: 'Review' },
                         { value: 'completed', label: 'Completed' },
-                        { value: 'onhold', label: 'On Hold' }
+                       
                       ]}
-                    />
+                    />:
+                      <EditableCell
+                      value={milestone.status}
+                      onSave={(newValue) => handleUpdateMilestone(milestone._id, 'status', newValue)}
+                      type="select"
+                      options={[
+                        { value: 'pending', label: 'Pending' },
+                        { value: 'inprogress', label: 'In Progress' },
+                         { value: 'review', label: 'Ready for Review' },
+                       
+                       
+                      ]}
+                    />}
                   </div>
                 </td>
                 
@@ -466,7 +525,7 @@ const openMilestoneModal=()=>{
                         { value: 'Low', label: 'Low' },
                         { value: 'Medium', label: 'Medium' },
                         { value: 'High', label: 'High' },
-                        { value: 'Critical', label: 'Critical' }
+                        // { value: 'Critical', label: 'Critical' }
                       ]}
                     />
                   </div>
@@ -536,7 +595,8 @@ const openMilestoneModal=()=>{
         </table>
 
         {filteredMilestones.length === 0 && (
-          <div className="project-milestone-empty-state">
+          role==="manager"?
+           <div className="project-milestone-empty-state">
             <Target size={48} className="project-milestone-empty-icon" />
             <h3>No milestones found</h3>
             <p>
@@ -551,7 +611,24 @@ const openMilestoneModal=()=>{
               <Plus size={16} />
               Create First Milestone
             </button>
+          </div>:
+           <div className="project-milestone-empty-state">
+            <Target size={48} className="project-milestone-empty-icon" />
+            <h3>Your are not assigned to any milestone yet</h3>
+            <p>
+              {searchTerm 
+                ? `No milestones match "${searchTerm}"`
+                : filter !== "All" 
+                  ? `No milestones with status "${filter}"`
+                  : "wait until your reporting manager assign you your first milestone"
+              }
+            </p>
+            {/* <button onClick={openMilestoneModal} className="project-milestone-create-first-btn" >
+              <Plus size={16} />
+              Create First Milestone
+            </button> */}
           </div>
+         
         )}
       </div>
 

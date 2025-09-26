@@ -85,27 +85,27 @@ console.log("babab",taskDetails);
                   <td className="member-cell">
                     <div className="member-info">
                       <img 
-                        src={member.user.avatarUrl} 
-                        alt={member.user.name} 
+                        src={member?.user?.avatarUrl} 
+                        alt={member?.user?.name ||"no user"} 
                         className="member-avatar"
                         onError={(e) => {
                           e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
                         }}
                       />
                       <div className="member-details">
-                        <span className="member-name">{member.user.name}</span>
-                        <span className="member-id">ID: {member.user._id.slice(-8)}</span>
+                        <span className="member-name">{member?.user.name}</span>
+                        <span className="member-id">ID: {member?.user?._id.slice(-8)}</span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <span className={getRoleBadgeClass(member.user.role)}>
+                    <span className={getRoleBadgeClass(member?.user?.role)}>
                       {member?.user?.role?.charAt(0).toUpperCase() + member.user.role.slice(1)}
                     </span>
                   </td>
-                  <td className="email-cell">{member.user.email}</td>
+                  <td className="email-cell">{member?.user?.email}</td>
                   <td>
-                    <span className={getStatusBadgeClass(member.user.status)}>
+                    <span className={getStatusBadgeClass(member?.user?.status)}>
                       {member?.user?.status?.charAt(0).toUpperCase() + member.user.status.slice(1)}
                     </span>
                   </td>

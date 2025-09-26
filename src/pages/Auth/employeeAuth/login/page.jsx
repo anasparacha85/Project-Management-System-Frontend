@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./employeelogin.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const EmployeeLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,9 @@ const EmployeeLoginPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const [Loading, setLoading] = useState(false)
   const navigate=useNavigate()
+  const dispatch=useDispatch()
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,6 +20,7 @@ const EmployeeLoginPage = () => {
 
     const handleSubmit = async(e) => {
     e.preventDefault();
+    setLoading(true)
     try {
         
    
@@ -26,10 +30,12 @@ const EmployeeLoginPage = () => {
         body:JSON.stringify(formData),
         headers:{
             'Content-Type':'application/json'
-        }
+        },
+         credentials:'include'
     })
     const data=await res.json()
     if(res.ok){
+      
         alert(data.SuccessMessage)
         navigate('/dashboard')
     }
@@ -42,6 +48,9 @@ const EmployeeLoginPage = () => {
         
         console.log(error);
         
+    }
+    finally{
+      setLoading(false)
     }
     
 
@@ -81,8 +90,8 @@ const EmployeeLoginPage = () => {
           />
 
          
-          <button type="submit" className="login-btn">
-            Login
+          <button disabled={Loading} type="submit" className="login-btn">
+          {Loading?"Loading...":"Login"} 
           </button>
         </form>
           <p className="login-subheading">

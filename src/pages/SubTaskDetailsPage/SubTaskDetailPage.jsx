@@ -992,6 +992,8 @@ const SubTaskDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const params = useParams();
+  const {user}=useSelector((state)=>state.User)
+  const role=user.role
   
   const { SubTaskDetails, SubTaskLoading, SubTaskError } = useSelector((state) => state.SubTask);
   // const { team } = useSelector((state) => state.Project);
@@ -1033,9 +1035,15 @@ const team=taskDetails.assignees
         ...(subTaskData.startDate ? { startDate: subTaskData.startDate } : {}),
         ...(subTaskData.dueDate ? { dueDate: subTaskData.dueDate } : {})
       };
-
-      const data = await ApiServices.updateSubTaskById(params.id, payload);
+      if (role === 'manager') {
+      const data = await ApiServices.updateManagerSubTaskById(params.id, payload);
       alert(data.SuccessMessage);
+      }
+      else{
+         const data = await ApiServices.updateEmployeeSubTaskById(params.id, payload);
+      alert(data.SuccessMessage);
+
+      }
       dispatch(fetchSubTaskById(params.id)).unwrap()
       .then((data)=>{
         setSubTaskData(data)
@@ -1044,7 +1052,7 @@ const team=taskDetails.assignees
         console.log(error);
         
       })
-      dispatch(fetchSubTaskById(params.id));
+      // dispatch(fetchSubTaskById(params.id));
     } catch (error) {
       alert(error.message);
     }
@@ -1077,6 +1085,13 @@ const team=taskDetails.assignees
       default: return 'task-details-status-default';
     }
   };
+  const getStatusOptions = () => {
+  if (role === "manager") {
+    return ["todo", "in-progress", "review", "completed"];
+  } else {
+    return ["todo", "in-progress", "ready-for-review"]; // employee ke liye
+  }
+};
 
   if (SubTaskLoading) {
     return (
@@ -1137,11 +1152,11 @@ const team=taskDetails.assignees
         <div className="task-details-grid">
           <EditableField 
             label="Status" 
-            value={subTaskData.status} 
+            value={(role==='employee' && subTaskData.status==='review') ?"ready-for-review":subTaskData.status} 
             placeholder="Select status"
             name="status"
             type="select"
-            options={["todo", "in-progress", "review", "completed"]}
+            options={getStatusOptions()}
             onUpdate={handleUpdateField}
           />
           

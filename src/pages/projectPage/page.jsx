@@ -7,7 +7,7 @@ import EmptyState from "../../components/states/projectemptystate";
 import { useNavigate } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
 import { useDispatch, useSelector } from "react-redux";
-import { FetchAllProjects } from "../../Slices/ProjectSlice";
+import { FetchAllProjects, setProjectError, setProjects } from "../../Slices/ProjectSlice";
 
 export default function ProjectPage() {
   // const [projects, setProjects] = useState([]);
@@ -16,6 +16,9 @@ export default function ProjectPage() {
   const navigate=useNavigate()
  const dispatch=useDispatch()
  const {projects,projectError,projectLoading}=useSelector((state)=>state.Project)
+ const {user}=useSelector((state)=>state.User)
+ console.log(user);
+ 
   const handleProjectCreate = async(projectData) => {
      
       const formData = new FormData();
@@ -85,9 +88,33 @@ export default function ProjectPage() {
   //   }
 
   // }
+  const role=user.role;
+  console.log(role);
+  
+  const FetchProjectsByEmployee=async()=>{
+    try {
+      const data=await ApiServices.getProjectByEmployee()
+      console.log(data);
+      dispatch(setProjects(data.projects))
+
+      
+      
+    } catch (error) {
+      console.log(error);
+      dispatch(setProjectError(error.message))
+      
+    }
+  }
   useEffect(()=>{
+    if(role==='manager'){
     dispatch(FetchAllProjects())
-  },[])
+    }
+    else{
+      FetchProjectsByEmployee()
+
+    }
+
+  },[role])
 
   const handleViewProject = (projectId) => {
     console.log("Navigate to project:", projectId);
@@ -98,11 +125,19 @@ export default function ProjectPage() {
   return (
     <div className="project-page">
       <div className="project-page-header">
-        <div className="header-content">
+      {role==='manager'?(
+         <div className="header-content">
           <h1>Projects</h1>
           <p>Manage and track your team's projects</p>
         </div>
-        {projects.length > 0 && (
+      ):
+       <div className="header-content">
+          <h1>Your assigned Projects</h1>
+          <p>Manage your projects and tasks status</p>
+        </div>
+      }
+       
+        {role==='manager' &&projects.length > 0 && (
           <button 
             className="btn-primary"
             onClick={() => setShowModal(true)}
@@ -112,7 +147,7 @@ export default function ProjectPage() {
         )}
       </div>
 
-      <div className="project-page-content">
+  <div className="project-page-content">
         {projects.length === 0 ? (
           <EmptyState onCreateProject={() => setShowModal(true)} />
         ) : (
@@ -127,6 +162,19 @@ export default function ProjectPage() {
           </div>
         )}
       </div>
+
+{/* (
+  <div className="projects-grid">
+            {projects.map(project => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onViewProject={handleViewProject}
+              />
+            ))}
+          </div>
+)} */}
+      
 
       {showModal && (
         <ProjectModal

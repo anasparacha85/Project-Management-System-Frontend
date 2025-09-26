@@ -9,7 +9,8 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { setSubTaskModalOpen } from "../../../Slices/UiSlice";
 import SubTaskModal from "../../../modals/SubTaskModal";
-import { fetchSubTasksBytaskId } from "../../../Slices/TaskSlice";
+import { fetchSubTasksBytaskId, setError, setSubTasks } from "../../../Slices/TaskSlice";
+import { use } from "react";
 
 const MileStoneLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
@@ -18,7 +19,7 @@ const MileStoneLayout = () => {
     const { SubTaskModalOpen}=useSelector((state)=>state.UserInterface)
     const {taskDetails,SubTasks}=useSelector((state)=>state.Task)
     console.log(SubTasks);
-    
+    const {user}=useSelector((state)=>state.User)
     const navigate=useNavigate()
   const params=useParams()
   useEffect(()=>{
@@ -26,7 +27,23 @@ const MileStoneLayout = () => {
   },[])
   useEffect(()=>{
     dispatch(fetchSubTasksBytaskId(params.id))
-  },[params.id,dispatch])
+  },[dispatch])
+  const role=user.role
+  // useEffect(()=>{
+  //   const fetchSubsTasks=async()=>{
+  //     try {
+  //       const data=await ApiServices.getSubTaskByTaskid(params.id)
+  //       console.log("hello",data);
+        
+  //       dispatch(setSubTasks(data.subTasks))
+  //       dispatch(setError(null))
+  //     } catch (error) {
+  //       dispatch(setError(error.message))
+        
+  //     }
+  //   }
+  //   fetchSubsTasks()
+  // },[])
 //      const onOpenTaskModal=()=>{
 //     setShowTaskModal(true)
 //     setProjectId(params.id)
@@ -145,14 +162,20 @@ const MileStoneLayout = () => {
             <Users size={16} />
             <span>Assign Members</span>
           </button> */}
-          <button onClick={()=>dispatch(setSubTaskModalOpen(true))}   className="mile-action-btn primary">
+          {role==="manager" &&
+          <>
+             <button onClick={()=>dispatch(setSubTaskModalOpen(true))}   className="mile-action-btn primary">
             <Plus size={16} />
             <span>Create Subtask</span>
           </button>
-            <button onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} className="mile-action-btn primary">
+           
+          </>}
+           <button onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} className="mile-action-btn primary">
             <ArrowLeft size={16} />
             <span>Back to Project</span>
           </button>
+
+         
         </div>
       </div>
          

@@ -1,6 +1,9 @@
 import apiClient from "../apiclient/ApiClient";
 
 const ApiServices = {
+  getUserData(){
+    return apiClient("/api/auth/user")
+  },
   fetchAllManagers() {
     return apiClient("/api/manager/fetchAllManagers");
   },
@@ -114,8 +117,14 @@ const ApiServices = {
   getTeamByTaskId(TaskId){
     return apiClient(`/api/subTask/getTeamByTaskId/${TaskId}`)
   },
-  updateSubTaskById(SubTaskId,data){
-    return apiClient(`/api/subTask/updateSubTaskById/${SubTaskId}`,{
+  updateManagerSubTaskById(SubTaskId,data){
+    return apiClient(`/api/subTask/updateManagerSubTaskById/${SubTaskId}`,{
+      method:'PUT',
+      body:data
+    })
+  },
+   updateEmployeeSubTaskById(SubTaskId,data){
+    return apiClient(`/api/subTask/updateEmployeeSubTaskById/${SubTaskId}`,{
       method:'PUT',
       body:data
     })
@@ -125,12 +134,37 @@ const ApiServices = {
       method:'DELETE',
     
   })},
-  updateSubTaskStatusById(data){
-    return apiClient(`/api/subTask/updateSubTaskStatus`,{
+  updateManagerSubTaskStatusById(data){
+    return apiClient(`/api/subTask/updateManagerSubTaskStatus`,{
       method:'PATCH',
       body:data
     })
-  }
+  },
+  updateEmployeeSubTaskStatusById(data){
+    return apiClient(`/api/subTask/updateEmployeeSubTaskStatus`,{
+      method:'PATCH',
+      body:data
+    })
+  },
+  //Getting Projects,Tasks,SubTasks assigned to Particular Employees
+  getProjectByEmployee(){
+    return apiClient(`/api/employee/getEmployeeProjects`)
+  },
+  getEmployeeMilestonesByProjectid(projectId){
+    return apiClient(`/api/employee/getEmployeeTasksByProject/${projectId}`)
+  },
+   getEmployeeMilestonesByProjectid(projectId){
+    return apiClient(`/api/employee/getEmployeeTasksByProject/${projectId}`)
+  },
+    getEmployeeSubTasksByTaskId(taskId){
+    return apiClient(`/api/employee/getEmployeeSubTasksByTask/${taskId}`)
+  },
+    updateEmployeeTaskById(TaskId,updates){
+    return apiClient(`/api/tasks/updateEmployeeTaskById/${TaskId}`,{
+      method:'PUT',
+      body:updates
+    })
+  },
     
 };
 

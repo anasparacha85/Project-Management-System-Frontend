@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { clearUser } from "../../../Slices/UserSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
-
+const  dispatch=useDispatch()
   const onLogout = async () => {
     try {
       const res = await fetch(
@@ -16,6 +18,8 @@ const Logout = () => {
       
 
       if (res.ok) {
+
+        dispatch(clearUser())
         navigate("/"); // redirect to homepage
       } else {
         alert(data.FailureMessage || "Logout failed!");

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Team.css";
 import { useDispatch, useSelector } from "react-redux";
 import { FetchTeamByProjectId } from "../../Slices/ProjectSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function TeamPage() {
   const params = useParams();
@@ -11,13 +11,13 @@ export default function TeamPage() {
   const dispatch = useDispatch();
   const [selectedMember, setSelectedMember] = useState(null);
 console.log(ProjectDetails);
-
+const navigate=useNavigate()
   useEffect(() => {
     dispatch(FetchTeamByProjectId(projectId)).unwrap()
       .then((data) => {
         console.log(data);
       });
-  }, [projectId,dispatch]);
+  }, []);
 
   const handleViewDetail = (member) => {
     setSelectedMember(member);
@@ -34,6 +34,8 @@ console.log(ProjectDetails);
   const getStatusBadgeClass = (status) => {
     return `status-badge ${status}`;
   };
+  console.log("hi",team);
+  
 
   if (ProjectLoading) {
     return (
@@ -81,34 +83,34 @@ console.log(ProjectDetails);
                   <td className="member-cell">
                     <div className="member-info">
                       <img 
-                        src={member.user.avatarUrl} 
-                        alt={member.user.name} 
+                        src={member?.user?.avatarUrl} 
+                        alt={member?.user?.name} 
                         className="member-avatar"
                         onError={(e) => {
                           e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
                         }}
                       />
                       <div className="member-details">
-                        <span className="member-name">{member.user.name}</span>
-                        <span className="member-id">ID: {member.user._id.slice(-8)}</span>
+                        <span className="member-name">{member?.user?.name}</span>
+                        <span className="member-id">ID: {member.user?._id.slice(-8)}</span>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <span className={getRoleBadgeClass(member.role)}>
-                      {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                    <span className={getRoleBadgeClass(member.user?.role)}>
+                      {member.role.charAt(0).toUpperCase() + member.user?.role.slice(1)}
                     </span>
                   </td>
-                  <td className="email-cell">{member.user.email}</td>
+                  <td className="email-cell">{member.user?.email}</td>
                   <td>
-                    <span className={getStatusBadgeClass(member.user.status)}>
-                      {member.user.status.charAt(0).toUpperCase() + member.user.status.slice(1)}
+                    <span className={getStatusBadgeClass(member.user?.status)}>
+                      {member.user?.status?.charAt(0).toUpperCase() + member.user?.status?.slice(1)}
                     </span>
                   </td>
                   <td>
                     <button 
                       className="view-detail-btn"
-                      onClick={() => handleViewDetail(member)}
+                      onClick={() => navigate(`/dashboard/project/${params.id}/team/${member.user._id}`)}
                     >
                       View Details
                     </button>

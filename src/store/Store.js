@@ -7,6 +7,7 @@ import TaskReducer from '../Slices/TaskSlice'
 import ProjectReducer from '../Slices/ProjectSlice'
 import UIReducer from '../Slices/UiSlice'
 import SubTaskReducer from '../Slices/SubTaskSlice'
+import UserReducer from '../Slices/UserSlice'
 
 const persistConfig = {
   key: "root",
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
    Task: TaskReducer,
    Project: ProjectReducer,
    UserInterface:UIReducer,
-   SubTask:SubTaskReducer
+   SubTask:SubTaskReducer,
+   User:UserReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

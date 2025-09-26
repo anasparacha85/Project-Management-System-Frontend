@@ -1,21 +1,20 @@
-import { AlertCircle, CheckCircle2, Circle, Clock, MoreHorizontal, Plus } from "lucide-react";
+import { AlertCircle, CheckCircle2, Circle, Clock, MoreHorizontal, Plus, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import TaskCard from "../../components/Cards/TaskCard/TaskCard";
 import './page.css';
 import { useParams } from "react-router-dom";
 import TaskModal from "../../modals/TaskModal";
 import ApiServices from "../../ApiService/ApiService";
-import { useDispatch } from "react-redux";
-import { fetchSubTasksBytaskId, fetchTasks, setSubTasks } from "../../Slices/TaskSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSubTasksBytaskId, setError, setSubTasks } from "../../Slices/TaskSlice";
 import { Draggable, Droppable, DragDropContext } from "react-beautiful-dnd";
-import { useSelector } from "react-redux";
-import { fetchSubTaskById } from "../../Slices/SubTaskSlice";
 
 const KanbanColumn = ({ title, tasks, color }) => {
   const getColumnIcon = (title) => {
     switch (title.toLowerCase()) {
       case 'to do': return <Circle size={16} />;
       case 'in progress': return <Clock size={16} />;
+      case 'ready for review': return <Eye size={16} />;
       case 'review': return <AlertCircle size={16} />;
       case 'completed': return <CheckCircle2 size={16} />;
       default: return <AlertCircle size={16} />;
@@ -40,149 +39,165 @@ const KanbanColumn = ({ title, tasks, color }) => {
 };
 
 const TasksPage = () => {
-  // status mapping between column title and backend status
+  const dispatch = useDispatch();
+  const params = useParams();
+  const { SubTasks } = useSelector((state) => state.Task);
+  const {user}=useSelector((state)=>state.User)
+   const role =  user.role
+  const [loadingColumn, setLoadingColumn] = useState(null)
+  const fetchEmployeeSubTask=async()=>{
+    try {
+      const response=await ApiServices.getEmployeeSubTasksByTaskId(params.id)
+      console.log("hi",response);
+      dispatch(setSubTasks(response.subtasks))
+      
+     
+    } catch (error) {
+      dispatch(setError(error.message))
+      
+      
+    }
+  }
+  // const fetchManagerSubTasks=async()=>{
+  //     const response=await ApiServices.getSubTaskByTaskid(TaskId)
+  //     console.log("hi2",response);
+  //     dispatch(setSubTasks(response))
+      
+  // }
+  useEffect(()=>{
+    if(role==='manager'){
+    dispatch(fetchSubTasksBytaskId(params.id))
+    }
+    else{
+      fetchEmployeeSubTask()
+      
+      
+    }
+  },[dispatch,params.id])
+  // Dummy role (yeh tum login user se le sakte ho)
+ 
+
+  // Status mapping
   const statusMap = {
     "To Do": "todo",
     "In Progress": "in-progress",
+    "Ready for Review": "ready-for-review",
     "Review": "review",
     "Completed": "completed"
   };
 
-const groupTasksByStatus = (tasks = []) => {
-  return {
-    "To Do": tasks.filter(task => task.status === "todo"),
-    "In Progress": tasks.filter(task => task.status === "in-progress"),
-    "Review": tasks.filter(task => task.status === "review"),
-    "Completed": tasks.filter(task => task.status === "completed"),
+  const groupTasksByStatus = (tasks = []) => {
+    return {
+      "To Do": tasks.filter(t => t.status === "todo"),
+      "In Progress": tasks.filter(t => t.status === "in-progress"),
+      "Ready for Review": tasks.filter(t => t.status === "review"),
+      "Review": tasks.filter(t => t.status === "review"),
+      "Completed": tasks.filter(t => t.status === "completed"),
+    };
   };
-};
 
 
-  const [ProjectId, setProjectId] = useState('');
-  const [viewMode, setViewMode] = useState('board');
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [ShowTaskModal, setShowTaskModal] = useState(false);
-  const [projectId, setprojectId] = useState('');
-  const dispatch = useDispatch();
-  const params = useParams();
-  const {taskDetails,SubTasks}=useSelector((state)=>state.Task)
-    console.log("hi",SubTasks);
+console.log("subtasks",SubTasks);
 
-  useEffect(() => {
-    // fetch tasks for this project (keeps your existing behavior)
-    if (params.id)   dispatch(fetchSubTasksBytaskId(params.id));
-  }, [ dispatch,params.id]);
-
-
-
+  const tasks = SubTasks || [];
+  console.log("tasks",tasks);
   
+  const groupedTasks = groupTasksByStatus(tasks);
 
-  const onTaskCreated = async (task) => {
-    try {
-      const formdata = new FormData();
-      formdata.append("title", task.title);
-      formdata.append("description", task.description);
-      formdata.append("priority", task.priority);
-      formdata.append("startDate", task.startDate);
-      formdata.append("dueDate", task.dueDate);
-      formdata.append("milestone", task.milestone);
-      formdata.append("assigneeIds", JSON.stringify(task.assigneeIds || []));
-      formdata.append("dependencies", JSON.stringify(task.dependencies || []));
-      (task.attachments || []).forEach((file) => formdata.append("attachments", file));
-      const res = await ApiServices.createTask(formdata, params.id);
-      console.log("Task created: ", res);
-      // optionally refresh or insert into boardData
-    } catch (error) {
-      console.error("Task creation error: ", error.message);
-    }
-  };
-// ensure SubTasks exists, otherwise default to []
-const tasks = SubTasks || []
+  // Role based columns
+  const availableColumns = role === "manager"
+    ? {
+        "To Do": { color: "#6b7280", tasks: groupedTasks["To Do"] || [] },
+        "In Progress": { color: "#3b82f6", tasks: groupedTasks["In Progress"] || [] },
+        "Review": { color: "#f59e0b", tasks: groupedTasks["Review"] || [] },
+        "Completed": { color: "#10b981", tasks: groupedTasks["Completed"] || [] },
+      }
+    : {
+        "To Do": { color: "#6b7280", tasks: groupedTasks["To Do"] || [] },
+        "In Progress": { color: "#3b82f6", tasks: groupedTasks["In Progress"] || [] },
+        "Ready for Review": { color: "#f59e0b", tasks: groupedTasks["Ready for Review"] || [] },
+      };
 
-const groupedTasks = groupTasksByStatus(tasks);
-
-
-  const initialColumns = {
-    "To Do": { color: "#6b7280", tasks: groupedTasks["To Do"] || [] },
-    "In Progress": { color: "#3b82f6", tasks: groupedTasks["In Progress"] || [] },
-    "Review": { color: "#f59e0b", tasks: groupedTasks["Review"] || [] },
-    "Completed": { color: "#10b981", tasks: groupedTasks["Completed"] || [] },
-  };
-
-  const [boardData, setBoardData] = useState(initialColumns);
-
-  const handleDragEnd = async(result) => {
+  const [boardData, setBoardData] = useState(availableColumns);
+      useEffect(() => {
+  setBoardData(availableColumns);
+}, [SubTasks, params.id]);
+  const handleDragEnd = async (result) => {
     const { source, destination } = result;
-    console.log(source,destination);
-    
     if (!destination) return;
-
-    // same column reorder
-    if (source.droppableId === destination.droppableId) {
-      const column = boardData[source.droppableId];
-      console.log(column);
-      
-      const copied = Array.from(column.tasks);
-      console.log(copied);
-      
-      const [moved] = copied.splice(source.index, 1);
-      console.log(moved);
-      
-      copied.splice(destination.index, 0, moved);
-      
-      
-
-      setBoardData(prev => ({
-        ...prev,
-        [source.droppableId]: { ...column, tasks: copied }
-      }));
-      return;
-    }
-
-    // move between columns
+ // ✅ Same column + same index => do nothing
+  if (
+    source.droppableId === destination.droppableId &&
+    source.index === destination.index
+  ) {
+    return;
+  }
     const sourceCol = boardData[source.droppableId];
     const destCol = boardData[destination.droppableId];
+
+    if (!sourceCol || !destCol) return;
+
+    // Employee restriction: can't move to Completed
+    if (role === "employee" && destination.droppableId === "Completed") {
+      alert("Employees cannot directly mark tasks as Completed!");
+      return;
+    }
 
     const sourceTasks = Array.from(sourceCol.tasks);
     const destTasks = Array.from(destCol.tasks);
 
-  const [moved] = sourceTasks.splice(source.index, 1);
+    const [moved] = sourceTasks.splice(source.index, 1);
+    const updatedTask = { ...moved, status: statusMap[destination.droppableId] };
 
-// clone to avoid mutating Redux / frozen object
-const updatedTask = { ...moved, status: statusMap[destination.droppableId] || moved.status };
+    destTasks.splice(destination.index, 0, updatedTask);
 
-destTasks.splice(destination.index, 0, updatedTask);
+    setBoardData(prev => ({
+      ...prev,
+      [source.droppableId]: { ...sourceCol, tasks: sourceTasks },
+      [destination.droppableId]: { ...destCol, tasks: destTasks },
+    }));
 
-setBoardData(prev => ({
-  ...prev,
-  [source.droppableId]: { ...sourceCol, tasks: sourceTasks },
-  [destination.droppableId]: { ...destCol, tasks: destTasks },
-}));
-console.log(updatedTask._id,updatedTask.status);
+ try {
+  setLoadingColumn(destination.droppableId);
+   // start loading
 
-try {
-  const response=await ApiServices.updateSubTaskStatusById({Id:updatedTask._id,status:updatedTask.status})
-  console.log(response);
-
-  dispatch(fetchSubTasksBytaskId(params.id))
-
-  // window.location.reload()
+  if (role !== 'manager') {
+      const res= await ApiServices.updateEmployeeSubTaskStatusById({
+      Id: updatedTask._id,
+      status: updatedTask.status,
+    });
+    console.log(res.UpdatedData);
+    dispatch(fetchSubTasksBytaskId(params.id))
+    setBoardData(availableColumns)
+    return
+ 
+    // dispatch(setSubTasks(res.UpdatedData))
+  } else {
+     const res=  await ApiServices.updateManagerSubTaskStatusById({
+      Id: updatedTask._id,
+      status: updatedTask.status,
+    });
+      console.log(res.UpdatedData);
+      dispatch(fetchSubTasksBytaskId(params.id))
+      setBoardData(availableColumns)
+      return
+ 
+  // dispatch(setSubTasks(res.UpdatedData))
+  }
   
+
+
 } catch (error) {
- alert(error.message)
-  
-  
+  alert(error.message);
+} finally {
+  setLoadingColumn(null); // stop loading
 }
-
-    // update backend (uncomment and adapt ApiServices)
-    // ApiServices.updateTaskStatus(moved._id, moved.status).catch(err => console.error(err));
   };
 
   return (
-    <div className="tasks-page">
-      {/* optional modal trigger */}
-      {ShowTaskModal && <TaskModal onCreate={onTaskCreated} onClose={() => setShowTaskModal(false)} projectId={projectId} />}
-
+    <div className="tasks-page" >
+   
+    
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="kanban-board">
           {Object.entries(boardData).map(([columnTitle, { color, tasks }]) => (
@@ -192,37 +207,38 @@ try {
                   className="kanban-column"
                   {...provided.droppableProps}
                   ref={provided.innerRef}
+                  style={{position:'relative'}}
                 >
-                  {/* header */}
                   <KanbanColumn title={columnTitle} tasks={tasks} color={color} />
-
-                  {/* droppable area (must include provided.placeholder inside this area) */}
-                 <div
-  className={`tasks-container ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
->
-  {tasks.map((task, index) => {
-    const idForDraggable = `${columnTitle}::${task._id}`;
-    return (
-      <Draggable key={idForDraggable} draggableId={idForDraggable} index={index}>
-        {(providedDraggable) => (
-          <div
-            ref={providedDraggable.innerRef}
-            {...providedDraggable.draggableProps}
-            {...providedDraggable.dragHandleProps}
-            style={{
-              userSelect: "none",
-              marginBottom: 8,
-              ...providedDraggable.draggableProps.style
-            }}
-          >
-            <TaskCard task={task} index={index} />
+                  {loadingColumn==columnTitle &&(
+                    <div className="column-overlay">
+            <div className="spinner"></div>
           </div>
-        )}
-      </Draggable>
-    );
-  })}
-  {provided.placeholder}
-</div>
+                  )}
+                  <div className={`tasks-container ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}>
+                    {tasks.map((task, index) => {
+                      const idForDraggable = `${columnTitle}::${task._id}`;
+                      return (
+                        <Draggable key={idForDraggable} draggableId={idForDraggable} index={index}>
+                          {(providedDraggable) => (
+                            <div
+                              ref={providedDraggable.innerRef}
+                              {...providedDraggable.draggableProps}
+                              {...providedDraggable.dragHandleProps}
+                              style={{
+                                userSelect: "none",
+                                marginBottom: 8,
+                                ...providedDraggable.draggableProps.style
+                              }}
+                            >
+                              <TaskCard task={task} index={index} />
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
                 </div>
               )}
             </Droppable>

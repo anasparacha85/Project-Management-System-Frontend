@@ -178,10 +178,10 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
         today.setHours(0, 0, 0, 0);
         const startDate = new Date(subTask.startDate);
 
-        if (startDate < today) {
-          dispatch(setError("Start date cannot be in the past"));
-          return false;
-        }
+        // if (startDate < today) {
+        //   dispatch(setError("Start date cannot be in the past"));
+        //   return false;
+        // }
 
         // Validate against parent task dates
         if (startDate < parentStartDate) {
@@ -203,12 +203,12 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
           }
         }
         break;
-      case 3:
-        if (subTask.assignees.length === 0) {
-          dispatch(setError("Please assign at least one team member"));
-          return false;
-        }
-        break;
+      // case 3:
+      //   if (subTask.assignees.length === 0) {
+      //     dispatch(setError("Please assign at least one team member"));
+      //     return false;
+      //   }
+      //   break;
       default:
         return true;
     }

@@ -296,7 +296,8 @@ const TaskDetailPage = () => {
    const [projectId, setprojectId] = useState(false)
    const navigate=useNavigate()
    const [project, setproject] = useState({})
-   
+   const {user}=useSelector((state)=>state.User)
+   const role=user.role
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState(null);
   const dispatch=useDispatch()
@@ -316,8 +317,28 @@ const TaskDetailPage = () => {
 
 
 }
+    const getSubTasksByEmployeeId=async()=>{
+      try {
+          const data=await ApiServices.getEmployeeSubTasksByTaskId(params.id)
+          console.log("hi subtasks employee",data);
+          
+          setSubtasks(data.subtasks)
+      } catch (error) {
+        setError(error.message)
+        
+      }
+
+
+}
 useEffect(()=>{
-  getSubTasksById()
+  if(role==='manager'){
+      getSubTasksById()
+    
+  }
+  else{
+    getSubTasksByEmployeeId()
+  }
+
 },[params.id])
   
     
@@ -352,17 +373,23 @@ useEffect(()=>{
   
 console.log(taskDetails);
 const handleSaveTask=async()=>{
-  console.log(taskDetails);
+  console.log(taskDetails,"task details");
   try {
       const payload = {
       ...taskDetails,
       ...(taskDetails.startDate ? { startDate: taskDetails.startDate } : {}),
       ...(taskDetails.dueDate ? { dueDate: taskDetails.dueDate } : {})
     };
-
+    if(role==='manager'){
     const data = await ApiServices.updateTaskById(params.id, payload);
+ alert(data.SuccessMessage)
+    }
+    else{
+      const data=await ApiServices.updateEmployeeTaskById(params.id,payload)
+       alert(data.SuccessMessage)
+    }
     // const data=await ApiServices.updateTaskById(params.id,taskDetails)
-    alert(data.SuccessMessage)
+   
     dispatch(fetchTasksById(params.id))
   } catch (error) {
     alert(error.message)
@@ -453,6 +480,13 @@ const handleDeleteTask=async()=>{
       default: return 'task-details-status-default';
     }
   };
+  const getStatusOptions = () => {
+  if (role === "manager") {
+    return ["todo", "in-progress", "review", "completed"];
+  } else {
+    return ["todo", "in-progress", "ready-for-review"]; // employee ke liye
+  }
+};
 
   if (loading) {
     return (
@@ -535,11 +569,11 @@ const handleDeleteTask=async()=>{
         <div className="task-details-grid">
           <EditableField 
             label="Status" 
-            value={taskData.status} 
+            value={(role==='employee' &&taskData.status==='review')?'ready-for-review':taskData.status} 
             placeholder="Select status"
             name="status"
             type="select"
-            options={["todo", "in-progress", "review", "completed"]}
+            options={getStatusOptions()}
           />
           
           <AssigneesSelector
@@ -752,7 +786,8 @@ const handleDeleteTask=async()=>{
         <div className="task-details-t-actions">
           <button onClick={handleSaveTask} className="task-details-act-btn task-details-primary">Save Changes</button>
           {/* <button className="task-details-act-btn task-details-secondary">Duplicate Task</button> */}
-          <button onClick={handleDeleteTask} className="task-details-act-btn task-details-danger">Delete Milestone</button>
+    {role==='manager' &&
+    <button onClick={handleDeleteTask} className="task-details-act-btn task-details-danger">Delete Milestone</button>}      
         </div>
       </div>
     </div>

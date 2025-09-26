@@ -3,6 +3,10 @@ import { Search, Bell, ChevronDown, Calendar, MessageSquare, Paperclip, User, Gr
 import Header from '../../components/Header/Header';
 import { NavLink, Outlet } from 'react-router-dom';
 import './dashboard.css';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import ApiServices from '../../ApiService/ApiService';
+import { setUser } from '../../Slices/UserSlice';
 
 // Sidebar Component
 const Sidebar = ({ activeItem, setActiveItem, isCollapsed, isMobileOpen, onClose }) => {
@@ -60,6 +64,28 @@ const Dashboard = () => {
   const [activeMenuItem, setActiveMenuItem] = useState('tasks');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const dispatch=useDispatch()
+  useEffect(()=>{
+    const fetchUser=async()=>{
+       try {
+          const response=await ApiServices.getUserData()
+          console.log(response);
+          
+          dispatch(setUser(response))
+        } catch (error) {
+          console.log(error);
+          
+          
+        }
+
+    }
+     fetchUser()
+  },[])
+  const {user}=useSelector((state)=>state.User)
+  console.log("hi i am ",user);
+  
+ 
+  
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);

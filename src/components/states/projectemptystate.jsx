@@ -1,7 +1,10 @@
 import React from "react";
 import "./projectemptystate.css";
+import { useSelector } from "react-redux";
 
 export default function EmptyState({ onCreateProject }) {
+  const {user}=useSelector((state)=>state.User)
+  const role=user?.role
   return (
     <div className="em-state">
       <div className="em-state-content">
@@ -26,8 +29,8 @@ export default function EmptyState({ onCreateProject }) {
             <path d="M16 18h.01"/>
           </svg>
         </div>
-        
-        <h2 style={{color:'white'}}>No projects yet</h2>
+        {role==='manager'?<>
+           <h2 style={{color:'white'}}>No projects yet</h2>
         <p  style={{color:'white'}}>
           Get started by creating your first project. Organize your team, 
           set deadlines, and track progress all in one place.
@@ -50,7 +53,14 @@ export default function EmptyState({ onCreateProject }) {
           </svg>
           Create Your First Project
         </button>
-        
+        </>:<>
+           <h2 style={{color:'white'}}>No projects assigned to you</h2>
+        <p  style={{color:'white'}}>
+          You have been not assigned to any project by your reporting manager .
+        </p>
+        </>}
+       
+        {role==='manager' &&
         <div className="empty-state-features">
           <div className="feature-item">
             <div className="feature-icon">
@@ -97,7 +107,9 @@ export default function EmptyState({ onCreateProject }) {
             </div>
           </div>
         </div>
+        }
       </div>
+      
     </div>
   );
 }

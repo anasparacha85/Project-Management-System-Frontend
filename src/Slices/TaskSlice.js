@@ -79,7 +79,7 @@ const taskSlice = createSlice({
       state.TaskReport=action.payload
     },
     setSubTasks:(state,action)=>{
-      state.SubTasks=action.payload.subTasks
+      state.SubTasks=action.payload
     }
 
 

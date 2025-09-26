@@ -1,9 +1,11 @@
 import { Bell, ChevronDown, Menu, Plus, Search, X } from "lucide-react";
 import './Header.css'
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Header Component
 export const Header = ({ onToggleSidebar, isMobileMenuOpen }) => {
+  const {user}=useSelector((state)=>state.User)
   const navigate = useNavigate()
   const onLogout = () => {
     navigate('/logout')
@@ -53,12 +55,12 @@ export const Header = ({ onToggleSidebar, isMobileMenuOpen }) => {
         </div>
         <div className="user-profile">
           <div className="profile-image">
-            <img src="/api/placeholder/32/32" alt="Profile" />
+            <img title={user.name} src={user.avatarUrl} alt="Profile" />
             <div className="status-indicator"></div>
           </div>
           <div className="user-info">
-            <span className="user-name">Anas</span>
-            <span className="user-location">karachi ,pakistan</span>
+            <span className="user-name">{user?.name}</span>
+            <span className="user-location">{user.email}</span>
           </div>
           <ChevronDown size={14} className="dropdown-icon" />
         </div>
