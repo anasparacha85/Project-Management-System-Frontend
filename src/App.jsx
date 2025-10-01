@@ -46,7 +46,7 @@ function App() {
           <Route path='project/:id' element={<ProjectLayout/>}>
           <Route index element={<ProjectReport/>}/>
           <Route path='team' element={<TeamPage/>}/>
-          <Route path='team/:id' element={<EmployeeDetailReport/>}/>
+          <Route path='team/:teamId' element={<EmployeeDetailReport/>}/>
           
            <Route path='milestone' element={<ProjectMilestonesPage/>}/>
            <Route path='attachments' element={<DocumentsPage/>}/>
