@@ -27,6 +27,7 @@ import MilestoneTeam from './pages/MilestoneTeams/MilestoneTeam'
 import MilestoneAnalytics from './pages/MilestoneAnalytics'
 import EmployeeReport from './pages/EmployeesReport/EmployeeReport'
 import EmployeeDetailReport from './pages/EmployeeDetails/EmployeeDetails'
+import MilestoneAssigneesDetails from './pages/MilestoneAssignessDetails/MilestoneAssigneeDetails'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -58,7 +59,7 @@ function App() {
            <Route path='board' element={<TasksPage/>}/>
            <Route path='team' element={<MilestoneTeam/>}/>
             <Route path='analytics' element={<MilestoneAnalytics/>}/>
-
+              <Route path='team/:employeeId' element={<MilestoneAssigneesDetails/>}/>
          
            </Route>
            <Route path='subTask/:id' element={<SubTaskDetailPage/>}/>

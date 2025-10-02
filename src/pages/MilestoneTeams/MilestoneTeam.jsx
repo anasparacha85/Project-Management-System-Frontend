@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./MilestoneTeam.css";
 import { useDispatch, useSelector } from "react-redux";
 import { FetchTeamByProjectId } from "../../Slices/ProjectSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function MilestoneTeam() {
   const params = useParams();
+  const navigate=useNavigate()
   const projectId = params.id;
 //   const { projectError, team, ProjectLoading,ProjectDetails } = useSelector((state) => state.Project);
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ console.log("babab",taskDetails);
                   <td>
                     <button 
                       className="view-detail-btn"
-                      // onClick={() => handleViewDetail(member)}
+                      onClick={() => navigate(`/dashboard/milestone/${params.id}/team/${member.user._id}`)}
                     >
                       View Details
                     </button>
