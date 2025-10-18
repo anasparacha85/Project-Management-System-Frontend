@@ -165,6 +165,13 @@ const ApiServices = {
       body:updates
     })
   },
+  getEmployeeReportByMilestoneId(userId,MilestoneId){
+    return apiClient(`/api/employee/getEmployeeTaskReport`,{
+      method:'POST',
+      body:{userId,MilestoneId}
+
+    })
+  }
     
 };
 
