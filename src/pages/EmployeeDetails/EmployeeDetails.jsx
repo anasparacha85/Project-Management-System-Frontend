@@ -1,46 +1,71 @@
 import React, { useEffect, useState } from "react";
 import { Clock, ClipboardList, ListChecks } from "lucide-react";
 import "./EmployeeDetailsReport.css";
+import ApiServices from "../../ApiService/ApiService";
+import { useParams } from "react-router-dom";
 
-const EmployeeDetailReport = ({ employeeId, projectId }) => {
+const EmployeeDetailReport = () => {
   const [report, setReport] = useState(null);
+  const [Error, setError] = useState(null)
+  const params=useParams()
+  console.log(params);
+  
+  const fetchEmployeeProjectReport=async()=>{
+    try {
+    const data=await ApiServices.getEmployeeReportByProjectId(params.teamId,params.id)
+    console.log(data);
+     
+    setReport(data)
+      
+      
+    } catch (error) {
+      console.log(error);
+      setError(error.message)
+      
+      
+    }
 
-  useEffect(() => {
-    // 🔹 Dummy Data for ek project only
-    const dummyReport = {
-      employee: {
-        id: employeeId,
-        name: "Ali Khan",
-        email: "ali@example.com",
-        avatar: "https://i.pravatar.cc/150?u=ali",
-        role: "Frontend Developer",
-      },
-      project: {
-        id: projectId,
-        name: "Project A",
-        duration: "15h 20m",
-        tasks: [
-          {
-            name: "Task 1 - API Integration",
-            duration: "5h 10m",
-            subtasks: [
-              { name: "Subtask 1.1 - Auth API", duration: "2h" },
-              { name: "Subtask 1.2 - CRUD Endpoints", duration: "3h 10m" },
-            ],
-          },
-          {
-            name: "Task 2 - UI Implementation",
-            duration: "10h 10m",
-            subtasks: [],
-          },
-        ],
-      },
-      totalDuration: "15h 20m",
-    };
+  }
+  useEffect(()=>{
+    fetchEmployeeProjectReport()
+  },[params.id,params.teamId])
 
-    setReport(dummyReport);
-  }, [employeeId, projectId]);
+  // useEffect(() => {
+  //   // 🔹 Dummy Data for ek project only
+  //   const dummyReport = {
+  //     employee: {
+  //       id: params.teamId,
+  //       name: "Ali Khan",
+  //       email: "ali@example.com",
+  //       avatar: "https://i.pravatar.cc/150?u=ali",
+  //       role: "Frontend Developer",
+  //     },
+  //     project: {
+  //       id: params.id,
+  //       name: "Project A",
+  //       duration: "15h 20m",
+  //       tasks: [
+  //         {
+  //           name: "Task 1 - API Integration",
+  //           duration: "5h 10m",
+  //           subtasks: [
+  //             { name: "Subtask 1.1 - Auth API", duration: "2h" },
+  //             { name: "Subtask 1.2 - CRUD Endpoints", duration: "3h 10m" },
+  //           ],
+  //         },
+  //         {
+  //           name: "Task 2 - UI Implementation",
+  //           duration: "10h 10m",
+  //           subtasks: [],
+  //         },
+  //       ],
+  //     },
+  //     totalDuration: "15h 20m",
+  //   };
 
+  //   setReport(dummyReport);
+  // }, [params.teamId, params.id]);
+if(Error) return <p className="loading">{Error}</p>;
   if (!report) return <p className="loading">Loading employee report...</p>;
 
   return (
@@ -62,23 +87,23 @@ const EmployeeDetailReport = ({ employeeId, projectId }) => {
       {/* 🔹 Project Detail */}
       <div className="project-card">
         <h3>
-          {report.project.name}
+          {report.project.title}
           <span className="duration">
             <Clock size={14} /> {report.project.duration}
           </span>
         </h3>
 
-        {report.project.tasks.map((task, j) => (
+        {report.project.milestones.map((task, j) => (
           <div key={j} className="task-block">
             <p className="task-title">
               <ClipboardList size={16} className="icon" />
-              {task.name}
+              {task.title}
               <span className="duration">
                 <Clock size={14} /> {task.duration}
               </span>
             </p>
 
-            {task.subtasks.length > 0 && (
+            {/* {task.subtasks.length > 0 && (
               <ul className="subtask-list">
                 {task.subtasks.map((sub, k) => (
                   <li key={k}>
@@ -90,7 +115,7 @@ const EmployeeDetailReport = ({ employeeId, projectId }) => {
                   </li>
                 ))}
               </ul>
-            )}
+            )} */}
           </div>
         ))}
       </div>

@@ -171,9 +171,17 @@ const ApiServices = {
       body:{userId,MilestoneId}
 
     })
-  }
     
-};
+  },
+   getEmployeeReportByProjectId(userId,projectId){
+    return apiClient(`/api/employee/getEmployeeProjectReport`,{
+      method:'POST',
+      body:{userId,projectId}
+
+    })
+    
+}
+}
 
 
 export default ApiServices;
