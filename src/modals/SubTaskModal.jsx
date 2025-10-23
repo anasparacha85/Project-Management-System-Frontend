@@ -577,7 +577,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
           </div>
         </div>
 
-        <form className="create-subtask-modal-form" onSubmit={handleSubmit}>
+        <div className="create-subtask-modal-form">
           <div className="create-subtask-modal-content">
             {renderStepContent()}
           </div>
@@ -637,6 +637,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
                   type="submit" 
                   className="create-subtask-btn-primary"
                   disabled={isSubmitting}
+                   onSubmit={handleSubmit}
                 >
                   {isSubmitting ? (
                     "Creating..."
@@ -652,7 +653,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
               )}
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

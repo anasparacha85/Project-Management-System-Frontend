@@ -232,8 +232,8 @@ const nextStep = useCallback(() => {
   }, [onClose]);
 
   // Submit form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // e.preventDefault();
     
     if (!validateStep(currentStep)) return;
     // if (!validateStep(3)) return;
@@ -591,7 +591,7 @@ const nextStep = useCallback(() => {
           </div>
         </div>
 
-        <form className="create-task-modal-form" onSubmit={handleSubmit}>
+        <div className="create-task-modal-form" >
           <div className="create-task-modal-content">
             {renderStepContent()}
           </div>
@@ -651,6 +651,7 @@ const nextStep = useCallback(() => {
                   type="submit" 
                   className="create-task-btn-primary"
                   disabled={isSubmitting}
+                  onClick={handleSubmit}
                 >
                   {isSubmitting ? (
                     "Creating..."
@@ -666,7 +667,7 @@ const nextStep = useCallback(() => {
               )}
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1118,8 +1118,8 @@ const team=taskDetails.assignees
         <div className="task-details-breadcrumb">
           Team Space / Projects / {subTaskData.task?.project || 'Project'} / {subTaskData.task?.title || 'Task'} / Subtasks
         </div>
-   
-        <div className="task-details-task-header">
+   <div style={{width:'100%',display:"flex",justifyContent:"space-between"}}>
+     <div className="task-details-task-header">
           <span className="task-details-task-badge">Subtask</span>
           <span className="task-details-task-id">{subTaskData._id?.slice(-8) || '86et84ncr'}</span>
           <button onClick={()=>navigate(-1)} className="task-details-ask-ai-btn">
@@ -1127,6 +1127,12 @@ const team=taskDetails.assignees
             Go Back
           </button>
         </div>
+        <div className="task-details-task-header">
+            <button  className="task-details-ask-ai-btn">Take break</button>
+        </div>
+      
+   </div>
+       
 
         <h1 className="task-details-task-title">{subTaskData.title || "Subtask Title"}</h1>
         
