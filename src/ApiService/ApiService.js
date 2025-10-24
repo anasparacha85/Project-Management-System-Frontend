@@ -180,7 +180,19 @@ const ApiServices = {
 
     })
     
-}
+},
+  takeBreakForEmployee(subTaskId){
+    return apiClient(`/api/employee/takeBreak`,{
+      method:'POST',
+      body:{subTaskId}
+    })
+  },
+  FinishBreakForEmployee(subTaskId){
+    return apiClient(`/api/employee/resumeBreak`,{
+      method:'POST',
+      body:{subTaskId}
+    })
+  }
 }
 
 

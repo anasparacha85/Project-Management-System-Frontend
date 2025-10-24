@@ -1012,6 +1012,64 @@ const team=taskDetails.assignees
       
     })
   }, []);
+ 
+const timeLogs = subTaskData.timeLogs || [];
+
+// get latest log
+const latestLog = timeLogs[timeLogs.length - 1];
+ const latestAction = latestLog?.action;
+const handlePause=async()=>{
+  try {
+    const response=await ApiServices.takeBreakForEmployee(params.id)
+    console.log(response);
+    
+  } catch (error) {
+    console.log(error);
+    
+    
+  }
+
+}
+const handleResume=async()=>{
+   try {
+    const response=await ApiServices.FinishBreakForEmployee(params.id)
+    console.log(response);
+    
+  } catch (error) {
+    console.log(error);
+    
+    
+  }
+
+}
+// now check the state
+const isOnBreak = latestLog?.action === "paused";
+let buttonLabel = "";
+let buttonAction = null; // function reference
+let buttonDisabled = false;
+
+switch (latestAction) {
+  case "started":
+  case "resumed":
+    buttonLabel = "Take Break";
+    buttonAction = handlePause;
+    break;
+
+  case "paused":
+    buttonLabel = "Finish Break";
+    buttonAction = handleResume;
+    break;
+
+  case "completed":
+    buttonLabel = "Task Completed";
+    buttonDisabled = true;
+    break;
+
+  default:
+    buttonLabel = "Start Task";
+    // buttonAction = handleStart;
+}
+
   // useEffect(()=>{
   //   fetch
   // })
@@ -1128,7 +1186,8 @@ const team=taskDetails.assignees
           </button>
         </div>
         <div className="task-details-task-header">
-            <button  className="task-details-ask-ai-btn">Take break</button>
+            <button  disabled={buttonDisabled}
+  onClick={buttonAction}  className="task-details-ask-ai-btn"> {buttonLabel}</button>
         </div>
       
    </div>
