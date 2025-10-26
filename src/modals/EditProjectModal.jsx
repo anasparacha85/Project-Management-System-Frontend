@@ -10,8 +10,8 @@ const EditProjectModal = ({ isOpen, onClose }) => {
     name: "",
     description: "",
     budget: "",
-    startDate: "",
-    endDate: "",
+    startDate: null,
+    endDate: null,
     projectStatus: "",
     priority: "",
   });
@@ -137,7 +137,7 @@ const EditProjectModal = ({ isOpen, onClose }) => {
 
   return (
     <div className={`edit-modal-overlay ${isClosing ? 'edit-modal-closing' : ''}`}>
-      <div className="edit-modal-backdrop" onClick={handleClose} />
+      <div className="edit-modal-backdrop" />
       
       <div className={`edit-modal-container ${isClosing ? 'edit-modal-closing' : ''}`}>
         <form onSubmit={handleSubmit} className="edit-modal-form">

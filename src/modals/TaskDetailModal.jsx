@@ -53,11 +53,11 @@ const dispatch=useDispatch()
           taskDetails.assignees.map((assignee) => (
             <div key={assignee._id} className="task-details-user-avatar-container">
               <img
-                src={assignee.user.avatarUrl}
-                alt={assignee.user.name}
+                src={assignee?.user?.avatarUrl}
+                alt={assignee?.user?.name}
                 className="task-details-user-avatar"
               />
-              <span className="task-details-user-name">{assignee.user.name}</span>
+              <span className="task-details-user-name">{assignee?.user?.name}</span>
               <button
                 style={{
                   marginLeft: "8px",
@@ -745,7 +745,7 @@ const handleDeleteTask=async()=>{
               <div key={assignee._id} className="task-details-activity-item">
                 <div className="task-details-activity-avatar">
                   <img 
-                    src={assignee.user?.avatarUrl} 
+                    src={assignee?.user?.avatarUrl} 
                     alt={assignee.user?.name}
                     className="task-details-activity-user-avatar"
                   />

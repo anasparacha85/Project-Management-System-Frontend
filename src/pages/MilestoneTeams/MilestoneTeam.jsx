@@ -81,8 +81,8 @@ console.log("babab",taskDetails);
               </tr>
             </thead>
             <tbody>
-              {taskDetails.assignees.map((member) => (
-                <tr key={member._id} className="table-row">
+              {taskDetails?.assignees?.map((member) => (
+                <tr key={member?._id} className="table-row">
                   <td className="member-cell">
                     <div className="member-info">
                       <img 
@@ -94,26 +94,26 @@ console.log("babab",taskDetails);
                         }}
                       />
                       <div className="member-details">
-                        <span className="member-name">{member?.user.name}</span>
+                        <span className="member-name">{member?.user?.name}</span>
                         <span className="member-id">ID: {member?.user?._id.slice(-8)}</span>
                       </div>
                     </div>
                   </td>
                   <td>
                     <span className={getRoleBadgeClass(member?.user?.role)}>
-                      {member?.user?.role?.charAt(0).toUpperCase() + member.user.role.slice(1)}
+                      {member?.user?.role?.charAt(0).toUpperCase() + member?.user?.role.slice(1)}
                     </span>
                   </td>
                   <td className="email-cell">{member?.user?.email}</td>
                   <td>
                     <span className={getStatusBadgeClass(member?.user?.status)}>
-                      {member?.user?.status?.charAt(0).toUpperCase() + member.user.status.slice(1)}
+                      {member?.user?.status?.charAt(0).toUpperCase() + member?.user?.status.slice(1)}
                     </span>
                   </td>
                   <td>
                     <button 
                       className="view-detail-btn"
-                      onClick={() => navigate(`/dashboard/milestone/${params.id}/team/${member.user._id}`)}
+                      onClick={() => navigate(`/dashboard/milestone/${params.id}/team/${member?.user?._id}`)}
                     >
                       View Details
                     </button>

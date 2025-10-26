@@ -10,8 +10,8 @@ export default function ProjectModal({ onClose }) {
   const [form, setForm] = useState({
     name: "",
     description: "",
-    startDate: "",
-    endDate: "",
+    startDate: null,
+    endDate: null,
     budget: "",
     priority: "Medium",
     managerId: "",
@@ -40,6 +40,7 @@ export default function ProjectModal({ onClose }) {
   const debounceQuery = useDebounce(searchMember, 500)
   const [filteredUsers, setFilteredUsers] = useState(null)
   const [IsSubmitting, setIsSubmitting] = useState(false)
+  const {user}=useSelector((state)=>state.User)
   // const {users}=useSelector((state)=>state.Project)
   const dispatch=useDispatch()
 
@@ -212,10 +213,10 @@ export default function ProjectModal({ onClose }) {
         today.setHours(0, 0, 0, 0);
         const startDate = new Date(form.startDate);
 
-        if (startDate < today) {
-          setError("Start date cannot be in the past");
-          return false;
-        }
+        // if (startDate < today) {
+        //   setError("Start date cannot be in the past");
+        //   return false;
+        // }
 
         if (form.endDate) {
           const endDate = new Date(form.endDate);
@@ -430,11 +431,14 @@ export default function ProjectModal({ onClose }) {
                 className="create-project-form-select"
               >
                 <option value="">Select a manager...</option>
-                {managers.map((m) => (
-                  <option key={m._id} value={m._id}>
-                    {m.name} — {m.email}
-                  </option>
-                ))}
+               {managers.map((m) => {
+  const isMyself = m.email === user?.email && m.name === user?.name;
+  return (
+    <option key={m._id} value={m._id}>
+      {isMyself ? "Select Myself" : `Select ${m.name} — ${m.email}`}
+    </option>
+  );
+})}
               </select>
             </div>
 

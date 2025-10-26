@@ -726,18 +726,18 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
   // Filtered users by search
   const filteredUsers = allUsers.filter(
     (u) =>
-      u.user.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.user.email.toLowerCase().includes(search.toLowerCase())
+      u.user?.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.user?.email.toLowerCase().includes(search.toLowerCase())
   );
 
   // Add or remove assignee
   const toggleAssignee = (user) => {
-    const exists = taskData.assignees.find((a) => a.user._id === user._id);
+    const exists = taskData.assignees.find((a) => a.user?._id === user?._id);
     if (exists) {
       // remove
       setTaskData({
         ...taskData,
-        assignees: taskData.assignees.filter((a) => a.user._id !== user._id),
+        assignees: taskData.assignees.filter((a) => a.user?._id !== user?._id),
       });
     } else {
       // add
@@ -756,11 +756,11 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
           taskData.assignees.map((assignee) => (
             <div key={assignee._id} className="task-details-user-avatar-container">
               <img
-                src={assignee.user.avatarUrl}
-                alt={assignee.user.name}
+                src={assignee?.user?.avatarUrl}
+                alt={assignee?.user?.name}
                 className="task-details-user-avatar"
               />
-              <span className="task-details-user-name">{assignee.user.name}</span>
+              <span className="task-details-user-name">{assignee?.user?.name}</span>
               <button
                 style={{
                   marginLeft: "8px",
@@ -770,7 +770,7 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
                   color: "red",
                   fontSize: "14px",
                 }}
-                onClick={() => toggleAssignee(assignee.user)}
+                onClick={() => toggleAssignee(assignee?.user)}
               >
                 ✕
               </button>
@@ -819,7 +819,7 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
               );
               return (
                 <div
-                  key={user.user._id}
+                  key={user?.user?._id}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -831,11 +831,11 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={() => toggleAssignee(user.user)}
+                    onChange={() => toggleAssignee(user?.user)}
                   />
                   <img
-                    src={user.user.avatarUrl}
-                    alt={user.user.name}
+                    src={user?.user?.avatarUrl}
+                    alt={user?.user?.name}
                     style={{
                       width: "28px",
                       height: "28px",
@@ -845,10 +845,10 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
                   />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: "14px", fontWeight: "500" }}>
-                      {user.user.name}
+                      {user?.user?.name}
                     </div>
                     <div style={{ fontSize: "12px", color: "#64748b" }}>
-                      {user.user.email}
+                      {user?.user?.email}
                     </div>
                   </div>
                 </div>
@@ -1002,8 +1002,8 @@ const SubTaskDetailPage = () => {
 const {taskDetails}=useSelector((state)=>state.Task)
 console.log("his",taskDetails);
 const team=taskDetails.assignees
-  useEffect(() => {
-    dispatch(fetchSubTaskById(params.id)).unwrap().then((data)=>{
+const fetchSubTask=()=>{
+     dispatch(fetchSubTaskById(params.id)).unwrap().then((data)=>{
       console.log("baby",data);
       
       setSubTaskData(data)
@@ -1011,7 +1011,13 @@ const team=taskDetails.assignees
       console.log(error);
       
     })
+
+  }
+  useEffect(() => {
+   fetchSubTask()
   }, []);
+
+  
  
 const timeLogs = subTaskData.timeLogs || [];
 
@@ -1022,6 +1028,8 @@ const handlePause=async()=>{
   try {
     const response=await ApiServices.takeBreakForEmployee(params.id)
     console.log(response);
+    alert(response.SuccessMessage)
+    fetchSubTask()
     
   } catch (error) {
     console.log(error);
@@ -1034,9 +1042,16 @@ const handleResume=async()=>{
    try {
     const response=await ApiServices.FinishBreakForEmployee(params.id)
     console.log(response);
+     alert(response.SuccessMessage)
+     fetchSubTask()
+    
+
+
     
   } catch (error) {
     console.log(error);
+       alert(error.message || "Something went wrong")
+ 
     
     
   }
@@ -1102,14 +1117,7 @@ switch (latestAction) {
       alert(data.SuccessMessage);
 
       }
-      dispatch(fetchSubTaskById(params.id)).unwrap()
-      .then((data)=>{
-        setSubTaskData(data)
-      })
-      .catch((error)=>{
-        console.log(error);
-        
-      })
+    fetchSubTask()
       // dispatch(fetchSubTaskById(params.id));
     } catch (error) {
       alert(error.message);

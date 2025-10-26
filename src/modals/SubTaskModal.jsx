@@ -39,7 +39,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
 
   // Derived state
   const parentStartDate = new Date(parentTask.startDate);
-  const parentDueDate = new Date(parentTask.dueDate);
+  const parentDueDate = parentTask.dueDate?new Date(parentTask.dueDate):null;
 
   // Load saved form data from localStorage
   useEffect(() => {
@@ -197,10 +197,10 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
             return false;
           }
           
-          if (dueDate > parentDueDate) {
-            dispatch(setError("Due date cannot be after the parent task due date"));
-            return false;
-          }
+          // if (dueDate > parentDueDate) {
+          //   dispatch(setError("Due date cannot be after the parent task due date"));
+          //   return false;
+          // }
         }
         break;
       // case 3:
@@ -241,11 +241,15 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
   }, [onClose]);
 
   // Submit form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+   
+      console.log("submit");
+    
+    console.log(subTask);
+    // e.preventDefault();
     
     if (!validateStep(currentStep)) return;
-    
+
     setIsSubmitting(true);
     dispatch(setError(null));
     
@@ -253,7 +257,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
       const formData = new FormData();
       
       // Append simple fields
-      formData.append("title", subTask.title);
+      formData.append("title", subTask.title)
       formData.append("description", subTask.description);
       formData.append("priority", subTask.priority);
       formData.append("startDate", subTask.startDate);
@@ -269,6 +273,8 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
       
       // Create the subtask
       const res = await ApiServices.createSubtask(formData, params.id);
+      console.log(res);
+      
       
       // Show success message
       if (res.SuccessMessage) {
@@ -317,7 +323,8 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
                     <span>Start date: {parentStartDate.toLocaleDateString()}</span>
                   </div>
                   <div className="create-subtask-parent-info">
-                    <span>Due date: {parentDueDate.toLocaleDateString()}</span>
+                                    <span>End date: {parentDueDate!==null?parentDueDate?.toLocaleDateString():"to be decided"}</span>
+
                   </div>
                 </>
               )}
@@ -407,7 +414,8 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
               <span>Milestone start date: {parentStartDate.toLocaleDateString()}</span>
             </div>
             <div className="create-subtask-parent-info">
-              <span>Milestone end date: {parentDueDate.toLocaleDateString()}</span>
+                                                <span>Milestone End date: {parentDueDate!==null?parentDueDate?.toLocaleDateString():"to be decided"}</span>
+
             </div>
             
             <div className="create-subtask-step-header">
@@ -425,7 +433,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
                   onChange={handleChange}
                   className="create-subtask-form-input"
                   min={parentStartDate.toISOString().split('T')[0]}
-                  max={parentDueDate.toISOString().split('T')[0]}
+                  max={parentDueDate?.toISOString().split('T')[0]}
                 />
               </div>
               <div className="create-subtask-form-field">
@@ -437,7 +445,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
                   onChange={handleChange}
                   className="create-subtask-form-input"
                   min={subTask.startDate || parentStartDate.toISOString().split('T')[0]}
-                  max={parentDueDate.toISOString().split('T')[0]}
+                  max={parentDueDate?.toISOString().split('T')[0]}
                 />
               </div>
             </div>
@@ -637,7 +645,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
                   type="submit" 
                   className="create-subtask-btn-primary"
                   disabled={isSubmitting}
-                   onSubmit={handleSubmit}
+                   onClick={handleSubmit}
                 >
                   {isSubmitting ? (
                     "Creating..."

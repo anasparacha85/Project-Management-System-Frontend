@@ -166,6 +166,8 @@ console.log("subtasks",SubTasks);
       Id: updatedTask._id,
       status: updatedTask.status,
     });
+    console.log(res,"eeeeeeeeeeee");
+    
     console.log(res.UpdatedData);
     dispatch(fetchSubTasksBytaskId(params.id))
     setBoardData(availableColumns)

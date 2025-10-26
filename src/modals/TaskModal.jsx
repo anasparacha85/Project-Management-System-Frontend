@@ -22,6 +22,8 @@ const TaskModal=({ projectId, onTaskCreated }) => {
   const { TaskModalOpen } = useSelector((state) => state.UserInterface);
   const { tasks, error: tasksError, loading: tasksLoading } = useSelector((state) => state.Task);
   const { projectError, ProjectLoading, ProjectDetails } = useSelector((state) => state.Project);
+  console.log(ProjectDetails);
+  
   
   // Local state
   const [currentStep, setCurrentStep] = useState(1);
@@ -44,7 +46,7 @@ const TaskModal=({ projectId, onTaskCreated }) => {
 
   // Derived state
   const projectStartDate = new Date(ProjectDetails.startDate);
-  const projectEndDate = new Date(ProjectDetails.endDate);
+  const projectEndDate =ProjectDetails.endDate!==null? new Date(ProjectDetails.endDate):null;
   const team = ProjectDetails.team || [];
 
   // Load saved form data from localStorage
@@ -294,10 +296,10 @@ const nextStep = useCallback(() => {
                 <span>Project: {ProjectDetails.name}</span>
               </div>
               <div className="create-task-parent-info">
-                <span>Start date: {projectStartDate.toLocaleDateString()}</span>
+                <span>Start date: {projectStartDate?.toLocaleDateString()}</span>
               </div>
               <div className="create-task-parent-info">
-                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+                <span>Project End date: {projectEndDate!==null?projectEndDate?.toLocaleDateString():"to be decided"}</span>
               </div>
             </div>
             
@@ -391,7 +393,8 @@ const nextStep = useCallback(() => {
                 <span>Start date: {projectStartDate.toLocaleDateString()}</span>
               </div>
               <div className="create-task-parent-info">
-                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+                               <span>Project End date: {projectEndDate!==null?projectEndDate?.toLocaleDateString():"to be decided"}</span>
+
               </div>
             </div>
             
@@ -410,7 +413,7 @@ const nextStep = useCallback(() => {
                   onChange={handleChange}
                   className="create-task-form-input"
                   min={projectStartDate.toISOString().split('T')[0]}
-                  max={projectEndDate.toISOString().split('T')[0]}
+                  max={projectEndDate?.toISOString().split('T')[0]}
                 />
               </div>
               <div className="create-task-form-field">
@@ -422,7 +425,7 @@ const nextStep = useCallback(() => {
                   onChange={handleChange}
                   className="create-task-form-input"
                   min={task.startDate || projectStartDate.toISOString().split('T')[0]}
-                  max={projectEndDate.toISOString().split('T')[0]}
+                  max={projectEndDate?.toISOString().split('T')[0]}
                 />
               </div>
             </div>
@@ -462,7 +465,8 @@ const nextStep = useCallback(() => {
                 <span>Start date: {projectStartDate.toLocaleDateString()}</span>
               </div>
               <div className="create-task-parent-info">
-                <span>Project End date: {projectEndDate.toLocaleDateString()}</span>
+                               <span>Project End date: {projectEndDate!==null?projectEndDate?.toLocaleDateString():"to be decided"}</span>
+
               </div>
             </div>
             

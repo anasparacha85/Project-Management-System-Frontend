@@ -534,17 +534,17 @@ const openMilestoneModal=()=>{
                 <td className="project-milestone-assignees-cell">
                   <div className="project-milestone-assignees-container">
                     {milestone.assignees?.slice(0, 3).map((assignee, index) => (
-                      <div key={index} className="project-milestone-assignee-avatar" title={assignee.user.name}>
+                      <div key={index} className="project-milestone-assignee-avatar" title={assignee?.user?.name}>
                         <img 
-                          src={assignee.user.avatarUrl} 
-                          alt={assignee.user.name}
+                          src={assignee?.user?.avatarUrl} 
+                          alt={assignee?.user?.name}
                           className="project-milestone-avatar-img"
                         />
                       </div>
                     ))}
                     {milestone.assignees?.length > 3 && (
                       <div className="project-milestone-more-assignees">
-                        +{milestone.assignees.length - 3}
+                        +{milestone?.assignees?.length - 3}
                       </div>
                     )}
                     {/* <button className="project-milestone-add-assignee" title="Add assignee">
