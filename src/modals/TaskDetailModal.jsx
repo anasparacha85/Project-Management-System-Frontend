@@ -14,6 +14,7 @@ const AssigneesSelector = () => {
 const {team}=useSelector((state)=>state.Project)
 const { taskDetails}=useSelector((state)=>state.Task)
 console.log(team);
+const {user}=useSelector((state)=>state.User)
 
   // useEffect(()=>{
   //   fetch
@@ -78,12 +79,14 @@ const dispatch=useDispatch()
         )}
 
         {/* ADD Button */}
-        <button
+        {user.role==="manager" &&
+         <button
           className="task-details-add-assignee-btn"
           onClick={() => setShowDropdown(!showDropdown)}
         >
           + Add
-        </button>
+        </button>}
+       
       </div>
 
       {/* Dropdown */}
@@ -112,11 +115,11 @@ const dispatch=useDispatch()
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user) => {
               const isChecked = !!taskDetails.assignees.find(
-                (a) => a.user._id === user.user._id
+                (a) => a.user?._id === user?.user?._id
               );
               return (
                 <div
-                  key={user.user._id}
+                  key={user?.user?._id}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -128,12 +131,12 @@ const dispatch=useDispatch()
                   <input
                     type="checkbox"
                     checked={isChecked}
-                    onChange={() => toggleAssignee(user.user)}
+                    onChange={() => toggleAssignee(user?.user)}
                   />
                   <img
-                    src={user.user.avatarUrl
+                    src={user?.user?.avatarUrl
 }
-                    alt={user.user.name}
+                    alt={user?.user?.name}
                     style={{
                       width: "28px",
                       height: "28px",
@@ -163,7 +166,7 @@ const dispatch=useDispatch()
   );
 };
 
-const EditableField = ({ label, value, placeholder, name, type = "text", options = [] }) => {
+const EditableField = ({ label, value, placeholder, name, type = "text", options = [],disabled }) => {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value || "");
 
@@ -236,6 +239,7 @@ const EditableField = ({ label, value, placeholder, name, type = "text", options
             onKeyDown={handleKeyPress}
             autoFocus
             name={name}
+            disabled={disabled || false}
           />
         ) : (
           <span
@@ -589,6 +593,7 @@ const handleDeleteTask=async()=>{
             placeholder="Set start date"
             name="startDate"
             type="date"
+            disabled={user.role==="manager"?false:true}
           />
           
           <EditableField 
@@ -597,6 +602,7 @@ const handleDeleteTask=async()=>{
             placeholder="Set due date"
             name="dueDate"
             type="date"
+              disabled={user.role==="manager"?false:true}
           />
           
           <EditableField 
