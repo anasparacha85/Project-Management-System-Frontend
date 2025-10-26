@@ -722,6 +722,7 @@ import { ArrowLeft } from "lucide-react";
 const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
+  const {user}=useSelector((state)=>state.User)
 
   // Filtered users by search
   const filteredUsers = allUsers.filter(
@@ -781,12 +782,14 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
         )}
 
         {/* ADD Button */}
-        <button
+        {user.role==="manager" &&
+         <button
           className="task-details-add-assignee-btn"
           onClick={() => setShowDropdown(!showDropdown)}
         >
           + Add
-        </button>
+        </button>}
+       
       </div>
 
       {/* Dropdown */}
@@ -865,7 +868,7 @@ const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
   );
 };
 
-const EditableField = ({ label, value, placeholder, name, type = "text", options = [], onUpdate }) => {
+const EditableField = ({ label, value, placeholder, name, type = "text", options = [], onUpdate,disabled }) => {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(value || "");
 
@@ -934,6 +937,7 @@ const EditableField = ({ label, value, placeholder, name, type = "text", options
             onKeyDown={handleKeyPress}
             autoFocus
             name={name}
+            disabled={disabled || false}
           />
         ) : (
           <span
@@ -1194,8 +1198,10 @@ switch (latestAction) {
           </button>
         </div>
         <div className="task-details-task-header">
-            <button  disabled={buttonDisabled}
-  onClick={buttonAction}  className="task-details-ask-ai-btn"> {buttonLabel}</button>
+        {user.role!=="manager" &&
+         <button  disabled={buttonDisabled}
+  onClick={buttonAction}  className="task-details-ask-ai-btn"> {buttonLabel}</button>}
+           
         </div>
       
    </div>
@@ -1246,6 +1252,7 @@ switch (latestAction) {
             name="startDate"
             type="date"
             onUpdate={handleUpdateField}
+            disabled={user.role=="manager"?false :true}
           />
           
           <EditableField 
@@ -1255,6 +1262,8 @@ switch (latestAction) {
             name="dueDate"
             type="date"
             onUpdate={handleUpdateField}
+               disabled={user.role=="manager"?false :true}
+            
           />
           
           <EditableField 
@@ -1273,7 +1282,7 @@ switch (latestAction) {
             <span className="task-details-label">Description</span>
             <textarea
               ref={descriptionRef}
-              disabled={false}
+              disabled={true}
               className="task-details-description-content"
               value={subTaskData.description || ""}
               onChange={(e) => handleUpdateField("description", e.target.value)}
