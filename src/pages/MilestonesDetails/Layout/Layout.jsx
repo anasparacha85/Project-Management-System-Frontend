@@ -49,6 +49,11 @@ const MileStoneLayout = () => {
       label: "analytics",
       icon: <AlignVerticalDistributeEnd size={16} />,
     },
+     {
+      path: `/dashboard/milestone/${params.id}/checklists`,
+      label: "CheckPoints",
+      icon: <MilestoneIcon size={16} />,
+    },
   ];
 
   return (

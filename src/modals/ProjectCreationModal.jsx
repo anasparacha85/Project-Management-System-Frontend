@@ -125,10 +125,7 @@ export default function ProjectModal({ onClose }) {
       setError("Please enter a project title");
       return;
     }
-    if (!form.managerId) {
-      setError("Please select a manager");
-      return;
-    }
+   
     if (form.files.length >= 4) {
       setError('you can only select 3 files at a time')
       return
@@ -148,7 +145,7 @@ export default function ProjectModal({ onClose }) {
     formData.append("endDate", projectData.endDate);
     formData.append("budget", projectData.budget);
     formData.append("priority", projectData.priority);
-    formData.append("managerId", projectData.managerId);
+    // formData.append("managerId", projectData.managerId);
       formData.append("teamName", projectData.teamName);
 
     // memberIds ek array hai → isko loop se bhejna hoga
@@ -423,7 +420,7 @@ export default function ProjectModal({ onClose }) {
                   />
                 </div>
               </div>
-              <label>Project Manager <span className="create-project-required">*</span></label>
+              {/* <label>Project Manager <span className="create-project-required">*</span></label>
               <select
                 name="managerId"
                 value={form.managerId}
@@ -439,7 +436,7 @@ export default function ProjectModal({ onClose }) {
     </option>
   );
 })}
-              </select>
+              </select> */}
             </div>
 
             <div className="create-project-form-field">
