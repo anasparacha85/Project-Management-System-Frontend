@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Search, Bell, ChevronDown, Calendar, MessageSquare, Paperclip, User, Grid3X3, CheckCircle2, Users, Clock } from 'lucide-react';
 import Header from '../../components/Header/Header';
 import { NavLink, Outlet } from 'react-router-dom';
-import './dashboard.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import ApiServices from '../../ApiService/ApiService';
@@ -20,38 +19,83 @@ const Sidebar = ({ activeItem, setActiveItem, isCollapsed, isMobileOpen, onClose
 
   return (
     <>
-      <div className={`sidebar-overlay ${isMobileOpen ? 'active' : ''}`} onClick={onClose}></div>
-      <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
-        <nav className="sidebar-nav">
-          <div className="nav-section">
-            {menuItems.map(item => {
-              const Icon = item.icon;
-              return (
-                <NavLink 
-                  key={item.id} 
-                  to={item.link} 
-                  className={({isActive}) => `sidebar-item ${isActive ? 'active' : ''}`}
-                  onClick={onClose}
-                >
-                  <div className="sidebar-item-content">
-                    <Icon size={18} className="sidebar-icon" />
-                    <span className="sidebar-label">{item.label}</span>
-                    {item.count && (
-                      <span className="item-count">{item.count}</span>
-                    )}
-                  </div>
-                  {activeItem === item.id && <div className="active-indicator" />}
-                </NavLink>
-              );
-            })}
+      {/* Overlay */}
+      <div 
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-all duration-300 md:hidden ${
+          isMobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`} 
+        onClick={onClose}
+      />
+      
+      {/* Sidebar */}
+      <aside 
+        className={`fixed top-16 left-0 bottom-0 w-64 bg-[rgb(246,244,243)] backdrop-blur-xl border-r border-white border-opacity-20 py-6 z-50 overflow-y-auto transition-all duration-300 md:translate-x-0 ${
+          isCollapsed ? 'w-20' : 'w-64'
+        } ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:static md:z-auto`}
+      >
+        <nav className="flex flex-col h-full px-4">
+          {/* Navigation Items */}
+          <div className="flex-1">
+           {menuItems.map(item => {
+  const Icon = item.icon;
+  return (
+    <NavLink
+      key={item.id}
+      to={item.link}
+      className={({ isActive }) =>
+        `relative flex items-center mb-1 cursor-pointer transition-all duration-300 rounded-xl overflow-hidden no-underline ${
+          isActive ? 'bg-blue-50 bg-opacity-10' : 'hover:bg-white hover:bg-opacity-80'
+        }`
+      }
+      onClick={onClose}
+    >
+      {({ isActive }) => (
+        <div className="flex items-center gap-3 px-4 py-3 w-full relative">
+          <Icon
+            size={18}
+            className={`transition-colors duration-300 ${
+              isActive ? 'text-blue-600' : 'text-gray-500'
+            }`}
+          />
+          <span
+            className={`text-sm font-medium transition-all duration-300 ${
+              isActive ? 'text-blue-600 font-semibold' : 'text-gray-700'
+            } ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'}`}
+          >
+            {item.label}
+          </span>
+          {item.count && (
+            <span
+              className={`bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs font-semibold min-w-5 text-center transition-all duration-300 ${
+                isCollapsed ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              {item.count}
+            </span>
+          )}
+          {isActive && (
+            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-blue-600 rounded-r" />
+          )}
+        </div>
+      )}
+    </NavLink>
+  );
+})}
+
           </div>
           
-          <div className="sidebar-footer">
-            <div className="storage-indicator">
-              <div className="storage-bar">
-                <div className="storage-used" style={{ width: '65%' }}></div>
+          {/* Footer */}
+          <div className="mt-auto pt-4 border-t border-white border-opacity-20">
+            <div className="bg-white bg-opacity-80 p-3 rounded-xl">
+              <div className="w-full h-1 bg-gray-200 rounded overflow-hidden mb-2">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+                  style={{ width: '65%' }}
+                />
               </div>
-              <span className="storage-text">6.5GB of 10GB used</span>
+              <span className="text-xs text-gray-600 font-medium">6.5GB of 10GB used</span>
             </div>
           </div>
         </nav>
@@ -64,28 +108,21 @@ const Dashboard = () => {
   const [activeMenuItem, setActiveMenuItem] = useState('tasks');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const dispatch=useDispatch()
-  useEffect(()=>{
-    const fetchUser=async()=>{
-       try {
-          const response=await ApiServices.getUserData()
-          console.log(response);
-          
-          dispatch(setUser(response))
-        } catch (error) {
-          console.log(error);
-          
-          
-        }
+  const dispatch = useDispatch();
 
-    }
-     fetchUser()
-  },[])
-  const {user}=useSelector((state)=>state.User)
-  console.log("hi i am ",user);
-  
- 
-  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await ApiServices.getUserData();
+        dispatch(setUser(response));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUser();
+  }, [dispatch]);
+
+  const { user } = useSelector((state) => state.User);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -104,13 +141,28 @@ const Dashboard = () => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isMobileMenuOpen]);
+  }, []);
 
   return (
-    <div className="dashboard">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 bg-400% bg-animate-gradient"
+      style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        backgroundSize: '400% 400%',
+        animation: 'gradientShift 15s ease infinite'
+      }}
+    >
+      <style jsx>{`
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+      
       <Header onToggleSidebar={toggleMobileMenu} isMobileMenuOpen={isMobileMenuOpen} />
       
-      <div className="dashboard-body">
+      <div className="flex min-h-[calc(100vh-64px)] relative">
         <Sidebar 
           activeItem={activeMenuItem} 
           setActiveItem={setActiveMenuItem}
@@ -119,9 +171,14 @@ const Dashboard = () => {
           onClose={closeMobileMenu}
         />
         
-        <main className={`main-content ${isMobileMenuOpen ? 'menu-open' : ''}`}>
-          <Outlet/>
-        </main>
+       <main 
+  className={`flex-1 overflow-y-auto bg-opacity-10 backdrop-blur-xl transition-all duration-300 ${
+    isMobileMenuOpen ? 'ml-0' : 'ml-0 '
+  } ${sidebarCollapsed ? 'md:ml-6' : 'md:ml-2'}`}
+>
+  <Outlet/>
+</main>
+
       </div>
     </div>
   );

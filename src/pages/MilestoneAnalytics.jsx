@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ApiServices from "../ApiService/ApiService";
-import "./MilestoneAnalytics.css";
 import { useSelector } from "react-redux";
 
 const COLORS = {
@@ -31,139 +30,6 @@ const STATUS_COLORS = {
   "Todo": COLORS.warning,
   "Review": COLORS.danger
 };
-// Mock API service for demo
-const ApiService = {
-  fetchMilestoneById: async (id) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-      _id: "milestone1",
-      title: "User Authentication System",
-      description: "Implement secure user login, registration and authentication flow with JWT tokens and social login integration.",
-      startDate: "2025-07-01T00:00:00Z",
-      dueDate: "2025-07-15T00:00:00Z",
-      priority: "High",
-      status: "in-progress",
-      numberOfSubtasks: 8,
-      numberOfAssignees: 3,
-      completedSubtasks: 5,
-      milestoneProgress: 62.5,
-      subtaskStatusBreakdown: [
-        { status: "Completed", count: 5 },
-        { status: "In Progress", count: 2 },
-        { status: "Review", count: 0 },
-        { status: "Todo", count: 1 }
-      ],
-      progressHistory: [
-        { day: "Day 1", planned: 7, actual: 5 },
-        { day: "Day 2", planned: 14, actual: 12 },
-        { day: "Day 3", planned: 21, actual: 18 },
-        { day: "Day 4", planned: 29, actual: 25 },
-        { day: "Day 5", planned: 36, actual: 31 },
-        { day: "Day 6", planned: 43, actual: 38 },
-        { day: "Day 7", planned: 50, actual: 45 },
-        { day: "Day 8", planned: 57, actual: 50 },
-        { day: "Day 9", planned: 64, actual: 56 },
-        { day: "Day 10", planned: 71, actual: 62.5 }
-      ],
-      assigneeDetails: [
-        {
-          _id: "user1",
-          name: "Alex Johnson",
-          email: "alex.johnson@skilltern.com",
-          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-        },
-        {
-          _id: "user2",
-          name: "Maria Garcia",
-          email: "maria.garcia@skilltern.com",
-          avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face"
-        },
-        {
-          _id: "user3",
-          name: "David Kim",
-          email: "david.kim@skilltern.com",
-          avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face"
-        }
-      ],
-      subTaskDetails: [
-        {
-          _id: "subtask1",
-          title: "JWT Authentication Setup",
-          status: "completed",
-          progress: 100,
-          startDate: "2025-07-01T00:00:00Z",
-          dueDate: "2025-07-03T00:00:00Z",
-          assignees: [{ user: "user1", status: "completed" }]
-        },
-        {
-          _id: "subtask2",
-          title: "User Registration Flow",
-          status: "completed",
-          progress: 100,
-          startDate: "2025-07-02T00:00:00Z",
-          dueDate: "2025-07-04T00:00:00Z",
-          assignees: [{ user: "user2", status: "completed" }]
-        },
-        {
-          _id: "subtask3",
-          title: "Login & Session Management",
-          status: "completed",
-          progress: 100,
-          startDate: "2025-07-03T00:00:00Z",
-          dueDate: "2025-07-05T00:00:00Z",
-          assignees: [{ user: "user1", status: "completed" }]
-        },
-        {
-          _id: "subtask4",
-          title: "Password Reset Functionality",
-          status: "completed",
-          progress: 100,
-          startDate: "2025-07-04T00:00:00Z",
-          dueDate: "2025-07-06T00:00:00Z",
-          assignees: [{ user: "user3", status: "completed" }]
-        },
-        {
-          _id: "subtask5",
-          title: "Social Login Integration",
-          status: "completed",
-          progress: 100,
-          startDate: "2025-07-05T00:00:00Z",
-          dueDate: "2025-07-08T00:00:00Z",
-          assignees: [{ user: "user2", status: "completed" }]
-        },
-        {
-          _id: "subtask6",
-          title: "Two-Factor Authentication",
-          status: "in-progress",
-          progress: 70,
-          startDate: "2025-07-08T00:00:00Z",
-          dueDate: "2025-07-12T00:00:00Z",
-          assignees: [{ user: "user3", status: "in-progress" }]
-        },
-        {
-          _id: "subtask7",
-          title: "Security Audit & Testing",
-          status: "in-progress",
-          progress: 40,
-          startDate: "2025-07-10T00:00:00Z",
-          dueDate: "2025-07-14T00:00:00Z",
-          assignees: [{ user: "user1", status: "in-progress" }]
-        },
-        {
-          _id: "subtask8",
-          title: "Documentation",
-          status: "todo",
-          progress: 0,
-          startDate: "2025-07-12T00:00:00Z",
-          dueDate: "2025-07-15T00:00:00Z",
-          assignees: [{ user: "user2", status: "todo" }]
-        }
-      ]
-    };
-  }
-};
 
 function MilestoneAnalytics() {
   const params = useParams();
@@ -172,8 +38,6 @@ function MilestoneAnalytics() {
   const [loading, setLoading] = useState(true);
   const [showDetails, setShowDetails] = useState({});
   const [chartAnimations, setChartAnimations] = useState(true);
-//   const { TaskReport,tasks,taskDetails}=useSelector((state)=>state.Task)
-// console.log( TaskReport,tasks,taskDetails);
 
   const fetchMilestoneById = async () => {
     try {
@@ -221,10 +85,10 @@ function MilestoneAnalytics() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{label}</p>
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+          <p className="font-medium text-gray-900 mb-1">{label}</p>
           {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }} className="tooltip-entry">
+            <p key={index} style={{ color: entry.color }} className="text-sm">
               {entry.name}: {entry.value}%
             </p>
           ))}
@@ -236,10 +100,10 @@ function MilestoneAnalytics() {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-content">
-          <RefreshCw className="loading-spinner" />
-          <p className="loading-text">Loading milestone report...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
+          <p className="text-gray-600 font-medium">Loading milestone report...</p>
         </div>
       </div>
     );
@@ -247,14 +111,14 @@ function MilestoneAnalytics() {
 
   if (error) {
     return (
-      <div className="e-container">
-        <div className="e-content">
-          <AlertCircle className="e-icon" />
-          <h3 className="e-title">Error Loading Report</h3>
-          <p className="e-message">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-red-200 max-w-sm text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Report</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={fetchMilestoneById}
-            className="e-retry-btn"
+            className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
           >
             Try Again
           </button>
@@ -264,58 +128,63 @@ function MilestoneAnalytics() {
   }
 
   return (
-    <div className="milestone-report-container">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <div className="report-header">
-        <div className="header-content">
-          <div className="header-left">
-            <h1 className="head-title">Milestone Dashboard</h1>
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-gray-900 m-0">Milestone Dashboard</h1>
           </div>
-          <div className="header-actions">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setChartAnimations(!chartAnimations)}
-              className="action-btn"
+              className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100"
               title={chartAnimations ? "Disable animations" : "Enable animations"}
             >
-              {chartAnimations ? <Eye className="action-icon" /> : <EyeOff className="action-icon" />}
+              {chartAnimations ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
-            <button className="action-btn">
-              <Download className="action-icon" />
+            <button className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100">
+              <Download className="w-4 h-4" />
             </button>
-            <button className="action-btn">
-              <Share2 className="action-icon" />
+            <button className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100">
+              <Share2 className="w-4 h-4" />
             </button>
             <button 
               onClick={fetchMilestoneById}
-              className="action-btn"
+              className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100"
             >
-              <RefreshCw className={`action-icon ${loading ? 'spinning' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="report-content">
+      <div className="max-w-7xl mx-auto p-6">
         {/* Milestone Header Card */}
-        <div className="milestone-header-card">
-          <div className="milestone-header-main">
-            <div className="milestone-info">
-              <div className="milestone-title-row">
-                <h2 className="milestone-title">{report.title}</h2>
-                <span className={`milestone-status-badge status-${(report.status || 'todo').toLowerCase()}`}>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <h2 className="text-3xl font-bold text-gray-900">{report.title}</h2>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                  (report.status || 'todo').toLowerCase() === 'todo' ? 'bg-gray-100 text-gray-800' :
+                  (report.status || 'todo').toLowerCase() === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                  (report.status || 'todo').toLowerCase() === 'review' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-green-100 text-green-800'
+                }`}>
                   {getStatusIcon(report.status)}
-                  <span className="status-text">{report.status}</span>
+                  <span className="capitalize">{report.status}</span>
                 </span>
               </div>
-              <p className="milestone-description">{report.description || "No description provided."}</p>
+              <p className="text-gray-600 text-lg leading-relaxed mb-4">{report.description || "No description provided."}</p>
               
               {daysRemaining !== null && (
-                <div className={`days-remaining ${
-                  daysRemaining > 7 ? 'days-safe' :
-                  daysRemaining > 0 ? 'days-warning' :
-                  'days-danger'
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium ${
+                  daysRemaining > 7 ? 'bg-green-100 text-green-800' :
+                  daysRemaining > 0 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
                 }`}>
-                  <Clock className="days-icon" />
+                  <Clock className="w-4 h-4" />
                   <span>
                     {daysRemaining > 0 ? `${daysRemaining} days remaining` :
                      daysRemaining === 0 ? 'Due today' : 
@@ -326,8 +195,8 @@ function MilestoneAnalytics() {
             </div>
             
             {/* Progress Ring */}
-            <div className="progress-ring-container">
-              <svg className="progress-ring" viewBox="0 0 36 36">
+            <div className="relative w-24 h-24">
+              <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
                 <path
                   d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
                   fill="none"
@@ -340,77 +209,77 @@ function MilestoneAnalytics() {
                   stroke="#3b82f6"
                   strokeWidth="2"
                   strokeDasharray={`${progressValue}, 100`}
-                  className="progress-path"
+                  className="transition-all duration-1000 ease-out"
                 />
               </svg>
-              <div className="progress-text">
-                <span className="progress-percentage">{Math.round(progressValue)}%</span>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-lg font-bold text-gray-900">{Math.round(progressValue)}%</span>
               </div>
             </div>
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="stats-grid">
-            <div className="stat-card stat-blue">
-              <div className="stat-icon">
-                <Calendar className="icon" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
+                <Calendar className="w-4 h-4 text-blue-700" />
               </div>
-              <p className="stat-label">Start Date</p>
-              <p className="st-value">{formatDate(report.startDate)}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Start Date</p>
+              <p className="text-sm font-bold text-gray-900">{formatDate(report.startDate)}</p>
             </div>
-            <div className="stat-card stat-red">
-              <div className="stat-icon">
-                <Calendar className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mb-2">
+                <Calendar className="w-4 h-4 text-red-600" />
               </div>
-              <p className="stat-label">Due Date</p>
-              <p className="st-value">{formatDate(report.dueDate)}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Due Date</p>
+              <p className="text-sm font-bold text-gray-900">{formatDate(report.dueDate)}</p>
             </div>
-            <div className="stat-card stat-orange">
-              <div className="stat-icon">
-                <Target className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mb-2">
+                <Target className="w-4 h-4 text-orange-600" />
               </div>
-              <p className="stat-label">Priority</p>
-              <p className="st-value">{report.priority}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Priority</p>
+              <p className="text-sm font-bold text-gray-900">{report.priority}</p>
             </div>
-            <div className="stat-card stat-green">
-              <div className="stat-icon">
-                <Flag className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2">
+                <Flag className="w-4 h-4 text-green-600" />
               </div>
-              <p className="stat-label">Subtasks</p>
-              <p className="st-value">{report.numberOfSubtasks || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Subtasks</p>
+              <p className="text-sm font-bold text-gray-900">{report.numberOfSubtasks || 0}</p>
             </div>
-            <div className="stat-card stat-purple">
-              <div className="stat-icon">
-                <CheckCircle className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
+                <CheckCircle className="w-4 h-4 text-purple-600" />
               </div>
-              <p className="stat-label">Completed</p>
-              <p className="st-value">{report.completedSubtasks || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Completed</p>
+              <p className="text-sm font-bold text-gray-900">{report.completedSubtasks || 0}</p>
             </div>
-            <div className="stat-card stat-indigo">
-              <div className="stat-icon">
-                <Users className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mb-2">
+                <Users className="w-4 h-4 text-indigo-600" />
               </div>
-              <p className="stat-label">Assignees</p>
-              <p className="st-value">{report.numberOfAssignees || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Assignees</p>
+              <p className="text-sm font-bold text-gray-900">{report.numberOfAssignees || 0}</p>
             </div>
           </div>
         </div>
 
         {/* Charts Grid */}
-        <div className="charts-grid">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
           {/* Subtask Status Chart */}
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3 className="chart-title">Subtask Status Distribution</h3>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 m-0">Subtask Status Distribution</h3>
               <button
                 onClick={() => toggleDetails('subtasks')}
-                className="details-toggle"
+                className="text-blue-600 bg-transparent border-none text-sm font-medium cursor-pointer transition-colors hover:text-blue-800"
               >
                 {showDetails.subtasks ? 'Hide Details' : 'Show Details'}
               </button>
             </div>
             
-            <div className="chart-container">
+            <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -444,14 +313,14 @@ function MilestoneAnalytics() {
             </div>
 
             {showDetails.subtasks && (
-              <div className="subtask-details">
+              <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
                 {subtaskData.map((item, index) => (
-                  <div key={index} className="subtask-detail-item">
-                    <div className="subtask-detail-left">
-                      <div className="subtask-color-dot" style={{ backgroundColor: item.fill }}></div>
-                      <span className="subtask-name">{item.name}</span>
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }}></div>
+                      <span className="font-medium text-gray-900">{item.name}</span>
                     </div>
-                    <span className="subtask-count">{item.value} tasks ({item.percentage}%)</span>
+                    <span className="text-gray-600 text-sm">{item.value} tasks ({item.percentage}%)</span>
                   </div>
                 ))}
               </div>
@@ -459,9 +328,9 @@ function MilestoneAnalytics() {
           </div>
 
           {/* Progress History Chart */}
-          <div className="chart-card">
-            <h3 className="chart-title">Progress Timeline - Actual vs Planned</h3>
-            <div className="chart-container">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">Progress Timeline - Actual vs Planned</h3>
+            <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={report.progressHistory || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -511,64 +380,69 @@ function MilestoneAnalytics() {
         </div>
 
         {/* Subtask List */}
-        <div className="chart-card">
-          <h3 className="chart-title">Subtasks</h3>
-          <div className="subtask-list">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">CheckLists</h3>
+          <div className="flex flex-col gap-4">
             {report.subTaskDetails && report.subTaskDetails.length > 0 ? (
               report.subTaskDetails.map((subtask, index) => (
-                <div key={index} className="subtask-item">
-                  <div className="subtask-info">
-                    <h4 className="subtask-title">{subtask.title}</h4>
-                    <div className="subtask-meta">
-                      <span className={`subtask-status status-${subtask.status}`}>
+                <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div className="mb-3">
+                    <h4 className="text-base font-semibold text-gray-900 mb-2">{subtask.title}</h4>
+                    <div className="flex gap-4 items-center flex-wrap">
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        subtask.status === 'todo' ? 'bg-gray-100 text-gray-800' :
+                        subtask.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
+                        subtask.status === 'review' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
                         {subtask.status}
                       </span>
-                      <span className="subtask-progress">{subtask.progress}% complete</span>
-                      <span className="subtask-dates">
+                      <span className="text-sm text-gray-600">{subtask.progress}% complete</span>
+                      <span className="text-sm text-gray-600">
                         {formatDate(subtask.startDate)} - {formatDate(subtask.dueDate)}
                       </span>
                     </div>
                   </div>
-                  <div className="subtask-progress-bar">
+                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="subtask-progress-fill"
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-1000 ease-out"
                       style={{ width: `${subtask.progress}%` }}
                     ></div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-subtasks">
-                <p>No subtasks found for this milestone.</p>
+              <div className="text-center text-gray-500 py-8">
+                <p>Milestone is not broken into any checklists.</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Assignees List */}
-        <div className="chart-card">
-          <h3 className="chart-title">Assignees</h3>
-          <div className="assignee-list">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">Assignees</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {report.assigneeDetails && report.assigneeDetails.length > 0 ? (
               report.assigneeDetails.map((assignee, index) => (
-                <div key={index} className="assignee-item">
-                  <div className="assignee-avatar">
+                <div key={index} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                  <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                     {assignee.avatar ? (
-                      <img src={assignee.avatar} alt={assignee.name} />
+                      <img src={assignee.avatar} alt={assignee.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="avatar-placeholder">
+                      <div className="w-full h-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-lg">
                         {assignee.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
-                  <div className="assignee-info">
-                    <h4 className="assignee-name">{assignee.name}</h4>
-                    <p className="assignee-email">{assignee.email}</p>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900 mb-1">{assignee.name}</h4>
+                    <p className="text-sm text-gray-600 m-0">{assignee.email}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="no-assignees">
+              <div className="text-center text-gray-500 py-8 col-span-3">
                 <p>No assignees found for this milestone.</p>
               </div>
             )}
@@ -592,12 +466,12 @@ function formatDate(iso) {
 
 function getStatusIcon(status) {
   switch (status?.toLowerCase()) {
-    case 'completed': return <CheckCircle className="status-icon" />;
-    case 'in-progress': return <PlayCircle className="status-icon" />;
-    case 'review': return <Eye className="status-icon" />;
-    case 'todo': return <AlertCircle className="status-icon" />;
-    default: return <AlertCircle className="status-icon" />;
+    case 'completed': return <CheckCircle className="w-4 h-4" />;
+    case 'in-progress': return <PlayCircle className="w-4 h-4" />;
+    case 'review': return <Eye className="w-4 h-4" />;
+    case 'todo': return <AlertCircle className="w-4 h-4" />;
+    default: return <AlertCircle className="w-4 h-4" />;
   }
 }
 
-export default MilestoneAnalytics
+export default MilestoneAnalytics;

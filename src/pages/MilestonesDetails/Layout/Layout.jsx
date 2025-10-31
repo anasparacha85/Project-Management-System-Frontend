@@ -1,7 +1,6 @@
 // src/layouts/ProjectLayout.jsx
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, MilestoneIcon, CircuitBoardIcon, AlignVerticalDistributeEnd, ArrowLeft, LogIn } from "lucide-react";
-import "./milestonelayout.css";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
 import ApiServices from "../../../ApiService/ApiService";
@@ -10,7 +9,6 @@ import { useSelector } from "react-redux";
 import { setSubTaskModalOpen } from "../../../Slices/UiSlice";
 import SubTaskModal from "../../../modals/SubTaskModal";
 import { fetchSubTasksBytaskId, setError, setSubTasks } from "../../../Slices/TaskSlice";
-import { use } from "react";
 
 const MileStoneLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
@@ -29,66 +27,9 @@ const MileStoneLayout = () => {
     dispatch(fetchSubTasksBytaskId(params.id))
   },[dispatch])
   const role=user.role
-  // useEffect(()=>{
-  //   const fetchSubsTasks=async()=>{
-  //     try {
-  //       const data=await ApiServices.getSubTaskByTaskid(params.id)
-  //       console.log("hello",data);
-        
-  //       dispatch(setSubTasks(data.subTasks))
-  //       dispatch(setError(null))
-  //     } catch (error) {
-  //       dispatch(setError(error.message))
-        
-  //     }
-  //   }
-  //   fetchSubsTasks()
-  // },[])
-//      const onOpenTaskModal=()=>{
-//     setShowTaskModal(true)
-//     setProjectId(params.id)
-//   }
-//      const onTaskCreated = async (task) => {
-//   try {
-//     console.log(task);
-    
-//     const formdata = new FormData();
 
-//     // simple fields append karo
-//     formdata.append("title", task.title);
-//     formdata.append("description", task.description);
-//     formdata.append("priority", task.priority);
-//     formdata.append("startDate", task.startDate);
-//     formdata.append("dueDate", task.dueDate);
-//     formdata.append("milestone", task.milestone);
-
-//     // array fields (assigneeIds, dependencies) ko JSON stringify karke bhejna behtar hoga
-//     formdata.append("assigneeIds", JSON.stringify(task.assigneeIds));
-//     formdata.append("dependencies", JSON.stringify(task.dependencies));
-
-//     // attachments agar multiple files hain
-//     task.attachments.forEach((file) => {
-//       formdata.append("attachments", file);
-//     });
-// // console.log(projectId,"h");
-     
-//     // ab api call
-//     const res = await ApiServices.createTask(formdata, params.id);
-//     alert('MileStone created')
-//     console.log("Task created: ", res);
-    
-//     setShowTaskModal(false)
-//   } catch (error) {
-//     console.error("Task creation error: ", error.message);
-//   }
-// };
- const navigations = [
-    // {
-    //   path: `/dashboard/project/${params.id}`,
-    //   label: "Board",
-    //   icon: <Grid3X3 size={16} />,
-    // },
-     {
+  const navigations = [
+    {
       path: `/dashboard/milestone/${params.id}`,
       label: "Overview",
       icon: <MilestoneIcon size={16} />,
@@ -99,86 +40,58 @@ const MileStoneLayout = () => {
       icon: <CircuitBoardIcon size={16} />,
     },
     {
-        
       path: `/dashboard/milestone/${params.id}/team`,
       label: "assignees",
       icon: <Group size={16} />,
     },
      {
-        
       path: `/dashboard/milestone/${params.id}/analytics`,
       label: "analytics",
       icon: <AlignVerticalDistributeEnd size={16} />,
     },
-   
-    
-    // {
-    //   path: `/dashboard/project/${params.id}/attachments`,
-    //   label: "Attachments",
-    //   icon: <DownloadCloud size={16} />,
-    // },
   ];
 
-
   return (
-    <div className="project-layout">
- 
-        
-               <SubTaskModal parentTask={taskDetails}  />
-        
+    <div className="p-8 max-w-[1400px] mx-auto">
+        <SubTaskModal parentTask={taskDetails}  />
        
-       
-      {/* Page Header */}
-    
-
       {/* Page Controls */}
-      <div className="page-controls">
-        <div className="controls-left">
-          <div className="view-toggle">
+      <div className="flex justify-between items-center mb-8 p-5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-md">
+        <div className="flex items-center gap-6">
+          <div className="flex bg-gray-100 rounded-xl p-1 gap-[9px]">
           {navigations.map((value,index)=>(
-             <NavLink  to={value.path} className={({isActive})=>`view-btn  ${isActive? 'view-btn active' : ''}`}>
-             {value.icon}
+             <NavLink  
+               to={value.path} 
+               className={({isActive}) => `flex items-center gap-2 px-4 py-2 border-none bg-transparent rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 text-gray-600 no-underline ${
+                 isActive ? 'bg-white text-gray-900 shadow-sm' : ''
+               }`}
+             >
+               {value.icon}
               <span>{value.label}</span>
-            
             </NavLink> 
-
           ))}
-         
           </div>
-
-          {/* <div className="search-filter">
-            <div className="search-projects">
-              <Search size={16} />
-              <input type="text" placeholder="Search..." />
-            </div>
-            <button className="filter-btn">
-              <Filter size={16} />
-              <span>Filter</span>
-            </button>
-          </div> */}
         </div>
-        <div className="mile-page-actions">
-          {/* <button className="mile-action-btn secondary">
-            <Users size={16} />
-            <span>Assign Members</span>
-          </button> */}
+        <div className="flex gap-3">
           {role==="manager" &&
           <>
-             <button onClick={()=>dispatch(setSubTaskModalOpen(true))}   className="mile-action-btn primary">
-            <Plus size={16} />
-            <span>Create Subtask</span>
-          </button>
-           
+             <button 
+               onClick={()=>dispatch(setSubTaskModalOpen(true))}   
+               className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap text-white bg-gradient-to-br from-[#667eea] to-[#764ba2] hover:shadow-lg hover:-translate-y-0.5"
+             >
+               <Plus size={16} />
+               <span>Add task to Your Checklists</span>
+             </button>
           </>}
-           <button onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} className="mile-action-btn primary">
-            <ArrowLeft size={16} />
-            <span>Back to Project</span>
-          </button>
-
-         
+           <button 
+             onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} 
+             className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap text-white bg-gradient-to-br from-[#667eea] to-[#764ba2] hover:shadow-lg hover:-translate-y-0.5"
+           >
+             <ArrowLeft size={16} />
+             <span>Back to Project</span>
+           </button>
         </div>
       </div>
-         
 
       {/* Ye jaga alag-alag page show karega */}
       <div className="page-body">

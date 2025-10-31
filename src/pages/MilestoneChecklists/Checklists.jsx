@@ -3,7 +3,7 @@ import { Calendar, Plus, Filter, Search, ChevronDown, Edit3, Save, X, Target, Cl
 import { useNavigate, useParams } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
 import { useDispatch } from "react-redux";
-import { setTaskModalOpen } from "../../Slices/UiSlice";
+import { setSubTaskModalOpen, setTaskModalOpen } from "../../Slices/UiSlice";
 import TaskModal from "../../modals/TaskModal";
 import { useSelector } from "react-redux";
 
@@ -146,8 +146,8 @@ const ProgressBar = ({ progress, onChange }) => {
   );
 };
 
-const ProjectMilestonesPage = () => {
-  const [milestones, setMilestones] = useState([]);
+const MilestonesChecklists = () => {
+  const [checklists, setChecklists] = useState([]);
   const [filter, setFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -172,36 +172,43 @@ const ProjectMilestonesPage = () => {
     }
   };
 
-  const fetchEmployeeMilestones = async () => {
-    setLoading(true);
+   const getSubTasksById = async () => {
     try {
-      const data = await ApiServices.getEmployeeMilestonesByProjectid(params.id);
-      console.log(data);
-      setMilestones(data.tasks || []);
+      const data = await ApiServices.getSubTaskByTaskid(params.id);
+      setChecklists(data.subTasks || []);
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      console.error(error.message);
     }
   };
+    const getEmployeeSubTask = async () => {
+      try {
+        const response = await ApiServices.getEmployeeSubTasksByTaskId(params.id);
+        console.log("hi", response);
+        dispatch(setChecklists(response.subtasks));
+      } catch (error) {
+      console.log(error.message);
+      
+      }
+    };
+  
 
   useEffect(() => {
     if (role === 'manager') {
-      fetchMilestones();
+      getSubTasksById()
     } else {
-      fetchEmployeeMilestones();
+     getEmployeeSubTask()
     }
   }, []);
 
   const handleUpdateMilestone = (milestoneId, field, newValue) => {
-    setMilestones(prev => prev.map(milestone => 
+    setChecklists(prev => prev.map(milestone => 
       milestone._id === milestoneId 
         ? { ...milestone, [field]: newValue }
         : milestone
     ));
   };
 
-  const filteredMilestones = milestones.filter(milestone => {
+  const filteredMilestones = checklists.filter(milestone => {
     const matchesFilter = filter === "All" || milestone.status === filter;
     const matchesSearch = milestone.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          milestone.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -209,7 +216,7 @@ const ProjectMilestonesPage = () => {
   });
 
   const getStatusStats = () => {
-    const stats = milestones.reduce((acc, milestone) => {
+    const stats =checklists.reduce((acc, milestone) => {
       acc[milestone.status] = (acc[milestone.status] || 0) + 1;
       return acc;
     }, {});
@@ -220,7 +227,7 @@ const ProjectMilestonesPage = () => {
 
   const openMilestoneModal = () => {
     setProjectId(params.id);
-    dispatch(setTaskModalOpen(true));
+    dispatch(setSubTaskModalOpen(true));
   };
 
   const formatDate = (dateString) => {
@@ -607,4 +614,4 @@ const ProjectMilestonesPage = () => {
   );
 };
 
-export default ProjectMilestonesPage;
+export default MilestonesChecklists;

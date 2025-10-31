@@ -1,7 +1,6 @@
 // src/layouts/ProjectLayout.jsx
 import { NavLink, Outlet, useParams } from "react-router-dom";
 import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, Edit, Antenna } from "lucide-react";
-import "./Layout.css";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
 import ApiServices from "../../../ApiService/ApiService";
@@ -42,14 +41,9 @@ setInviteTeamModalOpen(true)
   },[params.id,dispatch])
     
  const navigations = [
-    // {
-    //   path: `/dashboard/project/${params.id}`,
-    //   label: "Board",
-    //   icon: <Grid3X3 size={16} />,
-    // },
      {
       path: `/dashboard/project/${params.id}`,
-      label: "Overview",
+      label: "Dashboard",
       icon: <DatabaseIcon size={16} />,
     },
     {
@@ -74,9 +68,6 @@ setInviteTeamModalOpen(true)
       icon: <Antenna size={16} />,
     },
   ];
-// if (ProjectLoading) {
-//   return <div className="loading">Loading project...</div>;
-// }
 
 if (ProjectError) {
   return <div className="error">Failed to load project. Please try again.</div>;
@@ -87,108 +78,100 @@ if (!ProjectDetails) {
 }
 
   return (
-    <div className="project-layout">
-    
+    <div className="p-8 max-w-[1400px] mx-auto">
+        <TaskModal  projectId={ProjectId}/>
         
-               <TaskModal  projectId={ProjectId}/>
+        {showEditProjectModal && (
+          <EditProjectModal isOpen={showEditProjectModal}  onClose={()=>setShowEditProjectModal(false)} />
+        )}
         
-       
-     
-        {
-        showEditProjectModal&&(
-        
-               <EditProjectModal isOpen={showEditProjectModal}  onClose={()=>setShowEditProjectModal(false)} />
-        
-       
-        )
-      }
-        {
-        InviteTeamModalOpen&&(
-        
-               <AddTeamModal    onClose={()=>setInviteTeamModalOpen(false)} alreadySelected={ProjectDetails.team} />
-        
-       
-        )
-      }
+        {InviteTeamModalOpen && (
+          <AddTeamModal onClose={()=>setInviteTeamModalOpen(false)} alreadySelected={ProjectDetails.team} />
+        )}
+
       {/* Page Header */}
-      <div className="page-header">
-        <div className="page-title-section">
-          <div className="breadcrumb">
-            <span>Projects</span>
+      <div className="flex justify-between items-start mb-8 gap-6">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 text-sm text-white/80 mb-2">
+            <span className="text-white/60">Projects</span>
             <span> / </span>
             <span>Dashboard</span>
           </div>
-          <h1 className="page-title">Project Workspace</h1>
-          <p className="page-subtitle">Manage tasks, team members & progress</p>
+          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Project Workspace</h1>
+          <p className="text-white/80 text-base leading-relaxed">Manage tasks, team members & progress</p>
         </div>
- {role==='manager' &&
- <div className="proj-page-actions">
-       
-          <button onClick={onOpenInviteTeamModal} className="proj-action-btn secondary">
-            <Users size={16} />
-            <span>Invite Team</span>
-          </button>
-          <button onClick={onOpenTaskModal} className="proj-action-btn primary">
-            <Plus size={16} />
-            <span>New Milestone</span>
-          </button>
-            <button onClick={onOpenEditProjectModal} className="proj-action-btn primary">
-            <Edit size={16} />
-            <span>Edit Project</span>
-          </button>
-        </div>}
         
+        {role==='manager' &&
+          <div className="flex gap-3">
+            <button 
+              onClick={onOpenInviteTeamModal} 
+              className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap bg-white/20 text-white border border-white/30 backdrop-blur-xl hover:bg-white/30"
+            >
+              <Users size={16} />
+              <span>Invite Team</span>
+            </button>
+            <button 
+              onClick={onOpenTaskModal} 
+              className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap bg-white text-gray-900 shadow-lg hover:shadow-xl hover:-translate-y-1"
+            >
+              <Plus size={16} />
+              <span>New Milestone</span>
+            </button>
+            <button 
+              onClick={onOpenEditProjectModal} 
+              className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap bg-white text-gray-900 shadow-lg hover:shadow-xl hover:-translate-y-1"
+            >
+              <Edit size={16} />
+              <span>Edit Project</span>
+            </button>
+          </div>
+        }
       </div>
 
       {/* Page Controls */}
-      <div className="page-controls">
-        <div className="controls-left">
-          <div className="view-toggle">
-          {navigations.map((value,index)=>(
-             <NavLink  to={value.path} className={({isActive})=>`view-btn  ${isActive? 'view-btn active' : ''}`}>
-             {value.icon}
-              <span>{value.label}</span>
-            
-            </NavLink> 
-
-          ))}
-         
+      <div className="flex justify-between items-center mb-8 p-5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-md">
+        <div className="flex items-center gap-6">
+          <div className="flex bg-gray-100 rounded-xl p-1 gap-[9px]">
+            {navigations.map((value,index)=>(
+              <NavLink  
+                to={value.path} 
+                className={({isActive}) => `flex items-center gap-2 px-4 py-2 border-none bg-transparent rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 text-gray-600 no-underline ${
+                  isActive ? 'bg-white text-gray-900 shadow-sm' : ''
+                }`}
+              >
+                {value.icon}
+                <span>{value.label}</span>
+              </NavLink> 
+            ))}
           </div>
-
-          {/* <div className="search-filter">
-            <div className="search-projects">
-              <Search size={16} />
-              <input type="text" placeholder="Search..." />
-            </div>
-            <button className="filter-btn">
-              <Filter size={16} />
-              <span>Filter</span>
-            </button>
-          </div> */}
         </div>
-        <div className="controls-right">
-          <div className="team-avatars">
-  {ProjectDetails?.team?.length > 0 ? (
-    ProjectDetails.team.map((member, idx) => (
-      <div key={idx} title={member?.user?.name} className="team-avatar" style={{ zIndex: 4 - idx }}>
-        <img 
-          src={member?.user?.avatarUrl} 
-          alt={member?.user?.name?.slice(0,2)} 
-          className="member-avatar"
-          onError={(e) => {
-            e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
-          }}
-        />
-      </div>
-    ))
-  ) : (
-    <span className="no-members">No team members</span>
-  )}
-</div>
-
+        
+        <div className="flex items-center">
+          <div className="flex items-center">
+            {ProjectDetails?.team?.length > 0 ? (
+              ProjectDetails.team.map((member, idx) => (
+                <div 
+                  key={idx} 
+                  title={member?.user?.name} 
+                  className="w-8 h-8 rounded-full bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white flex items-center justify-center text-xs font-semibold -ml-2 border-2 border-white transition-all duration-200 hover:-translate-y-1 hover:z-10"
+                  style={{ zIndex: 4 - idx }}
+                >
+                  <img 
+                    src={member?.user?.avatarUrl} 
+                    alt={member?.user?.name?.slice(0,2)} 
+                    className="w-full h-full rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png';
+                    }}
+                  />
+                </div>
+              ))
+            ) : (
+              <span className="no-members">No team members</span>
+            )}
+          </div>
         </div>
       </div>
-         
 
       {/* Ye jaga alag-alag page show karega */}
       <div className="page-body">

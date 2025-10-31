@@ -312,8 +312,8 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
         return (
           <div className="create-subtask-step-content">
             <div className="create-subtask-step-header">
-              <h3>Subtask Information</h3>
-              <p>Tell us about your subtask's basic details</p>
+              <h3>task Information</h3>
+              <p>Tell us about your task's basic details</p>
               {parentTask && (
                 <>
                   <div className="create-subtask-parent-info">
@@ -331,7 +331,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
             </div>
 
             <div className="create-subtask-form-field">
-              <label>Subtask Title <span className="create-subtask-required">*</span></label>
+              <label>task Title <span className="create-subtask-required">*</span></label>
               <input
                 name="title"
                 type="text"
@@ -420,7 +420,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
             
             <div className="create-subtask-step-header">
               <h3>Timeline & Priority</h3>
-              <p>Set your subtask timeline and priority details</p>
+              <p>Set your task timeline and priority details</p>
             </div>
 
             <div className="create-subtask-form-row">
@@ -479,7 +479,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
           <div className="create-subtask-step-content">
             <div className="create-subtask-step-header">
               <h3>Assignment</h3>
-              <p>Assign team members to this subtask</p>
+              <p>Assign team members to this task</p>
             </div>
 
             <div className="create-subtask-form-field">
@@ -557,7 +557,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
     <div className="create-subtask-modal-backdrop" onClick={handleBackdropClick}>
       <div className="create-subtask-modal-container">
         <div className="create-subtask-modal-header">
-          <h2>Create New Subtask</h2>
+          <h2>Add new task to your checklist</h2>
           <button className="create-subtask-modal-close" onClick={onClose}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" />

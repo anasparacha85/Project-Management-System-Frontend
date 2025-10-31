@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
-import "./ProjectReport.css";
 
 const COLORS = {
   primary: "#3b82f6",
@@ -53,56 +52,13 @@ function calculateDaysRemaining(endDate) {
 
 function getStatusIcon(status) {
   switch (status?.toLowerCase()) {
-    case 'completed': case 'complete': return <CheckCircle className="status-icon" />;
-    case 'active': case 'in-progress': return <PlayCircle className="status-icon" />;
-    case 'on-hold': case 'onhold': return <Pause className="status-icon" />;
-    case 'archive': case 'archieve': return <Archive className="status-icon" />;
-    default: return <AlertCircle className="status-icon" />;
+    case 'completed': case 'complete': return <CheckCircle className="w-4 h-4" />;
+    case 'active': case 'in-progress': return <PlayCircle className="w-4 h-4" />;
+    case 'on-hold': case 'onhold': return <Pause className="w-4 h-4" />;
+    case 'archive': case 'archieve': return <Archive className="w-4 h-4" />;
+    default: return <AlertCircle className="w-4 h-4" />;
   }
 }
-// Mock API service for demo
-const ApiService = {
-  fetchProjectById: async (id) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-      name: "Website Redesign Project",
-      description: "Complete overhaul of the company website with modern design, improved UX, and mobile responsiveness. This project aims to increase user engagement by 40% and improve conversion rates.",
-      projectStatus: "active",
-      startDate: "2024-01-15T00:00:00Z",
-      endDate: "2024-06-30T00:00:00Z",
-      priority: "High",
-      numberOfFiles: 127,
-      numberOfTasks: 45,
-      numberOfTeamMembers: 8,
-      numberOfUniqueAssignees: 6,
-      averageProgress: 67.5,
-      taskStatusBreakdown: [
-        { status: "Completed", count: 22 },
-        { status: "In Progress", count: 15 },
-        { status: "Todo", count: 6 },
-        { status: "On Hold", count: 2 }
-      ],
-      progressHistory: [
-        { week: "Week 1", progress: 5 },
-        { week: "Week 2", progress: 12 },
-        { week: "Week 3", progress: 28 },
-        { week: "Week 4", progress: 35 },
-        { week: "Week 5", progress: 48 },
-        { week: "Week 6", progress: 55 },
-        { week: "Week 7", progress: 67.5 }
-      ],
-      budget: { allocated: 50000, spent: 33750 },
-      milestones: [
-        { name: "Design Phase", status: "completed", date: "2024-02-15" },
-        { name: "Development Phase", status: "in-progress", date: "2024-04-30" },
-        { name: "Testing Phase", status: "pending", date: "2024-06-15" },
-        { name: "Launch", status: "pending", date: "2024-06-30" }
-      ]
-    };
-  }
-};
 
 export default function ProjectReport() {
   const params = useParams();
@@ -132,19 +88,19 @@ export default function ProjectReport() {
   useEffect(() => {
     fetchProjectById();
   }, []);
+  
   useEffect(() => {
-  if (report?.progressHistory) {
-    let lastVal = 0;
-    report.progressHistory.forEach(p => {
-      if (p.actual === 0 && lastVal > 0) {
-        p.actual = lastVal;
-      } else {
-        lastVal = p.actual;
-      }
-    });
-  }
-}, [report]);
-
+    if (report?.progressHistory) {
+      let lastVal = 0;
+      report.progressHistory.forEach(p => {
+        if (p.actual === 0 && lastVal > 0) {
+          p.actual = lastVal;
+        } else {
+          lastVal = p.actual;
+        }
+      });
+    }
+  }, [report]);
 
   const daysRemaining = useMemo(() => 
     calculateDaysRemaining(report.endDate), [report.endDate]
@@ -173,10 +129,10 @@ export default function ProjectReport() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{label}</p>
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+          <p className="font-medium text-gray-900 mb-1">{label}</p>
           {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }} className="tooltip-entry">
+            <p key={index} style={{ color: entry.color }} className="text-sm">
               {entry.name}: {entry.value} {entry.payload?.percentage && `(${entry.payload.percentage}%)`}
             </p>
           ))}
@@ -188,10 +144,10 @@ export default function ProjectReport() {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-content">
-          <RefreshCw className="loading-spinner" />
-          <p className="loading-text">Loading project report...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
+          <p className="text-gray-600 font-medium">Loading project report...</p>
         </div>
       </div>
     );
@@ -199,14 +155,14 @@ export default function ProjectReport() {
 
   if (error) {
     return (
-      <div className="error-container">
-        <div className="error-content">
-          <AlertCircle className="error-icon" />
-          <h3 className="error-title">Error Loading Report</h3>
-          <p className="error-message">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-red-200 max-w-sm text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Report</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={fetchProjectById}
-            className="error-retry-btn"
+            className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors"
           >
             Try Again
           </button>
@@ -216,75 +172,81 @@ export default function ProjectReport() {
   }
 
   return (
-    <div className="project-report-container">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <div className="report-header">
-        <div className="header-content">
-          <div className="header-left">
-            <div className="header-nav">
-              <h1 className="head-title" style={{"font-size":" 1.5rem",
-  "fontWeight": 700,
-  "color": "#111827",
-  "margin": 0
-}}>Project Dashboard</h1>
-              <div className="nav-tabs">
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold text-gray-900 m-0">Project Dashboard</h1>
+              {/* <div className="flex gap-2 mt-2">
                 {['overview', 'analytics', 'team'].map((view) => (
                   <button
                     key={view}
                     onClick={() => setActiveView(view)}
-                    className={`nav-tab ${activeView === view ? 'nav-tab-active' : ''}`}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                      activeView === view 
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     {view.charAt(0).toUpperCase() + view.slice(1)}
                   </button>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
-          <div className="header-actions">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setChartAnimations(!chartAnimations)}
-              className="action-btn"
+              className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100"
               title={chartAnimations ? "Disable animations" : "Enable animations"}
             >
-              {chartAnimations ? <Eye className="action-icon" /> : <EyeOff className="action-icon" />}
+              {chartAnimations ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
-            <button className="action-btn">
-              <Download className="action-icon" />
+            {/* <button className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100">
+              <Download className="w-4 h-4" />
             </button>
-            <button className="action-btn">
-              <Share2 className="action-icon" />
-            </button>
+            <button className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100">
+              <Share2 className="w-4 h-4" />
+            </button> */}
             <button 
               onClick={fetchProjectById}
-              className="action-btn"
+              className="p-2 text-gray-500 bg-transparent border-none rounded-lg cursor-pointer transition-all hover:text-gray-700 hover:bg-gray-100"
             >
-              <RefreshCw className={`action-icon ${loading ? 'spinning' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="report-content">
+      <div className="max-w-7xl mx-auto p-6">
         {/* Project Header Card */}
-        <div className="project-header-card">
-          <div className="project-header-main">
-            <div className="project-info">
-              <div className="project-title-row">
-                <h2 className="project-title">{report.name}</h2>
-                <span className={`project-status-badge status-${(report.projectStatus || 'draft').toLowerCase()}`}>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <h2 className="text-3xl font-bold text-gray-900">{report.name}</h2>
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                  (report.projectStatus || 'draft').toLowerCase() === 'active' ? 'bg-green-100 text-green-800' :
+                  (report.projectStatus || 'draft').toLowerCase() === 'completed' || 'complete' ? 'bg-blue-100 text-blue-800' :
+                  (report.projectStatus || 'draft').toLowerCase() === 'on-hold' || 'onhold' ? 'bg-yellow-100 text-yellow-800' :
+                  (report.projectStatus || 'draft').toLowerCase() === 'draft' ? 'bg-gray-100 text-gray-800' :
+                  'bg-purple-100 text-purple-800'
+                }`}>
                   {getStatusIcon(report.projectStatus)}
-                  <span className="status-text">{report.projectStatus}</span>
+                  <span className="capitalize">{report.projectStatus}</span>
                 </span>
               </div>
-              <p className="project-description">{report.description || "No description provided."}</p>
+              <p className="text-gray-600 text-lg leading-relaxed mb-4">{report.description || "No description provided."}</p>
               
               {daysRemaining !== null && (
-                <div className={`days-remaining ${
-                  daysRemaining > 30 ? 'days-safe' :
-                  daysRemaining > 7 ? 'days-warning' :
-                  'days-danger'
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium ${
+                  daysRemaining > 30 ? 'bg-green-100 text-green-800' :
+                  daysRemaining > 7 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
                 }`}>
-                  <Clock className="days-icon" />
+                  <Clock className="w-4 h-4" />
                   <span>
                     {daysRemaining > 0 ? `${daysRemaining} days remaining` :
                      daysRemaining === 0 ? 'Due today' : 
@@ -295,8 +257,8 @@ export default function ProjectReport() {
             </div>
             
             {/* Progress Ring */}
-            <div className="progress-ring-container">
-              <svg className="progress-ring" viewBox="0 0 36 36">
+            <div className="relative w-24 h-24">
+              <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
                 <path
                   d="m18,2.0845 a 15.9155,15.9155 0 0,1 0,31.831 a 15.9155,15.9155 0 0,1 0,-31.831"
                   fill="none"
@@ -309,77 +271,77 @@ export default function ProjectReport() {
                   stroke="#3b82f6"
                   strokeWidth="2"
                   strokeDasharray={`${progressValue}, 100`}
-                  className="progress-path"
+                  className="transition-all duration-1000 ease-out"
                 />
               </svg>
-              <div className="progress-text">
-                <span className="progress-percentage">{Math.round(progressValue)}%</span>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-lg font-bold text-gray-900">{Math.round(progressValue)}%</span>
               </div>
             </div>
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="stats-grid">
-            <div className="stat-card stat-blue">
-              <div className="stat-icon">
-                <Calendar className="icon" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
+                <Calendar className="w-4 h-4 text-blue-700" />
               </div>
-              <p className="stat-label">Start Date</p>
-              <p className="st-value">{formatDate(report.startDate)}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Start Date</p>
+              <p className="text-sm font-bold text-gray-900">{formatDate(report.startDate)}</p>
             </div>
-            <div className="stat-card stat-red">
-              <div className="stat-icon">
-                <Calendar className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mb-2">
+                <Calendar className="w-4 h-4 text-red-600" />
               </div>
-              <p className="stat-label">End Date</p>
-              <p className="st-value">{formatDate(report.endDate)}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">End Date</p>
+              <p className="text-sm font-bold text-gray-900">{formatDate(report.endDate)}</p>
             </div>
-            <div className="stat-card stat-orange">
-              <div className="stat-icon">
-                <Target className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mb-2">
+                <Target className="w-4 h-4 text-orange-600" />
               </div>
-              <p className="stat-label">Priority</p>
-              <p className="st-value">{report.priority}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Priority</p>
+              <p className="text-sm font-bold text-gray-900">{report.priority}</p>
             </div>
-            <div className="stat-card stat-green">
-              <div className="stat-icon">
-                <FileText className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2">
+                <FileText className="w-4 h-4 text-green-600" />
               </div>
-              <p className="stat-label">Files</p>
-              <p className="st-value">{report.numberOfFiles || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Files</p>
+              <p className="text-sm font-bold text-gray-900">{report.numberOfFiles || 0}</p>
             </div>
-            <div className="stat-card stat-purple">
-              <div className="stat-icon">
-                <Target className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
+                <Target className="w-4 h-4 text-purple-600" />
               </div>
-              <p className="stat-label">Tasks</p>
-              <p className="st-value">{report.numberOfTasks || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Tasks</p>
+              <p className="text-sm font-bold text-gray-900">{report.numberOfTasks || 0}</p>
             </div>
-            <div className="stat-card stat-indigo">
-              <div className="stat-icon">
-                <Users className="icon" />
+            <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mb-2">
+                <Users className="w-4 h-4 text-indigo-600" />
               </div>
-              <p className="stat-label">Team Size</p>
-              <p className="st-value">{report.numberOfTeamMembers || 0}</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Team Size</p>
+              <p className="text-sm font-bold text-gray-900">{report.numberOfTeamMembers || 0}</p>
             </div>
           </div>
         </div>
 
         {/* Charts Grid */}
-        <div className="charts-grid">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
           {/* Task Status Chart */}
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3 className="chart-title">Task Status Distribution</h3>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 m-0">Task Status Distribution</h3>
               <button
                 onClick={() => toggleDetails('tasks')}
-                className="details-toggle"
+                className="text-blue-600 bg-transparent border-none text-sm font-medium cursor-pointer transition-colors hover:text-blue-800"
               >
                 {showDetails.tasks ? 'Hide Details' : 'Show Details'}
               </button>
             </div>
             
-            <div className="chart-container">
+            <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -413,14 +375,14 @@ export default function ProjectReport() {
             </div>
 
             {showDetails.tasks && (
-              <div className="task-details">
+              <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-2">
                 {taskData.map((item, index) => (
-                  <div key={index} className="task-detail-item">
-                    <div className="task-detail-left">
-                      <div className="task-color-dot" style={{ backgroundColor: item.fill }}></div>
-                      <span className="task-name">{item.name}</span>
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }}></div>
+                      <span className="font-medium text-gray-900">{item.name}</span>
                     </div>
-                    <span className="task-count">{item.value} tasks ({item.percentage}%)</span>
+                    <span className="text-gray-600 text-sm">{item.value} tasks ({item.percentage}%)</span>
                   </div>
                 ))}
               </div>
@@ -428,44 +390,43 @@ export default function ProjectReport() {
           </div>
 
           {/* Progress History Chart */}
-         {/* // Alternative: Area Chart implementation */}
-<div className="chart-card">
-    <h3 className="chart-title">Progress Timeline - Actual vs Planned</h3>
-    <div className="chart-container">
-        <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={report.progressHistory || []}>
-                <defs>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">Progress Timeline - Actual vs Planned</h3>
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={report.progressHistory || []}>
+                  <defs>
                     <linearGradient id="plannedGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
                     </linearGradient>
                     <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
+                      <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
                     </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis 
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis 
                     dataKey="week" 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#64748b' }}
-                />
-                <YAxis 
+                  />
+                  <YAxis 
                     domain={[0, 100]}
                     axisLine={false}
                     tickLine={false}
                     tick={{ fontSize: 12, fill: '#64748b' }}
                     tickFormatter={(value) => `${value}%`}
-                />
-                <Tooltip 
+                  />
+                  <Tooltip 
                     formatter={(value, name) => [`${value}%`, name === 'actual' ? 'Actual Progress' : 'Planned Progress']}
                     labelFormatter={(label) => `Week: ${label}`}
-                />
-                <Legend 
+                  />
+                  <Legend 
                     formatter={(value) => value === 'actual' ? 'Actual Progress' : 'Planned Progress'}
-                />
-                <Area
+                  />
+                  <Area
                     type="monotone"
                     dataKey="planned"
                     stroke="#8884d8"
@@ -474,8 +435,8 @@ export default function ProjectReport() {
                     strokeDasharray="5 5"
                     name="planned"
                     animationDuration={chartAnimations ? 1000 : 0}
-                />
-                <Area
+                  />
+                  <Area
                     type="monotone"
                     dataKey="actual"
                     stroke="#82ca9d"
@@ -483,19 +444,19 @@ export default function ProjectReport() {
                     strokeWidth={3}
                     name="actual"
                     animationDuration={chartAnimations ? 1000 : 0}
-                />
-            </AreaChart>
-        </ResponsiveContainer>
-    </div>
-</div>
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
 
         {/* Team & Budget Overview */}
-        <div className="bottom-grid">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Team Statistics */}
-          <div className="chart-card">
-            <h3 className="chart-title">Team Overview</h3>
-            <div className="chart-container team-chart">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">Team Overview</h3>
+            <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={teamData} margin={{ left: 20, right: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -522,10 +483,10 @@ export default function ProjectReport() {
               </ResponsiveContainer>
             </div>
             
-            <div className="team-utilization">
-              <div className="utilization-row">
-                <span className="utilization-label">Team Utilization</span>
-                <span className="utilization-value">
+            <div className="mt-4 p-4 bg-green-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-green-800 font-medium">Team Utilization</span>
+                <span className="text-green-900 font-bold">
                   {Math.round(((report.numberOfUniqueAssignees || 0) / (report.numberOfTeamMembers || 1)) * 100)}%
                 </span>
               </div>
@@ -533,58 +494,60 @@ export default function ProjectReport() {
           </div>
 
           {/* Budget Overview */}
-          <div className="chart-card">
-            <h3 className="chart-title">Budget Status</h3>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">Budget Status</h3>
             {report.budget ? (
-              <div className="budget-content">
-                <div className="budget-row">
-                  <span className="budget-label">Allocated Budget</span>
-                  <span className="budget-allocated">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Allocated Budget</span>
+                  <span className="text-2xl font-bold text-gray-900">
                     ${report.budget.toLocaleString()}
                   </span>
                 </div>
-                <div className="budget-row">
-                  <span className="budget-label">Spent</span>
-                  <span className="budget-spent">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Spent</span>
+                  <span className="text-xl font-semibold text-blue-600">
                     ${report.budget.spent?.toLocaleString()}
                   </span>
                 </div>
-                <div className="budget-progress-bar">
+                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                   <div 
-                    className="budget-progress-fill"
-                    style={{ 
-                      width: `${Math.min((report.budget.spent / report.budget.allocated) * 100, 100)}%` 
-                    }}
+                    className="bg-blue-600 h-3 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${Math.min((report.budget.spent / report.budget.allocated) * 100, 100)}%` }}
                   ></div>
                 </div>
-                <div className="budget-summary">
-                  <span className="budget-used">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">
                     {Math.round((0 / report.budget) * 100)}% used
                   </span>
-                  <span className="budget-remaining">
+                  <span className="text-green-600 font-medium">
                     ${(report.budget - 0).toLocaleString()} remaining
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="no-budget">
-                <TrendingUp className="no-budget-icon" />
+              <div className="text-center text-gray-500 py-8">
+                <TrendingUp className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>Budget information not available</p>
               </div>
             )}
             
             {/* Milestones */}
             {report.milestones && (
-              <div className="milestones-section">
-                <h4 className="milestones-title">Project Milestones</h4>
-                <div className="milestones-list">
+              <div className="mt-8 pt-6 border-t border-gray-100">
+                <h4 className="font-semibold text-gray-900 mb-4">Project Milestones</h4>
+                <div className="flex flex-col gap-2">
                   {report.milestones.map((milestone, index) => (
-                    <div key={index} className={`milestone-item milestone-${milestone.status}`}>
-                      <div className="milestone-left">
+                    <div key={index} className={`flex items-center justify-between p-3 rounded-lg ${
+                      milestone.status === 'completed' ? 'bg-green-50' :
+                      milestone.status === 'in-progress' ? 'bg-blue-50' :
+                      'bg-gray-50'
+                    }`}>
+                      <div className="flex items-center gap-2">
                         {getStatusIcon(milestone.status)}
-                        <span className="milestone-name">{milestone.name}</span>
+                        <span className="font-medium">{milestone.name}</span>
                       </div>
-                      <span className="milestone-date">
+                      <span className="text-sm text-gray-600">
                         {formatDate(milestone.date)}
                       </span>
                     </div>

@@ -12,6 +12,7 @@
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tailwindcss/vite": "^4.1.16",
     "install": "^0.13.0",
     "lucide-react": "^0.541.0",
     "npm": "^11.6.0",
@@ -23,7 +24,8 @@
     "react-select": "^5.10.2",
     "recharts": "^3.1.2",
     "redux": "^5.0.1",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "tailwindcss": "^4.1.16"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

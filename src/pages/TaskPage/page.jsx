@@ -1,7 +1,6 @@
 import { AlertCircle, CheckCircle2, Circle, Clock, MoreHorizontal, Plus, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import TaskCard from "../../components/Cards/TaskCard/TaskCard";
-import './page.css';
 import { useParams } from "react-router-dom";
 import TaskModal from "../../modals/TaskModal";
 import ApiServices from "../../ApiService/ApiService";
@@ -22,16 +21,24 @@ const KanbanColumn = ({ title, tasks, color }) => {
   };
 
   return (
-    <div className="kanban-column-header">
-      <div className="column-title-section">
-        <div className="column-icon" style={{ color }}>
-          {getColumnIcon(title)}
-        </div>
-        <h3 className="column-title">{title}</h3>
-        <span className="task-count">{tasks.length}</span>
-        <div style={{ marginLeft: 'auto' }} className="column-actions">
-          <button className="column-action-btn"><Plus size={14} /></button>
-          <button className="column-action-btn"><MoreHorizontal size={14} /></button>
+    <div className="flex flex-col mb-4">
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <div style={{ color }} className="transition-colors duration-200">
+            {getColumnIcon(title)}
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 m-0">{title}</h3>
+          <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-xl text-xs font-semibold min-w-6 text-center">
+            {tasks.length}
+          </span>
+          <div className="flex gap-1 ml-auto">
+            <button className="w-8 h-8 border-none bg-transparent rounded-lg flex items-center justify-center cursor-pointer transition-colors duration-200 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+              <Plus size={14} />
+            </button>
+            <button className="w-8 h-8 border-none bg-transparent rounded-lg flex items-center justify-center cursor-pointer transition-colors duration-200 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+              <MoreHorizontal size={14} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -42,42 +49,28 @@ const TasksPage = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const { SubTasks } = useSelector((state) => state.Task);
-  const {user}=useSelector((state)=>state.User)
-   const role =  user.role
-  const [loadingColumn, setLoadingColumn] = useState(null)
-  const fetchEmployeeSubTask=async()=>{
-    try {
-      const response=await ApiServices.getEmployeeSubTasksByTaskId(params.id)
-      console.log("hi",response);
-      dispatch(setSubTasks(response.subtasks))
-      
-     
-    } catch (error) {
-      dispatch(setError(error.message))
-      
-      
-    }
-  }
-  // const fetchManagerSubTasks=async()=>{
-  //     const response=await ApiServices.getSubTaskByTaskid(TaskId)
-  //     console.log("hi2",response);
-  //     dispatch(setSubTasks(response))
-      
-  // }
-  useEffect(()=>{
-    if(role==='manager'){
-    dispatch(fetchSubTasksBytaskId(params.id))
-    }
-    else{
-      fetchEmployeeSubTask()
-      
-      
-    }
-  },[dispatch,params.id])
-  // Dummy role (yeh tum login user se le sakte ho)
- 
+  const { user } = useSelector((state) => state.User);
+  const role = user.role;
+  const [loadingColumn, setLoadingColumn] = useState(null);
 
-  // Status mapping
+  const fetchEmployeeSubTask = async () => {
+    try {
+      const response = await ApiServices.getEmployeeSubTasksByTaskId(params.id);
+      console.log("hi", response);
+      dispatch(setSubTasks(response.subtasks));
+    } catch (error) {
+      dispatch(setError(error.message));
+    }
+  };
+
+  useEffect(() => {
+    if (role === 'manager') {
+      dispatch(fetchSubTasksBytaskId(params.id));
+    } else {
+      fetchEmployeeSubTask();
+    }
+  }, [dispatch, params.id]);
+
   const statusMap = {
     "To Do": "todo",
     "In Progress": "in-progress",
@@ -96,15 +89,13 @@ const TasksPage = () => {
     };
   };
 
-
-console.log("subtasks",SubTasks);
+  console.log("subtasks", SubTasks);
 
   const tasks = SubTasks || [];
-  console.log("tasks",tasks);
-  
+  console.log("tasks", tasks);
+
   const groupedTasks = groupTasksByStatus(tasks);
 
-  // Role based columns
   const availableColumns = role === "manager"
     ? {
         "To Do": { color: "#6b7280", tasks: groupedTasks["To Do"] || [] },
@@ -119,25 +110,27 @@ console.log("subtasks",SubTasks);
       };
 
   const [boardData, setBoardData] = useState(availableColumns);
-      useEffect(() => {
-  setBoardData(availableColumns);
-}, [SubTasks, params.id]);
+  
+  useEffect(() => {
+    setBoardData(availableColumns);
+  }, [SubTasks, params.id]);
+
   const handleDragEnd = async (result) => {
     const { source, destination } = result;
     if (!destination) return;
- // ✅ Same column + same index => do nothing
-  if (
-    source.droppableId === destination.droppableId &&
-    source.index === destination.index
-  ) {
-    return;
-  }
+    
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
     const sourceCol = boardData[source.droppableId];
     const destCol = boardData[destination.droppableId];
 
     if (!sourceCol || !destCol) return;
 
-    // Employee restriction: can't move to Completed
     if (role === "employee" && destination.droppableId === "Completed") {
       alert("Employees cannot directly mark tasks as Completed!");
       return;
@@ -157,67 +150,59 @@ console.log("subtasks",SubTasks);
       [destination.droppableId]: { ...destCol, tasks: destTasks },
     }));
 
- try {
-  setLoadingColumn(destination.droppableId);
-   // start loading
+    try {
+      setLoadingColumn(destination.droppableId);
 
-  if (role !== 'manager') {
-      const res= await ApiServices.updateEmployeeSubTaskStatusById({
-      Id: updatedTask._id,
-      status: updatedTask.status,
-    });
-    console.log(res,"eeeeeeeeeeee");
-    
-    console.log(res.UpdatedData);
-    dispatch(fetchSubTasksBytaskId(params.id))
-    setBoardData(availableColumns)
-    return
- 
-    // dispatch(setSubTasks(res.UpdatedData))
-  } else {
-     const res=  await ApiServices.updateManagerSubTaskStatusById({
-      Id: updatedTask._id,
-      status: updatedTask.status,
-    });
-      console.log(res.UpdatedData);
-      dispatch(fetchSubTasksBytaskId(params.id))
-      setBoardData(availableColumns)
-      return
- 
-  // dispatch(setSubTasks(res.UpdatedData))
-  }
-  
-
-
-} catch (error) {
-  alert(error.message);
-} finally {
-  setLoadingColumn(null); // stop loading
-}
+      if (role !== 'manager') {
+        const res = await ApiServices.updateEmployeeSubTaskStatusById({
+          Id: updatedTask._id,
+          status: updatedTask.status,
+        });
+        console.log(res, "eeeeeeeeeeee");
+        console.log(res.UpdatedData);
+        dispatch(fetchSubTasksBytaskId(params.id));
+        setBoardData(availableColumns);
+        return;
+      } else {
+        const res = await ApiServices.updateManagerSubTaskStatusById({
+          Id: updatedTask._id,
+          status: updatedTask.status,
+        });
+        console.log(res.UpdatedData);
+        dispatch(fetchSubTasksBytaskId(params.id));
+        setBoardData(availableColumns);
+        return;
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoadingColumn(null);
+    }
   };
 
   return (
-    <div className="tasks-page" >
-   
-    
+    <div className="p-8   overflow-x-auto">
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="kanban-board">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-6 items-start">
           {Object.entries(boardData).map(([columnTitle, { color, tasks }]) => (
             <Droppable key={columnTitle} droppableId={columnTitle}>
               {(provided, snapshot) => (
                 <div
-                  className="kanban-column"
+                  className="bg-white/95 backdrop-blur-xl rounded-2xl p-5 shadow-md min-h-[600px] transition-all duration-200 hover:shadow-lg relative"
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  style={{position:'relative'}}
                 >
                   <KanbanColumn title={columnTitle} tasks={tasks} color={color} />
-                  {loadingColumn==columnTitle &&(
-                    <div className="column-overlay">
-            <div className="spinner"></div>
-          </div>
+                  
+                  {loadingColumn === columnTitle && (
+                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-20 rounded-2xl">
+                      <div className="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                    </div>
                   )}
-                  <div className={`tasks-container ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}>
+                  
+                  <div className={`flex flex-col gap-4 flex-1 overflow-y-auto ${
+                    snapshot.isDraggingOver ? 'bg-gray-200' : ''
+                  }`}>
                     {tasks.map((task, index) => {
                       const idForDraggable = `${columnTitle}::${task._id}`;
                       return (
