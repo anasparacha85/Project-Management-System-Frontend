@@ -311,14 +311,14 @@ export default function ProjectReport() {
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2">
                 <FileText className="w-4 h-4 text-green-600" />
               </div>
-              <p className="text-xs text-gray-600 font-medium mb-1">Files</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Attachments</p>
               <p className="text-sm font-bold text-gray-900">{report.numberOfFiles || 0}</p>
             </div>
             <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
                 <Target className="w-4 h-4 text-purple-600" />
               </div>
-              <p className="text-xs text-gray-600 font-medium mb-1">Tasks</p>
+              <p className="text-xs text-gray-600 font-medium mb-1">Milestones</p>
               <p className="text-sm font-bold text-gray-900">{report.numberOfTasks || 0}</p>
             </div>
             <div className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 transition-all hover:shadow-md hover:-translate-y-0.5">

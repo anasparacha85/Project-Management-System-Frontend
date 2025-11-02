@@ -296,7 +296,7 @@ const MilestonesChecklists = () => {
       </div>
 
       {/* Stats Dashboard */}
-      <div className="max-w-[1600px] mx-auto mb-6">
+      {/* <div className="max-w-[1600px] mx-auto mb-6">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-2">
@@ -348,7 +348,7 @@ const MilestonesChecklists = () => {
             <p className="text-xs font-semibold uppercase opacity-90">Avg Progress</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Filter Bar */}
       <div className="max-w-[1600px] mx-auto mb-6">

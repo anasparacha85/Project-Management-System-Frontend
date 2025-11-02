@@ -520,7 +520,7 @@ const TaskDetailPage = () => {
             <span>/</span>
             <span>{taskDetails.project || 'Project'}</span>
             <span>/</span>
-            <span className="text-gray-700 font-medium">Task Details</span>
+            <span className="text-gray-700 font-medium">Milestone Details</span>
           </div>
           
           <div className="flex items-start justify-between gap-4 mb-6">

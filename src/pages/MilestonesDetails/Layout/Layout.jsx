@@ -41,12 +41,12 @@ const MileStoneLayout = () => {
     },
     {
       path: `/dashboard/milestone/${params.id}/team`,
-      label: "assignees",
+      label: "Assignees",
       icon: <Group size={16} />,
     },
      {
       path: `/dashboard/milestone/${params.id}/analytics`,
-      label: "analytics",
+      label: "Analytics",
       icon: <AlignVerticalDistributeEnd size={16} />,
     },
      {
@@ -54,52 +54,81 @@ const MileStoneLayout = () => {
       label: "CheckPoints",
       icon: <MilestoneIcon size={16} />,
     },
+    
   ];
 
   return (
-    <div className="p-8 max-w-[1400px] mx-auto">
+    <div className="min-h-screen  mr-3 mt-2">
         <SubTaskModal parentTask={taskDetails}  />
        
-      {/* Page Controls */}
-      <div className="flex justify-between items-center mb-8 p-5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-md">
-        <div className="flex items-center gap-6">
-          <div className="flex bg-gray-100 rounded-xl p-1 gap-[9px]">
-          {navigations.map((value,index)=>(
-             <NavLink  
-               to={value.path} 
-               className={({isActive}) => `flex items-center gap-2 px-4 py-2 border-none bg-transparent rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 text-gray-600 no-underline ${
-                 isActive ? 'bg-white text-gray-900 shadow-sm' : ''
-               }`}
-             >
-               {value.icon}
-              <span>{value.label}</span>
-            </NavLink> 
-          ))}
+      {/* Header Section with Milestone Details */}
+      <div className=" ">
+        <div className="max-w-[1400px] mx-auto px-3 py-6">
+          {/* Top Bar - Back Button & Actions */}
+          <div className="flex justify-between items-center mb-6">
+            <button 
+              onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} 
+              className="flex items-center gap-2 px-4 py-2 text-gray-200 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 border-none bg-transparent cursor-pointer"
+            >
+              <ArrowLeft className="" size={18} />
+              <span className="text-sm font-medium ">Back to Project</span>
+            </button>
+
+            {role==="manager" && (
+              <button 
+                onClick={()=>dispatch(setSubTaskModalOpen(true))}   
+                className="flex items-center gap-2 px-5 py-2.5 border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 text-gray-800 bg-gradient-to-r from-white to-gray-50 hover:shadow-lg hover:shadow-purple-500/30 hover:-translate-y-0.5"
+              >
+                <Plus size={18} />
+                <span>Add Checkpoint</span>
+              </button>
+            )}
           </div>
-        </div>
-        <div className="flex gap-3">
-          {role==="manager" &&
-          <>
-             <button 
-               onClick={()=>dispatch(setSubTaskModalOpen(true))}   
-               className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap text-white bg-gradient-to-br from-[#667eea] to-[#764ba2] hover:shadow-lg hover:-translate-y-0.5"
-             >
-               <Plus size={16} />
-               <span>Add task to Your Checklists</span>
-             </button>
-          </>}
-           <button 
-             onClick={()=>navigate(`/dashboard/project/${taskDetails.project}`)} 
-             className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap text-white bg-gradient-to-br from-[#667eea] to-[#764ba2] hover:shadow-lg hover:-translate-y-0.5"
-           >
-             <ArrowLeft size={16} />
-             <span>Back to Project</span>
-           </button>
+
+          {/* Milestone Title & Description */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-50 to-gray-300 flex items-center justify-center shadow-md">
+                <MilestoneIcon size={20} className="text-purple-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-200 m-0">
+                Milestone Details
+              </h1>
+            </div>
+            {taskDetails?.description && (
+              <p className="text-gray-300 text-base leading-relaxed ml-[52px] max-w-3xl">
+         {user.role=='manager'&&"Manage you Milestone Add checkpoints track progress and assignees"}     
+              </p>
+            )}
+          </div>
+
+         {/* Navigation Tabs */}
+<div className="flex items-center  bg-white  border border-gray-200 rounded-2xl  shadow-sm">
+  {navigations.map((value, index) => (
+    <NavLink
+      key={index}
+      to={value.path}
+      end
+      className={({ isActive }) => `
+        flex items-center ${index===0 &&'rounded-l-2xl'} ${index===navigations.length-1&&'rounded-r-2xl'} justify-center py-6 w-[100%] gap-2 px-5 py-3 text-sm font-medium  transition-all duration-300 ease-in-out
+        ${
+          isActive
+            ? 'bg-gradient-to-r from-purple-400 to-indigo-700 text-white shadow-md scale-[1.03]'
+            : 'text-gray-600 hover:text-gray-900 bg-gradient-to-r from-gray-50 to-gray-300 hover:bg-gray-100'
+        }
+      `}
+    >
+      <span className="text-lg">{value.icon}</span>
+      <span>{value.label}</span>
+    </NavLink>
+  ))}
+</div>
+
         </div>
       </div>
 
-      {/* Ye jaga alag-alag page show karega */}
-      <div className="page-body">
+      {/* Content Area */}
+      <div className="max-w-[1400px] mx-auto px-3 py-0">
         <Outlet />
       </div>
     </div>
