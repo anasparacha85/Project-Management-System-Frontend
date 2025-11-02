@@ -6,7 +6,8 @@ import ApiServices from "../ApiService/ApiService";
 import { FetchProjectDetailsById } from "../Slices/ProjectSlice";
 import { AlertCircle, Plus, Check, Circle, Trash2, ChevronDown, ChevronRight, Eye, Calendar, Users, Flag, Target, MessageSquare, Save, Edit2, Loader } from "lucide-react";
 import { setSubTaskModalOpen } from "../Slices/UiSlice";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 const AssigneesSelector = ({ assignees, team, onUpdate, userRole }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [search, setSearch] = useState("");
@@ -80,7 +81,10 @@ const AssigneesSelector = ({ assignees, team, onUpdate, userRole }) => {
           {filteredUsers.length > 0 ? (
             <div className="space-y-1">
               {filteredUsers.map((user) => {
-                const isChecked = !!assignees.find((a) => a.user?._id === user?.user?._id);
+                console.log("===========",user)
+                  console.log("+++++++++++",assignees)
+               const isChecked = !!assignees.find((a) => a.user?._id === user?.user?._id );
+
                 return (
                   <div
                     key={user?.user?._id}
@@ -114,7 +118,6 @@ const AssigneesSelector = ({ assignees, team, onUpdate, userRole }) => {
     </div>
   );
 };
-
 const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -123,6 +126,7 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
   const completedCount = subtasks.filter(st => st.status === 'completed').length;
   const totalCount = subtasks.length;
   const completionPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const percentagePerTask = totalCount > 0 ? Math.round((100 / totalCount) * 10) / 10 : 0;
 
   const handleAddChecklist = () => {
     dispatch(setSubTaskModalOpen(true));
@@ -146,7 +150,7 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
           ) : (
             <ChevronRight className="w-5 h-5 text-gray-500" />
           )}
-          <h3 className="text-lg font-semibold text-gray-900">CheckList</h3>
+          <h3 className="text-lg font-semibold text-gray-900">CheckPoints</h3>
           <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">
             {completedCount}/{totalCount}
           </span>
@@ -166,61 +170,75 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
 
       {isExpanded && (
         <div>
-          <div className="p-5 space-y-2">
+          <div className="p-5 space-y-3">
             {subtasks.length > 0 ? (
               subtasks.map((item) => (
                 <div
                   key={item._id}
-                  className="group flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-200"
+                  className="group bg-white rounded-lg border border-gray-200 p-4 hover:border-indigo-300 hover:shadow-sm transition-all"
                 >
-                  <button
-                    onClick={() => handleToggleComplete(item._id)}
-                    className="flex-shrink-0"
-                  >
-                   {item.status === 'completed' ? (
-  <div className="w-5 h-5 bg-green-500 rounded-md flex items-center justify-center shadow-sm">
-    <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
-  </div>
-) : item.status === 'in-progress' ? (
-  <div className="w-5 h-5 bg-orange-500 rounded-md flex items-center justify-center animate-spin">
-    <Loader className="w-3.5 h-3.5 text-white stroke-[3]" />
-  </div>
-) : item.status === 'review' ? (
-  <div className="w-5 h-5 bg-blue-500 rounded-md flex items-center justify-center shadow-sm">
-    <Eye className="w-3.5 h-3.5 text-white stroke-[3]" />
-  </div>
-) : (
-  <div className="w-5 h-5 border-2 border-gray-300 rounded-md hover:border-indigo-500 transition-colors flex items-center justify-center">
-    <Circle className="w-3 h-3 text-gray-400" />
-  </div>
-)}
-
-                  </button>
-
-                  <span
-                    className={`flex-1 text-sm ${
-                      item.status === 'completed' 
-                        ? 'text-gray-400 line-through' 
-                        : 'text-gray-700 font-medium'
-                    }`}
-                  >
-                    {item.title}
-                  </span>
-
-                  {userRole === "manager" && (
+                  <div className="flex items-center gap-3 mb-3">
                     <button
-                      onClick={() => navigate(`/dashboard/subtask/${item._id}`)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-indigo-50 rounded-lg text-indigo-600"
+                      onClick={() => handleToggleComplete(item._id)}
+                      className="flex-shrink-0"
                     >
-                      <Eye className="w-4 h-4" />
+                      {item.status === 'completed' ? (
+                        <div className="w-5 h-5 bg-green-500 rounded-md flex items-center justify-center shadow-sm">
+                          <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
+                        </div>
+                      ) : item.status === 'in-progress' ? (
+                        <div className="w-5 h-5 bg-orange-500 rounded-md flex items-center justify-center">
+                          <Loader className="w-3.5 h-3.5 text-white stroke-[3]" />
+                        </div>
+                      ) : item.status === 'review' ? (
+                        <div className="w-5 h-5 bg-blue-500 rounded-md flex items-center justify-center shadow-sm">
+                          <Eye className="w-3.5 h-3.5 text-white stroke-[3]" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 border-2 border-gray-300 rounded-md hover:border-indigo-500 transition-colors flex items-center justify-center">
+                          <Circle className="w-3 h-3 text-gray-400" />
+                        </div>
+                      )}
                     </button>
-                  )}
+
+                    <span
+                      className={`flex-1 text-sm ${
+                        item.status === 'completed' 
+                          ? 'text-gray-400 line-through' 
+                          : 'text-gray-900 font-medium'
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+
+                    {userRole === "manager" && (
+                      <button
+                        onClick={() => navigate(`/dashboard/subtask/${item._id}`)}
+                        className="opacity-0 cursor-pointer group-hover:opacity-100 transition-opacity p-2 hover:bg-indigo-50 rounded-lg text-indigo-600"
+                      >
+                        <Eye className="w-5  h-5" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 pl-8">
+                    <div className="flex-1 bg-indigo-50 rounded-lg px-3 py-2 border border-indigo-100">
+                      <div className="flex items-center  gap-2 text-xs">
+                        <span className="text-gray-600 font-medium">Contains </span>
+                        <div className="flex items-center gap-1.5">
+                          <Target className="w-3.5 h-3.5 text-indigo-600" />
+                          <span className="text-indigo-700 font-bold">{percentagePerTask}%</span>
+                        </div>
+                        <span className="text-gray-600 font-medium">of the milestone </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
               <div className="text-center py-12">
                 <Circle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No subtasks yet</p>
+                <p className="text-sm text-gray-500">No checkpoints yet</p>
                 <p className="text-xs text-gray-400 mt-1">Break down this task into smaller steps</p>
               </div>
             )}
@@ -230,10 +248,10 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
             <div className="p-4 flex justify-end bg-gray-50 border-t border-gray-200">
               <button
                 onClick={handleAddChecklist}
-                className="w-[50%] px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="w-[50%] px-4 py-2.5 bg-indigo-600 cursor-pointer text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <Plus className="w-4 h-4" />
-                Add More Tasks to Your Checklists
+             {subtasks.length>0?"Add More checkpoints to Your milestone ":"Add your first checkpoint"}   
               </button>
             </div>
           )}
@@ -242,7 +260,6 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
     </div>
   );
 };
-
 const InfoCard = ({ icon: Icon, label, value, type = "text", editing, onEdit, onChange, onSave, options = [], disabled }) => {
   const getPriorityStyle = (priority) => {
     switch (priority) {
@@ -343,7 +360,7 @@ const TaskDetailPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useDispatch();
-  
+  const [IsLoading, setIsLoading] = useState(false)
   const { taskDetails, loading, error } = useSelector((state) => state.Task);
   const { team } = useSelector((state) => state.Project);
   const { user } = useSelector((state) => state.User);
@@ -402,6 +419,7 @@ const TaskDetailPage = () => {
 
   const handleSaveTask = async () => {
     try {
+      setIsLoading(true)
       const payload = {
         ...taskDetails,
         ...(taskDetails.startDate ? { startDate: taskDetails.startDate } : {}),
@@ -417,6 +435,9 @@ const TaskDetailPage = () => {
       dispatch(fetchTasksById(params.id));
     } catch (error) {
       alert(error.message);
+    }
+    finally{
+      setIsLoading(false)
     }
   };
 
@@ -609,28 +630,49 @@ const TaskDetailPage = () => {
               />
             </div>
 
-            {/* Description */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Description</h2>
-                <button
-                  onClick={() => descriptionRef.current.disabled = false}
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  Edit
-                </button>
-              </div>
-              <textarea
-                ref={descriptionRef}
-                disabled={true}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm text-gray-700 disabled:cursor-not-allowed"
-                value={taskDetails.description || ""}
-                onChange={(e) => dispatch(setTaskDetails({ ...taskDetails, description: e.target.value }))}
-                rows="6"
-                placeholder="Add a description for this task..."
-              />
-            </div>
+           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-xl font-semibold text-gray-900">Description</h2>
+    <button
+      onClick={() =>
+        setEditingFields((prev) => ({
+          ...prev,
+          description: !prev.description,
+        }))
+      }
+      className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
+    >
+      <Edit2 className="w-3.5 h-3.5" />
+      {editingFields.description ? "Save" : "Edit"}
+    </button>
+  </div>
+
+  {editingFields.description ? (
+    <ReactQuill
+      theme="snow"
+      value={taskDetails.description || ""}
+      onChange={(value) =>
+        dispatch(setTaskDetails({ ...taskDetails, description: value }))
+      }
+      className="bg-white rounded-lg border border-gray-200"
+      modules={{
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["link", "image"],
+          ["clean"],
+        ],
+      }}
+    />
+  ) : (
+    <div
+      className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-lg border border-gray-200"
+      dangerouslySetInnerHTML={{ __html: taskDetails.description || "<p>No description added.</p>" }}
+    />
+  )}
+</div>
+
 
           
           </div>
@@ -760,11 +802,14 @@ const TaskDetailPage = () => {
              <div className="flex gap-2  flex-col mt-10">
               <button
                 onClick={handleSaveTask}
-                className="px-5 py-2.5 bg-green-600 text-white rounded-lg text-center font-medium hover:bg-green-700 transition-all shadow-sm hover:shadow-md flex justify-center items-center gap-2"
+                disabled={IsLoading?true:false}
+                className={`px-5 py-2.5 bg-green-600  text-white rounded-lg ${IsLoading?"cursor-not-allowed":"cursor-pointer"} text-center font-medium hover:bg-green-700 transition-all shadow-sm hover:shadow-md flex justify-center items-center gap-2`}
               >
             
                   <Save className="w-4 h-4" />
-                Save
+               
+                {IsLoading?"Saving changes....":" Save changes"}
+
               
               
               </button>

@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
 import { fetchSubTaskById, setSubTaskDetails } from "../../Slices/SubTaskSlice";
 import { ArrowLeft } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const AssigneesSelector = ({ allUsers, taskData, setTaskData }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -248,7 +250,7 @@ const SubTaskDetailPage = () => {
   const params = useParams();
   const { user } = useSelector((state) => state.User);
   const role = user.role;
-  
+  const [IsLoading, setIsLoading] = useState(false)
   const { SubTaskDetails, SubTaskLoading, SubTaskError } = useSelector((state) => state.SubTask);
   const { taskDetails } = useSelector((state) => state.Task);
   const team = taskDetails.assignees;
@@ -318,6 +320,7 @@ const SubTaskDetailPage = () => {
 
   const handleSaveSubTask = async () => {
     try {
+      setIsLoading(true)
       const payload = {
         ...subTaskData,
         ...(subTaskData.startDate ? { startDate: subTaskData.startDate } : {}),
@@ -325,14 +328,19 @@ const SubTaskDetailPage = () => {
       };
       if (role === 'manager') {
         const data = await ApiServices.updateManagerSubTaskById(params.id, payload);
-        alert(data.SuccessMessage);
+        // alert(data.SuccessMessage);
+        alert("checkpoint updated successfully")
       } else {
         const data = await ApiServices.updateEmployeeSubTaskById(params.id, payload);
-        alert(data.SuccessMessage);
+       // alert(data.SuccessMessage);
+          alert("checkpoint updated successfully")
       }
       fetchSubTask();
     } catch (error) {
       alert(error.message);
+    }
+    finally{
+      setIsLoading(false)
     }
   };
 
@@ -499,24 +507,58 @@ const SubTaskDetailPage = () => {
           />
         </div>
 
-        <div className="my-8 p-6 bg-white border border-gray-200 rounded-xl">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-semibold text-gray-700">Description</span>
-            <textarea
-              ref={descriptionRef}
-              disabled={true}
-              className="bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-24 whitespace-pre-wrap leading-relaxed"
-              value={subTaskData.description || ""}
-              onChange={(e) => handleUpdateField("description", e.target.value)}
-            />
-            <button 
-              onClick={() => descriptionRef.current.disabled = false} 
-              className="bg-purple-600 text-white border-none px-4 py-2 rounded-lg cursor-pointer font-semibold transition-all hover:bg-purple-700 hover:-translate-y-0.5 self-start"
-            >
-              Edit Description
-            </button>
-          </div>
-        </div>
+    <div className="my-8 p-6 bg-white border border-gray-200 rounded-xl">
+  <div className="flex flex-col gap-2">
+    <span className="text-sm font-semibold text-gray-700">Description</span>
+
+    {!subTaskData.isEditingDescription ? (
+      <div
+        className="p-4 rounded-lg  min-h-24 leading-relaxed prose max-w-none  cursor-pointer"
+        onClick={() =>
+          setSubTaskData((prev) => ({ ...prev, isEditingDescription: true }))
+        }
+        dangerouslySetInnerHTML={{
+          __html: subTaskData.description || "Click to add a description...",
+        }}
+      />
+    ) : (
+      <ReactQuill
+        theme="snow"
+        value={subTaskData.description || ""}
+        onChange={(value) => handleUpdateField("description", value)}
+        className="min-h-40 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-3 focus:ring-purple-100"
+      />
+    )}
+
+    {subTaskData.isEditingDescription && (
+      <div className="flex gap-3 mt-3">
+        <button
+          onClick={() => {
+            setSubTaskData((prev) => ({
+              ...prev,
+              isEditingDescription: false,
+            }));
+          }}
+          className="bg-green-600 text-white border-none px-4 py-2 rounded-lg cursor-pointer font-semibold transition-all hover:bg-green-700 hover:-translate-y-0.5"
+        >
+          Save
+        </button>
+        <button
+          onClick={() =>
+            setSubTaskData((prev) => ({
+              ...prev,
+              isEditingDescription: false,
+              description: subTaskData.description, // reset to original
+            }))
+          }
+          className="bg-gray-100 text-gray-600 border border-gray-300 px-4 py-2 rounded-lg cursor-pointer font-semibold transition-all hover:bg-gray-200 hover:-translate-y-0.5"
+        >
+          Cancel
+        </button>
+      </div>
+    )}
+  </div>
+</div>
 
         <div className="flex gap-0 mt-10 border-b-2 border-gray-200 bg-white rounded-t-xl px-6">
           <button 
@@ -651,8 +693,8 @@ const SubTaskDetailPage = () => {
         </div>
 
         <div className="p-6 border-t border-gray-200 flex flex-col gap-3">
-          <button onClick={handleSaveSubTask} className="bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-3 border-none rounded-lg cursor-pointer font-semibold text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-green-200">
-            Save Changes
+          <button disabled={IsLoading?true:false} onClick={handleSaveSubTask} className={`bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-3 border-none rounded-lg cursor-pointer font-semibold text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-green-200 ${IsLoading&&'cursor-not-allowed '}`}>
+         {IsLoading?"Saving Changes...":"Save Changes"}   
           </button>
           <button onClick={handleDeleteSubTask} className="bg-red-50 text-red-600 border border-red-200 px-5 py-3 rounded-lg cursor-pointer font-semibold text-sm transition-all hover:bg-red-100 hover:border-red-300">
             Delete Subtask

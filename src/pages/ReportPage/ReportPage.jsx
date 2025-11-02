@@ -238,7 +238,11 @@ export default function ProjectReport() {
                   <span className="capitalize">{report.projectStatus}</span>
                 </span>
               </div>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">{report.description || "No description provided."}</p>
+            <div
+  className="text-gray-600 text-lg leading-relaxed mb-4 prose max-w-none"
+  dangerouslySetInnerHTML={{ __html: report.description || "No description provided." }}
+/>
+
               
               {daysRemaining !== null && (
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium ${

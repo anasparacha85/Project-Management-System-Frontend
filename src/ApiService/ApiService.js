@@ -192,6 +192,12 @@ const ApiServices = {
       method:'POST',
       body:{subTaskId}
     })
+  },
+  GenerateDescription({name,type,parent}){
+    return apiClient(`/api/ai/generate-description`,{
+      method:'POST',
+      body:{name,type,parent}
+    })
   }
 }
 

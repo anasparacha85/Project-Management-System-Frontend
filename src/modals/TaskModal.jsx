@@ -7,6 +7,7 @@ import { fetchTasks } from "../Slices/TaskSlice";
 import { FetchTeamByProjectId } from "../Slices/ProjectSlice";
 import { useParams } from "react-router-dom";
 import { setTaskModalOpen } from "../Slices/UiSlice";
+import DescriptionField from "../components/CustomFields/DescriptionField";
 
 // Constants for better maintainability
 const PRIORITIES = ["Low", "Medium", "High", "Critical"];
@@ -43,6 +44,7 @@ const TaskModal=({ projectId, onTaskCreated }) => {
     milestone: "",
     attachments: []
   });
+console.log(ProjectDetails);
 
   // Derived state
   const projectStartDate = new Date(ProjectDetails.startDate);
@@ -321,17 +323,13 @@ const nextStep = useCallback(() => {
               />
             </div>
 
-            <div className="create-task-form-field">
-              <label>Description</label>
-              <textarea
-                name="description"
-                rows={4}
-                placeholder="Describe the task requirements and objectives..."
-                value={task.description}
-                onChange={handleChange}
-                className="create-task-form-textarea"
-              />
-            </div>
+                        <DescriptionField
+             description={task.description}
+             setDescription={(value) => setTask({ ...task, description: value })}
+             name={task.title}
+             type={"milestone"}
+             parent={ProjectDetails.name}
+           />
 
             <div className="create-task-form-field">
               <label>Attach Documents</label>
