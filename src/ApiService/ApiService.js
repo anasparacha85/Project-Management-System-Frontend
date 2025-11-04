@@ -198,6 +198,13 @@ const ApiServices = {
       method:'POST',
       body:{name,type,parent}
     })
+  },
+  PostComment({type,targetId,content}){
+    return apiClient(`/api/comments/post-comment`,{
+      method:'POST',
+      body:{type,targetId,content}
+    })
+
   }
 }
 

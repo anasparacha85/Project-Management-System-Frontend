@@ -254,6 +254,17 @@ const SubTaskDetailPage = () => {
   const { SubTaskDetails, SubTaskLoading, SubTaskError } = useSelector((state) => state.SubTask);
   const { taskDetails } = useSelector((state) => state.Task);
   const team = taskDetails.assignees;
+  const [comments, setComments] = useState([]);
+  const fetchComments = async () => {
+  try {
+    const response = await ApiServices.GetCommentsByTargetId('subtask',params.id);
+    setComments(response?.comments || []); // assuming response.comments array milega
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+  }
+};
+
+
 
   const fetchSubTask = () => {
     dispatch(fetchSubTaskById(params.id)).unwrap().then((data) => {
@@ -263,14 +274,25 @@ const SubTaskDetailPage = () => {
     });
   };
 
-  useEffect(() => {
-    fetchSubTask();
-  }, []);
+ useEffect(() => {
+  fetchSubTask();
+  fetchComments(); // 👈 yahan call kar
+}, []);
 
   const timeLogs = subTaskData.timeLogs || [];
   const latestLog = timeLogs[timeLogs.length - 1];
   const latestAction = latestLog?.action;
-
+const handleAddComment=async()=>{
+  try {
+    const response=await ApiServices.PostComment({type:"subtask",targetId:params.id,content:newComment})
+  setNewComment("");
+    fetchComments(); // 👈 refresh comments list
+    
+  } catch (error) {
+    alert(error.message)
+    
+  }
+}
   const handlePause = async () => {
     try {
       const response = await ApiServices.takeBreakForEmployee(params.id);
@@ -631,6 +653,40 @@ const SubTaskDetailPage = () => {
       {/* RIGHT SIDEBAR */}
       <div className="flex-none w-96 bg-white border-l border-gray-200 flex flex-col overflow-hidden">
         <div className="flex-1 p-6 overflow-y-auto">
+  <h3 className="text-lg font-bold text-gray-900 mb-6">Comments</h3>
+
+  {comments.length > 0 ? (
+    <div className="space-y-4 mb-8">
+      {comments.map((comment) => (
+        <div key={comment._id} className="flex gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+          <img
+            src={comment.user?.avatarUrl}
+            alt={comment.user?.name}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+          <div>
+            <p className="text-sm">
+              <strong>{comment.user?.name}</strong> {comment.content}
+            </p>
+            <span className="text-xs text-gray-500">
+              {new Date(comment.createdAt).toLocaleString()}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-400 text-sm mb-6">No comments yet</p>
+  )}
+
+  {/* Existing Activity Section */}
+  <h3 className="text-lg font-bold text-gray-900 mb-6">Activity</h3>
+  <div className="space-y-5">
+    {/* existing activity logs */}
+  </div>
+</div>
+
+        <div className="flex-1 p-6 overflow-y-auto">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Activity</h3>
           <div className="space-y-5">
             <div className="flex gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
@@ -683,6 +739,7 @@ const SubTaskDetailPage = () => {
               rows="3"
             />
             <button 
+            onClick={handleAddComment}
               className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-none px-5 py-3 rounded-lg cursor-pointer font-semibold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed self-end"
               disabled={!newComment.trim()}
             >

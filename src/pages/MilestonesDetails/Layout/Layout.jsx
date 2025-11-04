@@ -86,7 +86,7 @@ const MileStoneLayout = () => {
           </div>
 
           {/* Milestone Title & Description */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-50 to-gray-300 flex items-center justify-center shadow-md">
                 <MilestoneIcon size={20} className="text-purple-600" />
@@ -100,7 +100,7 @@ const MileStoneLayout = () => {
          {user.role=='manager'&&"Manage you Milestone Add checkpoints track progress and assignees"}     
               </p>
             )}
-          </div>
+          </div> */}
 
          {/* Navigation Tabs */}
 <div className="flex items-center  bg-white  border border-gray-200 rounded-2xl  shadow-sm">
