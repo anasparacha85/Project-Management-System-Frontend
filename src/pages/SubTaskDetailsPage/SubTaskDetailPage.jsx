@@ -257,7 +257,9 @@ const SubTaskDetailPage = () => {
   const [comments, setComments] = useState([]);
   const fetchComments = async () => {
   try {
-    const response = await ApiServices.GetCommentsByTargetId('subtask',params.id);
+    const response = await ApiServices.GetCommentsByTargetId({type:'subtask',targetId:params.id});
+    console.log("========",response);
+    
     setComments(response?.comments || []); // assuming response.comments array milega
   } catch (error) {
     console.error("Error fetching comments:", error);
@@ -285,6 +287,8 @@ const SubTaskDetailPage = () => {
 const handleAddComment=async()=>{
   try {
     const response=await ApiServices.PostComment({type:"subtask",targetId:params.id,content:newComment})
+    console.log(response);
+    
   setNewComment("");
     fetchComments(); // 👈 refresh comments list
     
@@ -655,18 +659,18 @@ const handleAddComment=async()=>{
         <div className="flex-1 p-6 overflow-y-auto">
   <h3 className="text-lg font-bold text-gray-900 mb-6">Comments</h3>
 
-  {comments.length > 0 ? (
+  {subTaskData.comments?.length > 0 ? (
     <div className="space-y-4 mb-8">
-      {comments.map((comment) => (
+      {subTaskData.comments.map((comment) => (
         <div key={comment._id} className="flex gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
           <img
-            src={comment.user?.avatarUrl}
-            alt={comment.user?.name}
+            src={comment.createdBy?.avatarUrl}
+            alt={comment.createdBy?.name}
             className="w-8 h-8 rounded-full object-cover"
           />
           <div>
             <p className="text-sm">
-              <strong>{comment.user?.name}</strong> {comment.content}
+              <strong>{comment.createdBy?.name}</strong> {comment.content}
             </p>
             <span className="text-xs text-gray-500">
               {new Date(comment.createdAt).toLocaleString()}
@@ -680,13 +684,7 @@ const handleAddComment=async()=>{
   )}
 
   {/* Existing Activity Section */}
-  <h3 className="text-lg font-bold text-gray-900 mb-6">Activity</h3>
-  <div className="space-y-5">
-    {/* existing activity logs */}
-  </div>
-</div>
-
-        <div className="flex-1 p-6 overflow-y-auto">
+   <div className="flex-1 p-6 overflow-y-auto">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Activity</h3>
           <div className="space-y-5">
             <div className="flex gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
@@ -729,6 +727,10 @@ const handleAddComment=async()=>{
           </div>
         </div>
 
+ 
+</div>
+
+       
         <div className="p-6 border-t border-gray-200">
           <div className="flex flex-col gap-3">
             <textarea

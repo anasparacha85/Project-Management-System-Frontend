@@ -205,6 +205,9 @@ const ApiServices = {
       body:{type,targetId,content}
     })
 
+  },
+  GetCommentsByTargetId({type,targetId}){
+    return apiClient(`/api/comments/get-comments/${type}/${targetId}`)
   }
 }
 
