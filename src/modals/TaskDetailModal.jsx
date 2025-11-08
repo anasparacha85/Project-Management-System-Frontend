@@ -211,14 +211,14 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
                       {item.title}
                     </span>
 
-                    {userRole === "manager" && (
+                   
                       <button
                         onClick={() => navigate(`/dashboard/subtask/${item._id}`)}
                         className="opacity-0 cursor-pointer group-hover:opacity-100 transition-opacity p-2 hover:bg-indigo-50 rounded-lg text-indigo-600"
                       >
                         <Eye className="w-5  h-5" />
                       </button>
-                    )}
+                   
                   </div>
 
                   <div className="flex items-center gap-3 pl-8">
@@ -365,10 +365,49 @@ const TaskDetailPage = () => {
   const { team } = useSelector((state) => state.Project);
   const { user } = useSelector((state) => state.User);
   const role = user.role;
+  const [comments, setComments] = useState([]);
+  console.log(taskDetails,"===============taskDetails");
+  
+  const fetchComments = async () => {
+  try {
+    const response = await ApiServices.GetCommentsByTargetId({type:'task',targetId:params.id});
+    console.log("========",response);
+    
+    setComments(response?.comments || []); // assuming response.comments array milega
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+  }
+};
 
-  const handleAddComment = () => {
-    // Comment functionality
-  };
+
+const playCommentSound = () => {
+  const audio = new Audio("/public/sound/comment-sound.mp3");
+  audio.volume = 0.5; // optional - sound thoda soft karne ke liye
+  audio.play().catch((e) => console.error("Audio play failed:", e));
+};
+ 
+ useEffect(() => {
+ 
+  fetchComments(); // 👈 yahan call kar
+}, []);
+ const handleAddComment=async()=>{
+  setIsLoading(true)
+  try {
+    const response=await ApiServices.PostComment({type:"task",targetId:params.id,content:newComment})
+    console.log(response);
+    
+  setNewComment("");
+    playCommentSound();
+    fetchComments(); // 👈 refresh comments list
+    
+  } catch (error) {
+    alert(error.message)
+    
+  }
+  finally{
+    setIsLoading(false)
+  }
+}
 
   const getSubTasksById = async () => {
     try {
@@ -749,19 +788,19 @@ const TaskDetailPage = () => {
                 ))}
 
                 {/* Comments */}
-                {taskDetails.comments?.map((comment) => (
+                {comments?.map((comment) => (
                   <div key={comment._id} className="flex gap-3">
                     <img
-                      src={comment.user?.avatarUrl || 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png'}
-                      alt={comment.user?.name}
+                      src={comment.createdBy?.avatarUrl || 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-avatar-profile-picture-male-icon.png'}
+                      alt={comment.createdBy?.name}
                       className="w-9 h-9 rounded-full object-cover ring-2 ring-gray-100 flex-shrink-0"
                     />
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-gray-900 mb-1">
-                        {comment.user?.name}
+                        {comment.createdBy?.name}
                       </p>
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                        <p className="text-sm text-gray-700">{comment.text}</p>
+                        <p className="text-sm text-gray-700">{comment.content}</p>
                       </div>
                       <p className="text-xs text-gray-400 mt-1.5">
                         {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
@@ -771,7 +810,7 @@ const TaskDetailPage = () => {
                 ))}
 
                 {/* Empty State */}
-                {(!taskDetails.comments || taskDetails.comments.length === 0) && taskDetails.assignees?.length <= 1 && (
+                {(!comments || comments.length === 0) && taskDetails.assignees?.length <= 1 && (
                   <div className="text-center py-8">
                     <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-sm text-gray-500">No activity yet</p>
@@ -795,7 +834,7 @@ const TaskDetailPage = () => {
                   className="mt-3 w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 shadow-sm"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  Post Comment
+              {IsLoading?"Posting....":" Post Comment"}   
                 </button>
               </div>
             </div>

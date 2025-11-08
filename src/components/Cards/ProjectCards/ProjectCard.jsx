@@ -65,12 +65,10 @@ export default function ProjectCard({ project, onViewProject }) {
 
       <div className="mb-5">
         {project.description && (
-          <p className="text-sm text-slate-600 leading-relaxed mb-5">
-            {project.description.length > 120 
-              ? `${project.description.substring(0, 120)}...` 
-              : project.description
-            }
-          </p>
+         <div
+        className="prose prose-sm leading-relaxed line-clamp-2 text-gray-700 mb-3"
+        dangerouslySetInnerHTML={{ __html: project.description || "<p>No description added.</p>" }}
+      />
         )}
 
         <div className="flex flex-col gap-2 mb-4">

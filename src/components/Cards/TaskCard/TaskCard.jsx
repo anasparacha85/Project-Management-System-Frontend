@@ -70,9 +70,11 @@ export const TaskCard = ({ task, index }) => {
       
       {/* Title & Description */}
       <h4 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">{task.title}</h4>
-      <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-2">
-        {task.description}
-      </p>
+     
+      <div
+        className="prose prose-sm leading-relaxed line-clamp-2 text-gray-700 mb-3"
+        dangerouslySetInnerHTML={{ __html: task.description || "<p>No description added.</p>" }}
+      />
       
       {/* Footer: Dates & Attachments */}
       <div className="flex justify-between items-center mb-3">

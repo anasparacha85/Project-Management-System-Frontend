@@ -574,7 +574,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-slideUp">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900">Add new task to your checklist</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Add new checkpoint to your milestone</h2>
           <button 
             className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             onClick={onClose}

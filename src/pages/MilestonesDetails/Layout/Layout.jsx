@@ -1,6 +1,6 @@
 // src/layouts/ProjectLayout.jsx
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
-import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, MilestoneIcon, CircuitBoardIcon, AlignVerticalDistributeEnd, ArrowLeft, LogIn } from "lucide-react";
+import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, MilestoneIcon, CircuitBoardIcon, AlignVerticalDistributeEnd, ArrowLeft, LogIn, Link } from "lucide-react";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
 import ApiServices from "../../../ApiService/ApiService";
@@ -39,6 +39,11 @@ const MileStoneLayout = () => {
       label: "Board",
       icon: <CircuitBoardIcon size={16} />,
     },
+     {
+      path: `/dashboard/milestone/${params.id}/checklists`,
+      label: "CheckPoints",
+      icon: <MilestoneIcon size={16} />,
+    },
     {
       path: `/dashboard/milestone/${params.id}/team`,
       label: "Assignees",
@@ -49,10 +54,11 @@ const MileStoneLayout = () => {
       label: "Analytics",
       icon: <AlignVerticalDistributeEnd size={16} />,
     },
+    
      {
-      path: `/dashboard/milestone/${params.id}/checklists`,
-      label: "CheckPoints",
-      icon: <MilestoneIcon size={16} />,
+      path: `/dashboard/milestone/${params.id}/attachments`,
+      label: "Attachments",
+      icon: <Link size={16} />,
     },
     
   ];
@@ -63,7 +69,7 @@ const MileStoneLayout = () => {
        
       {/* Header Section with Milestone Details */}
       <div className=" ">
-        <div className="max-w-[1400px] mx-auto px-3 py-6">
+        <div className="max-w-[1400px]  mx-auto px-3 py-6">
           {/* Top Bar - Back Button & Actions */}
           <div className="flex justify-between items-center mb-6">
             <button 
@@ -103,17 +109,17 @@ const MileStoneLayout = () => {
           </div> */}
 
          {/* Navigation Tabs */}
-<div className="flex items-center  bg-white  border border-gray-200 rounded-2xl  shadow-sm">
+<div className="flex items-center py-6 px-3 bg-white  border border-gray-200 rounded-2xl  shadow-sm">
   {navigations.map((value, index) => (
     <NavLink
       key={index}
       to={value.path}
       end
       className={({ isActive }) => `
-        flex items-center ${index===0 &&'rounded-l-2xl'} ${index===navigations.length-1&&'rounded-r-2xl'} justify-center py-6 w-[100%] gap-2 px-5 py-3 text-sm font-medium  transition-all duration-300 ease-in-out
+        flex items-center ${index===0 &&'rounded-l-xl'} ${index===navigations.length-1&&'rounded-r-xl'} justify-center  w-[100%] gap-2 px-5 py-6 text-sm font-medium  transition-all duration-300 ease-in-out
         ${
           isActive
-            ? 'bg-gradient-to-r from-purple-400 to-indigo-700 text-white shadow-md scale-[1.03]'
+            ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md scale-[1.03]'
             : 'text-gray-600 hover:text-gray-900 bg-gradient-to-r from-gray-50 to-gray-300 hover:bg-gray-100'
         }
       `}

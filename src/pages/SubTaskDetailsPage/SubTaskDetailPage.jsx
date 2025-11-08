@@ -267,7 +267,11 @@ const SubTaskDetailPage = () => {
 };
 
 
-
+const playCommentSound = () => {
+  const audio = new Audio("/public/sound/comment-sound.mp3");
+  audio.volume = 0.5; // optional - sound thoda soft karne ke liye
+  audio.play().catch((e) => console.error("Audio play failed:", e));
+};
   const fetchSubTask = () => {
     dispatch(fetchSubTaskById(params.id)).unwrap().then((data) => {
       setSubTaskData(data);
@@ -290,6 +294,7 @@ const handleAddComment=async()=>{
     console.log(response);
     
   setNewComment("");
+    playCommentSound();
     fetchComments(); // 👈 refresh comments list
     
   } catch (error) {
@@ -659,9 +664,9 @@ const handleAddComment=async()=>{
         <div className="flex-1 p-6 overflow-y-auto">
   <h3 className="text-lg font-bold text-gray-900 mb-6">Comments</h3>
 
-  {subTaskData.comments?.length > 0 ? (
+  {comments?.length > 0 ? (
     <div className="space-y-4 mb-8">
-      {subTaskData.comments.map((comment) => (
+      {comments.map((comment) => (
         <div key={comment._id} className="flex gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
           <img
             src={comment.createdBy?.avatarUrl}

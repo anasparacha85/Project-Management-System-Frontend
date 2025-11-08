@@ -10,7 +10,7 @@ export default function DescriptionField({ description, setDescription, name, la
   // Generate description using AI
   const handleAIGenerate = async () => {
     if (!name?.trim()) {
-      setError("Please enter a name before generating description.");
+      setError("Please enter a title before generating description.");
       return;
     }
 
