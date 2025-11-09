@@ -266,12 +266,34 @@ const SubTaskDetailPage = () => {
   }
 };
 
+// Use a ref to initialize the audio once and reuse it.
+const commentAudioRef = useRef(null);
 
-const playCommentSound = () => {
-  const audio = new Audio("/public/sound/comment-sound.mp3");
-  audio.volume = 0.5; // optional - sound thoda soft karne ke liye
-  audio.play().catch((e) => console.error("Audio play failed:", e));
+useEffect(() => {
+  // Files in `public/` are served from the site root in production (Vercel).
+  // Use `/sound/comment-sound.mp3` (no `/public` prefix) and initialize once.
+  try {
+    commentAudioRef.current = new Audio("/sound/comment-sound.mp3");
+    commentAudioRef.current.preload = "auto";
+    commentAudioRef.current.volume = 0.5;
+  } catch (e) {
+    console.warn("Failed to initialize comment sound:", e);
+    commentAudioRef.current = null;
+  }
+}, []);
+
+const playCommentSound = async () => {
+  const audio = commentAudioRef.current;
+  if (!audio) return;
+  try {
+    // Some browsers block play() unless triggered by a user gesture.
+    await audio.play();
+  } catch (e) {
+    // Log the error so we can distinguish 404/path vs autoplay block in production.
+    console.warn("Audio play failed (autoplay or other):", e);
+  }
 };
+ 
   const fetchSubTask = () => {
     dispatch(fetchSubTaskById(params.id)).unwrap().then((data) => {
       setSubTaskData(data);
