@@ -7,6 +7,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const EditProjectModal = ({ isOpen, onClose }) => {
+   const params = useParams();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -15,29 +16,40 @@ const EditProjectModal = ({ isOpen, onClose }) => {
     endDate: null,
     projectStatus: "",
     priority: "",
+     projectId: params?.id
+    
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [isClosing, setIsClosing] = useState(false);
 
-  const params = useParams();
+ 
   const { ProjectDetails, ProjectLoading, projectError } = useSelector((state) => state.Project);
   const dispatch = useDispatch();
+  console.log(ProjectDetails,"projectDetails");
+  
+  
+ useEffect(() => {
+  if (isOpen && ProjectDetails && ProjectDetails.name) {
+    setFormData({
+      name: ProjectDetails.name || "",
+      description: ProjectDetails.description || "",
+      budget: ProjectDetails.budget || "",
+      startDate: ProjectDetails.startDate
+        ? ProjectDetails.startDate.split("T")[0]
+        : "",
+      endDate: ProjectDetails.endDate
+        ? ProjectDetails.endDate.split("T")[0]
+        : "",
+      projectStatus: ProjectDetails.projectStatus || "",
+      priority: ProjectDetails.priority || "",
+      projectId: params?.id,
+    });
+  }
+}, [isOpen, ProjectDetails]);
 
-  useEffect(() => {
-    if (ProjectDetails) {
-      setFormData({
-        name: ProjectDetails.name || "",
-        description: ProjectDetails.description || "",
-        budget: ProjectDetails.budget || "",
-        startDate: ProjectDetails.startDate ? ProjectDetails.startDate.split("T")[0] : "",
-        endDate: ProjectDetails.endDate ? ProjectDetails.endDate.split("T")[0] : "",
-        projectStatus: ProjectDetails.projectStatus || "",
-        priority: ProjectDetails.priority || "",
-        projectId: params?.id
-      });
-    }
-  }, [ProjectDetails, params]);
+
+console.log(formData,"============");
 
   const validateForm = () => {
     const newErrors = {};
@@ -69,7 +81,8 @@ const EditProjectModal = ({ isOpen, onClose }) => {
     if (!validateForm()) {
       return;
     }
-
+    console.log(formData);
+    
     setIsLoading(true);
     
     try {
@@ -213,7 +226,7 @@ const EditProjectModal = ({ isOpen, onClose }) => {
                        />
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col mt-7">
                   <label className="text-sm font-semibold text-gray-700 mb-2">
                     Budget
                   </label>
