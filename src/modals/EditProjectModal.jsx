@@ -47,10 +47,6 @@ const EditProjectModal = ({ isOpen, onClose }) => {
     });
   }
 }, [isOpen, ProjectDetails]);
-
-
-console.log(formData,"============");
-
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
