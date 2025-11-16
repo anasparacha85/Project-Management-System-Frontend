@@ -3,7 +3,7 @@ import "./ManagerLogin.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ApiServices from "../../../../ApiService/ApiService";
-import { setUser } from "../../../../Slices/UserSlice";
+import { setToken, setUser } from "../../../../Slices/UserSlice";
 
 const ManagerLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -39,6 +39,9 @@ const dispatch=useDispatch()
       
         alert(data.SuccessMessage)
         navigate('/dashboard')
+        localStorage.setItem('token',data.token)
+
+        dispatch(setToken(localStorage.getItem('token')))
     }
     else{
         alert(data.FailureMessage)

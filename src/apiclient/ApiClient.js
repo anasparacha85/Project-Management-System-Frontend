@@ -2,7 +2,10 @@ const BASE_URL = import.meta.env.VITE_LOCAL_API_URL;
 
 async function apiClient(endpoint, { method = "GET", headers = {}, body, params } = {}) {
   let url = `${BASE_URL}${endpoint}`;
-
+  // Get token from localStorage instead of Redux (this is not a React component)
+  const token = localStorage.getItem('token');
+  console.log(token);
+  
   // query params handle karo
   if (params && typeof params === "object") {
     const query = new URLSearchParams(params).toString();
@@ -11,9 +14,9 @@ async function apiClient(endpoint, { method = "GET", headers = {}, body, params 
 
   const options = {
     method,
-    credentials: "include", // har jagah cookies include hongi
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${token || ''}`,
       ...headers,
     },
   };

@@ -16,11 +16,15 @@ export const getUser=createAsyncThunk(
 const UserSlice=createSlice({
     name:'user',
     initialState:{
-        user:{}
+        user:{},
+        token:null
     },
     reducers:{
         setUser:(state,action)=>{
             state.user=action.payload
+        },
+        setToken:(state,action)=>{
+            state.token=action.payload
         },
         clearUser:(state,action)=>{
             state.user={}
@@ -28,5 +32,5 @@ const UserSlice=createSlice({
     }
 })
 
-export const {setUser,clearUser}=UserSlice.actions
+export const {setUser,clearUser,setToken}=UserSlice.actions
 export default UserSlice.reducer

@@ -121,3 +121,61 @@
 .ql-toolbar {
   border-radius: 0.5rem 0.5rem 0 0;
 }
+@keyframes gradientRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dark .header-dark-styles {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(148, 163, 184, 0.2);
+  }
+  
+  .dark .text-dark-primary {
+    color: white;
+  }
+  
+  .dark .bg-dark-input {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: white;
+  }
+  
+  .dark .bg-dark-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .dark .bg-dark-button {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: white;
+  }
+  
+  .dark .bg-dark-button:hover {
+    background: rgba(71, 85, 105, 0.8);
+  }
+  
+  .dark .bg-dark-profile {
+    background: rgba(51, 65, 85, 0.8);
+  }
+  
+  .dark .bg-dark-profile:hover {
+    background: rgba(71, 85, 105, 0.8);
+  }
+  
+  .dark .text-dark-name {
+    color: white;
+  }
+  
+  .dark .bg-dark-logout {
+    background: rgba(51, 65, 85, 0.8);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: white;
+  }
+  
+  .dark .bg-dark-logout:hover {
+    background: rgba(71, 85, 105, 0.8);
+  }
+}

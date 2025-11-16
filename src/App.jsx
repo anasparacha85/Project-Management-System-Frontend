@@ -30,6 +30,8 @@ import EmployeeDetailReport from './pages/EmployeeDetails/EmployeeDetails'
 import MilestoneAssigneesDetails from './pages/MilestoneAssignessDetails/MilestoneAssigneeDetails'
 import MilestonesChecklists from './pages/MilestoneChecklists/Checklists'
 import MilestoneDocs from './pages/MilestoneDocuments/MilestoneDocs'
+import ProtectedRoute from './Routes/ProtectedRoute'
+import PublicRoute from './Routes/PublicRoute'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -39,38 +41,42 @@ function App() {
     
      <ScrollToTop />
       <Routes>
-      <Route path='/' element={<ManagerLoginPage/>}/>
-      <Route path='/manager-signup' element={<ManagerRegisterPage/>}/>
-       <Route path='/employee-signup' element={<EmployeeRegisterPage/>}/>
+      <Route element={<PublicRoute/>}>
+        <Route path='/' element={<ManagerLoginPage/>}/>
+        <Route path='/manager-signup' element={<ManagerRegisterPage/>}/>
+        <Route path='/employee-signup' element={<EmployeeRegisterPage/>}/>
         <Route path='/employee-login' element={<EmployeeLoginPage/>}/>
-          <Route path='/logout' element={<Logout/>}/>
+      </Route>
+      
+      <Route path='/logout' element={<Logout/>}/>
+      
+      <Route element={<ProtectedRoute/>}>
         <Route path='/dashboard' element={<Dashboard/>}>
           <Route path='' element={<ProjectPage/>}/>
           <Route path='project/:id' element={<ProjectLayout/>}>
-          <Route index element={<ProjectReport/>}/>
-          <Route path='team' element={<TeamPage/>}/>
-          <Route path='team/:teamId' element={<EmployeeDetailReport/>}/>
-          
-           <Route path='milestone' element={<ProjectMilestonesPage/>}/>
-           <Route path='attachments' element={<DocumentsPage/>}/>
-           <Route path='employees-report' element={<EmployeeReport/>}/>
+            <Route index element={<ProjectReport/>}/>
+            <Route path='team' element={<TeamPage/>}/>
+            <Route path='team/:teamId' element={<EmployeeDetailReport/>}/>
+            <Route path='milestone' element={<ProjectMilestonesPage/>}/>
+            <Route path='attachments' element={<DocumentsPage/>}/>
+            <Route path='employees-report' element={<EmployeeReport/>}/>
           </Route>
           
-           <Route path='milestone/:id' element={<MileStoneLayout/>}>
-           <Route index element={<TaskDetailPage/>}/>
-           <Route path='board' element={<TasksPage/>}/>
+          <Route path='milestone/:id' element={<MileStoneLayout/>}>
+            <Route index element={<TaskDetailPage/>}/>
+            <Route path='board' element={<TasksPage/>}/>
             <Route path='attachments' element={<MilestoneDocs/>}/>
-           <Route path='team' element={<MilestoneTeam/>}/>
+            <Route path='team' element={<MilestoneTeam/>}/>
             <Route path='analytics' element={<MilestoneAnalytics/>}/>
-              <Route path='team/:employeeId' element={<MilestoneAssigneesDetails/>}/>
-           <Route path='checklists' element={<MilestonesChecklists/>}/>
-           
-           </Route>
-           <Route path='subTask/:id' element={<SubTaskDetailPage/>}/>
-           
+            <Route path='team/:employeeId' element={<MilestoneAssigneesDetails/>}/>
+            <Route path='checklists' element={<MilestonesChecklists/>}/>
+          </Route>
+          
+          <Route path='subTask/:id' element={<SubTaskDetailPage/>}/>
         </Route>
-          <Route path='*' element={<NotFoundPage/>}/>
+      </Route>
       
+      <Route path='*' element={<NotFoundPage/>}/>
       </Routes>
     </>
   )

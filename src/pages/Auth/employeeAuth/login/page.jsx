@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./employeelogin.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setToken } from "../../../../Slices/UserSlice";
 
 const EmployeeLoginPage = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,9 @@ const EmployeeLoginPage = () => {
     if(res.ok){
       
         alert(data.SuccessMessage)
+        localStorage.setItem('token',data.token)
         navigate('/dashboard')
+        dispatch(setToken(localStorage.getItem('token')))
     }
     else{
         alert(data.FailureMessage)

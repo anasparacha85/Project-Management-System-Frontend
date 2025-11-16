@@ -216,7 +216,15 @@ const ApiServices = {
   },
   GetCommentsByTargetId({type,targetId}){
     return apiClient(`/api/comments/get-comments/${type}/${targetId}`)
-  }
+  },
+  GetNotifications(){
+    return apiClient(`/api/notifications/get-notification`)
+  },
+  MarkAsReadNotification(notificationId){
+    return apiClient(`/api/notifications/mark-as-read/${notificationId}`,{
+      method:'PATCH'
+    })
+}
 }
 
 
