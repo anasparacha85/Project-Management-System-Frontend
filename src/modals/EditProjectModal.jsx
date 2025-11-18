@@ -5,9 +5,12 @@ import ApiServices from "../ApiService/ApiService";
 import { FetchProjectDetailsById } from "../Slices/ProjectSlice";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getChangedFields } from "../utils/changeDetectionUtils";
 
 const EditProjectModal = ({ isOpen, onClose }) => {
    const params = useParams();
+   const [originalData, setOriginalData] = useState({});
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -29,24 +32,24 @@ const EditProjectModal = ({ isOpen, onClose }) => {
   console.log(ProjectDetails,"projectDetails");
   
   
- useEffect(() => {
+useEffect(() => {
   if (isOpen && ProjectDetails && ProjectDetails.name) {
-    setFormData({
+    const formatted = {
       name: ProjectDetails.name || "",
       description: ProjectDetails.description || "",
       budget: ProjectDetails.budget || "",
-      startDate: ProjectDetails.startDate
-        ? ProjectDetails.startDate.split("T")[0]
-        : "",
-      endDate: ProjectDetails.endDate
-        ? ProjectDetails.endDate.split("T")[0]
-        : "",
+      startDate: ProjectDetails.startDate ? ProjectDetails.startDate.split("T")[0] : "",
+      endDate: ProjectDetails.endDate ? ProjectDetails.endDate.split("T")[0] : "",
       projectStatus: ProjectDetails.projectStatus || "",
       priority: ProjectDetails.priority || "",
       projectId: params?.id,
-    });
+    };
+
+    setFormData(formatted);
+    setOriginalData(formatted);  // <-- save original
   }
 }, [isOpen, ProjectDetails]);
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
@@ -78,11 +81,20 @@ const EditProjectModal = ({ isOpen, onClose }) => {
       return;
     }
     console.log(formData);
+    const changedFields = getChangedFields(originalData, formData);
+
+  // Ensure projectId is included for update
+  changedFields.projectId = params.id;
+
+  if (Object.keys(changedFields).length <= 1) {
+    alert("No changes to update.");
+    return;
+  }
     
     setIsLoading(true);
     
     try {
-      const data = await ApiServices.updateProjectDetailsById(formData);
+      const data = await ApiServices.updateProjectDetailsById(changedFields);
       alert(data.SuccessMessage);
       dispatch(FetchProjectDetailsById(params.id));
       handleClose();
