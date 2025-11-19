@@ -31,6 +31,7 @@ const EditProjectModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   console.log(ProjectDetails,"projectDetails");
   
+  console.log(ProjectDetails.name,"name");
   
 useEffect(() => {
   if (isOpen && ProjectDetails && ProjectDetails.name) {
@@ -45,10 +46,13 @@ useEffect(() => {
       projectId: params?.id,
     };
 
-    setFormData(formatted);
+    // Merge the fetched values into the current form state using a
+    // functional update to avoid overwriting any concurrent edits and
+    // to prevent stale-state race conditions.
+    setFormData((prev) => ({ ...prev, ...formatted }));
     setOriginalData(formatted);  // <-- save original
   }
-}, [isOpen, ProjectDetails]);
+}, [isOpen, ProjectDetails, params?.id]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -67,10 +71,12 @@ useEffect(() => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
+    // Use functional updates to avoid relying on a possibly stale
+    // `formData` value when multiple updates happen quickly.
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -228,8 +234,8 @@ useEffect(() => {
                   </label>
                   <ReactQuill
                          theme="snow"
-                         value={formData.description || ""}
-                      onChange={(value) => setFormData({ ...formData, description: value })}
+                       value={formData.description || ""}
+                     onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
                          className="min-h-40 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:ring-3 focus:ring-purple-100"
                        />
                 </div>
