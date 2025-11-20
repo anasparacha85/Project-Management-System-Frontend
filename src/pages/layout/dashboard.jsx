@@ -198,10 +198,10 @@ import { setUser } from '../../Slices/UserSlice';
 const Sidebar = ({ activeItem, setActiveItem, isCollapsed, isMobileOpen, onClose }) => {
   const menuItems = [
     { id: 'project', label: 'Projects', icon: Grid3X3, count: 12, link: '/dashboard' },
-    { id: 'tasks', label: 'Tasks', icon: CheckCircle2, count: 24, link: '/dashboard/tasks' },
-    { id: 'workload', label: 'Workload', icon: Users, count: null, link: '/workload' },
-    { id: 'performance', label: 'Analytics', icon: Clock, count: null, link: '/performance' },
-    { id: 'settings', label: 'Settings', icon: User, count: null, link: '/settings' }
+    { id: 'leave', label: 'Leave Management', icon: CheckCircle2, count: 24, link: '/dashboard/leave-management' },
+    // { id: 'workload', label: 'Workload', icon: Users, count: null, link: '/workload' },
+    // { id: 'performance', label: 'Analytics', icon: Clock, count: null, link: '/performance' },
+    // { id: 'settings', label: 'Settings', icon: User, count: null, link: '/settings' }
   ];
 
   return (

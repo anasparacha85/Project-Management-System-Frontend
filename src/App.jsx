@@ -32,6 +32,7 @@ import MilestonesChecklists from './pages/MilestoneChecklists/Checklists'
 import MilestoneDocs from './pages/MilestoneDocuments/MilestoneDocs'
 import ProtectedRoute from './Routes/ProtectedRoute'
 import PublicRoute from './Routes/PublicRoute'
+import LeaveManagement from './pages/Leave/LeaveManagement'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -53,6 +54,7 @@ function App() {
       <Route element={<ProtectedRoute/>}>
         <Route path='/dashboard' element={<Dashboard/>}>
           <Route path='' element={<ProjectPage/>}/>
+          <Route path='leave-management' element={<LeaveManagement/>}/>
           <Route path='project/:id' element={<ProjectLayout/>}>
             <Route index element={<ProjectReport/>}/>
             <Route path='team' element={<TeamPage/>}/>
