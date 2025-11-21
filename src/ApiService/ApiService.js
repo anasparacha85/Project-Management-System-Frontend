@@ -248,6 +248,7 @@ ApproveLeaveRequest(leaveId){
     method:'PATCH'
   })
 },
+//
 RejectLeaveRequest({leaveId,rejectionReason}){
   return apiClient(`/api/leave-management/reject/${leaveId}`,{
     method:'PUT',
