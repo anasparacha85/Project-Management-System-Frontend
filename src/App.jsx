@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Route,Routes } from 'react-router-dom'
+import { Navigate, Route,Routes } from 'react-router-dom'
 import Dashboard from './pages/layout/dashboard'
 import TasksPage from './pages/TaskPage/page'
 import ProjectPage from './pages/projectPage/page'
@@ -32,7 +32,15 @@ import MilestonesChecklists from './pages/MilestoneChecklists/Checklists'
 import MilestoneDocs from './pages/MilestoneDocuments/MilestoneDocs'
 import ProtectedRoute from './Routes/ProtectedRoute'
 import PublicRoute from './Routes/PublicRoute'
+import RoleBasedRoute from './Routes/RoleBasedRoute'
 import LeaveManagement from './pages/Leave/LeaveManagement'
+import MyLeaves from './pages/Leave/MyLeaves'
+import TeamRequests from './pages/Leave/TeamRequests'
+import LeaveLayout from './pages/Leave/LeaveLayout'
+import EmployeeRequestLeave from './pages/Leave/EmployeeRequestLeave'
+import EmployeeMyLeaves from './pages/Leave/EmployeeMyLeaves'
+import ManagerLeaveRequests from './pages/Leave/ManagemerLeaveRequests'
+import ManagerTeamSummary from './pages/Leave/ManagerTeamSummary'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -54,7 +62,23 @@ function App() {
       <Route element={<ProtectedRoute/>}>
         <Route path='/dashboard' element={<Dashboard/>}>
           <Route path='' element={<ProjectPage/>}/>
-          <Route path='leave-management' element={<LeaveManagement/>}/>
+          <Route path='leave-management' element={<LeaveManagement/>}>
+          <Route index element={<Navigate to="my-leaves" />} />
+            <Route path='my-leaves' element={<MyLeaves/>}/>
+            <Route element={<RoleBasedRoute allowedRoles={['manager']}/>}>
+              <Route path='team-requests' element={<TeamRequests/>}/>
+            </Route>
+          </Route>
+          {/* <Route path="leave-management" element={<LeaveLayout />}>
+  <Route index element={<Navigate to="request" />} />
+
+  <Route path="request" element={<EmployeeRequestLeave />} />
+  <Route path="my-leaves" element={<EmployeeMyLeaves />} />
+
+  <Route path="manager-requests" element={<ManagerLeaveRequests />} />
+  <Route path="manager-summary" element={<ManagerTeamSummary />} />
+</Route> */}
+
           <Route path='project/:id' element={<ProjectLayout/>}>
             <Route index element={<ProjectReport/>}/>
             <Route path='team' element={<TeamPage/>}/>

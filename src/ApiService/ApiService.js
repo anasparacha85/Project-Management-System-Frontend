@@ -231,7 +231,29 @@ const ApiServices = {
       method:'POST',
       body:{leaveType, startDate, endDate, reason, attachments, managerId}
     })
-  }
+  },
+  GetAllLeaveRequests(){
+    return apiClient(`/api/leave-management/all-requests`,{
+  })
+},
+GetEmployeeByIdLeaves(filters = {}) {
+  // filters = { status: 'approved', leaveType: 'sick' }
+  return apiClient(`/api/leave-management/my-leaves`, {
+    method: 'GET',
+    params: filters
+  });
+},
+ApproveLeaveRequest(leaveId){
+  return apiClient(`/api/leave-management/approve/${leaveId}`,{
+    method:'PATCH'
+  })
+},
+RejectLeaveRequest({leaveId,rejectionReason}){
+  return apiClient(`/api/leave-management/reject/${leaveId}`,{
+    method:'PUT',
+    body:{rejectionReason:rejectionReason}
+  })
+},
 }
 
 
