@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Plus, Clock, CheckCircle, XCircle, 
-  AlertCircle
+  AlertCircle,
+  SearchIcon
 } from 'lucide-react';
 import RequestLeaveModal from '../../modals/RequestsModal';
 import { useSelector } from 'react-redux';
@@ -53,6 +54,7 @@ const MyLeaves = () => {
       console.error("Error fetching managers:", error);
     }
   };
+  const [searchTerm, setSearchTerm] = useState(null)
 
   const leaveTypeColors = {
     sick: 'bg-red-100 text-red-700 border-red-200',
@@ -106,11 +108,52 @@ const MyLeaves = () => {
   const filteredLeaves = filterStatus === 'all' 
     ? myLeaves 
     : myLeaves.filter(leave => leave.status === filterStatus);
+      const handleSearch = (value) => {
+    setSearchTerm(value)
+    // handleFilter(value, statusFilter)
+  }
+
 
   return (
     <>
       {/* Actions Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+     <div className="space-y-6">
+        <div>
+              <h1 className="text-3xl font-bold text-gray-900">My Leaves</h1>
+              <p className="text-gray-600 mt-1">View and manage your leave requests</p>
+            </div>
+      
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="text-3xl font-bold text-gray-900">{filteredLeaves.filter((l) => l.status === "approved").length}</div>
+                <p className="text-sm text-gray-600 mt-1">Approved Leaves</p>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="text-3xl font-bold text-amber-600">{filteredLeaves.filter((l) => l.status === "pending").length}</div>
+                <p className="text-sm text-gray-600 mt-1">Pending Requests</p>
+              </div>
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="text-3xl font-bold text-rose-600">{filteredLeaves.filter((l) => l.status === "rejected").length}</div>
+                <p className="text-sm text-gray-600 mt-1">Rejected Leaves</p>
+              </div>
+            </div>
+      
+            {/* Search and Filter */}
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="flex-1 relative">
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search by reason or type..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+      
+              
+            </div>
         <div className="flex gap-2 flex-wrap">
           {['all', 'pending', 'approved', 'rejected'].map(status => (
             <button

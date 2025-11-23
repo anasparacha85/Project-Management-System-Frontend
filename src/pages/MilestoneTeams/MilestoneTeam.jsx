@@ -67,11 +67,11 @@ console.log("babab",taskDetails);
   return (
     <div className="max-w-7xl mx-auto p-8 bg-slate-50 min-h-screen">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-slate-800 mb-2 tracking-tight">Assigned members ({taskDetails.assignees.length})</h1>
+        <h1 className="text-4xl font-bold text-slate-800 mb-2 tracking-tight">Assigned members ({taskDetails?.assignees?.length||0})</h1>
         <p className="text-lg text-slate-500">members assigned to {taskDetails.title}</p>
       </div>
 
-      {taskDetails.assignees && taskDetails.assignees.length > 0 ? (
+      {taskDetails?.assignees && taskDetails?.assignees?.length > 0 ? (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
           <table className="w-full border-collapse text-sm">
             <thead className="bg-gradient-to-r from-slate-50 to-slate-100">

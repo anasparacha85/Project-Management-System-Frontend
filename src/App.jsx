@@ -34,6 +34,7 @@ import ProtectedRoute from './Routes/ProtectedRoute'
 import PublicRoute from './Routes/PublicRoute'
 import RoleBasedRoute from './Routes/RoleBasedRoute'
 import LeaveManagement from './pages/Leave/LeaveManagement'
+import LeaveIndexRedirect from './pages/Leave/LeaveIndexRedirect'
 import MyLeaves from './pages/Leave/MyLeaves'
 import TeamRequests from './pages/Leave/TeamRequests'
 import LeaveLayout from './pages/Leave/LeaveLayout'
@@ -63,10 +64,11 @@ function App() {
         <Route path='/dashboard' element={<Dashboard/>}>
           <Route path='' element={<ProjectPage/>}/>
           <Route path='leave-management' element={<LeaveManagement/>}>
-          <Route index element={<Navigate to="my-leaves" />} />
+          <Route index element={<LeaveIndexRedirect/>} />
             <Route path='my-leaves' element={<MyLeaves/>}/>
             <Route element={<RoleBasedRoute allowedRoles={['manager']}/>}>
-              <Route path='team-requests' element={<TeamRequests/>}/>
+              <Route path='manager-requests' element={<TeamRequests/>}/>
+                <Route path='manager-summary' element={<ManagerTeamSummary/>}/>
             </Route>
           </Route>
           {/* <Route path="leave-management" element={<LeaveLayout />}>
