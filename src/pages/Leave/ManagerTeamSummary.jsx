@@ -14,72 +14,100 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
+import ApiServices from "../../ApiService/ApiService"
+import EmployeeLeaveDetailsModal from "../../modals/EmployeeLeaveDetailModal"
 
 const ManagerTeamSummary = () => {
   const [summary, setSummary] = useState([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchTeamSummary()
-  }, [])
-
-  const fetchTeamSummary = async () => {
-    try {
-      setLoading(true)
-      // TODO: Replace with actual API call
-      // const response = await ApiServices.getTeamLeaveSummary();
-
-      // Mock data
-      const mockSummary = [
-        {
-          employeeId: 1,
-          employeeName: "Alice Johnson",
-          employeeEmail: "alice@company.com",
-          approvedLeaveDays: 12,
-          pendingRequests: 1,
-          upcomingLeaves: [{ startDate: "2024-02-01", endDate: "2024-02-09" }],
-        },
-        {
-          employeeId: 2,
-          employeeName: "Bob Smith",
-          employeeEmail: "bob@company.com",
-          approvedLeaveDays: 5,
-          pendingRequests: 2,
-          upcomingLeaves: [],
-        },
-        {
-          employeeId: 3,
-          employeeName: "Carol Davis",
-          employeeEmail: "carol@company.com",
-          approvedLeaveDays: 8,
-          pendingRequests: 0,
-          upcomingLeaves: [{ startDate: "2024-01-25", endDate: "2024-01-26" }],
-        },
-        {
-          employeeId: 4,
-          employeeName: "David Wilson",
-          employeeEmail: "david@company.com",
-          approvedLeaveDays: 15,
-          pendingRequests: 1,
-          upcomingLeaves: [],
-        },
-        {
-          employeeId: 5,
-          employeeName: "Emma Brown",
-          employeeEmail: "emma@company.com",
-          approvedLeaveDays: 3,
-          pendingRequests: 0,
-          upcomingLeaves: [],
-        },
-      ]
-
-      setSummary(mockSummary)
-    } catch (error) {
-      console.error("Error fetching team summary:", error)
-    } finally {
-      setLoading(false)
-    }
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+const [selectedEmployee, setSelectedEmployee] = useState(null);
+const fetchTeamSummary = async () => {
+  try {
+    setLoading(true)  
+    const response = await ApiServices.GetTeamLeaveSummary();
+    console.log(response);
+    setSummary(response.summary)
+    
   }
+  catch (error) {
+    console.error("Error fetching team summary:", error)
+    
+  }
+  finally {
+    setLoading(false)
+  }
+}
+useEffect(()=>{
+  fetchTeamSummary()
+},[])
+const openHistoryModal = (emp) => {
+  setSelectedEmployee(emp._id);
+  setShowHistoryModal(true);
+};
+
+
+
+
+  
+
+  // const fetchTeamSummary = async () => {
+  //   try {
+  //     setLoading(true)
+  //     // TODO: Replace with actual API call
+  //     // const response = await ApiServices.getTeamLeaveSummary();
+
+  //     // Mock data
+  //     const mockSummary = [
+  //       {
+  //         employeeId: 1,
+  //         employeeName: "Alice Johnson",
+  //         employeeEmail: "alice@company.com",
+  //         approvedLeaveDays: 12,
+  //         pendingRequests: 1,
+  //         upcomingLeaves: [{ startDate: "2024-02-01", endDate: "2024-02-09" }],
+  //       },
+  //       {
+  //         employeeId: 2,
+  //         employeeName: "Bob Smith",
+  //         employeeEmail: "bob@company.com",
+  //         approvedLeaveDays: 5,
+  //         pendingRequests: 2,
+  //         upcomingLeaves: [],
+  //       },
+  //       {
+  //         employeeId: 3,
+  //         employeeName: "Carol Davis",
+  //         employeeEmail: "carol@company.com",
+  //         approvedLeaveDays: 8,
+  //         pendingRequests: 0,
+  //         upcomingLeaves: [{ startDate: "2024-01-25", endDate: "2024-01-26" }],
+  //       },
+  //       {
+  //         employeeId: 4,
+  //         employeeName: "David Wilson",
+  //         employeeEmail: "david@company.com",
+  //         approvedLeaveDays: 15,
+  //         pendingRequests: 1,
+  //         upcomingLeaves: [],
+  //       },
+  //       {
+  //         employeeId: 5,
+  //         employeeName: "Emma Brown",
+  //         employeeEmail: "emma@company.com",
+  //         approvedLeaveDays: 3,
+  //         pendingRequests: 0,
+  //         upcomingLeaves: [],
+  //       },
+  //     ]
+
+  //     setSummary(mockSummary)
+  //   } catch (error) {
+  //     console.error("Error fetching team summary:", error)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
 
   if (loading) {
     return (
@@ -220,6 +248,8 @@ const ManagerTeamSummary = () => {
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Upcoming
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                >View Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -250,12 +280,24 @@ const ManagerTeamSummary = () => {
                       <span className="text-gray-500 text-sm">No upcoming</span>
                     )}
                   </td>
+                  <td className="px-6 py-4">
+  <button 
+    onClick={() => openHistoryModal(emp)}
+    className="text-blue-600 hover:underline text-sm font-medium"
+  >
+    View History
+  </button>
+</td>
+
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+      {showHistoryModal && (
+  <EmployeeLeaveDetailsModal open={showHistoryModal} onClose={()=>setShowHistoryModal(false)} selectedId={selectedEmployee}/>
+)}
     </div>
   )
 }

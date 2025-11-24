@@ -256,6 +256,12 @@ RejectLeaveRequest({leaveId,rejectionReason}){
     body:{rejectionReason:rejectionReason}
   })
 },
+GetTeamLeaveSummary(){
+  return apiClient(`/api/leave-management/team-summary`)
+},
+GetEMployeeLeavesDetailsById(employeeId){
+  return apiClient(`/api/leave-management/employee-leaves/${employeeId}`)
+}
 }
 
 
