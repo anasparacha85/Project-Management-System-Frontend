@@ -42,7 +42,8 @@ useEffect(()=>{
   fetchTeamSummary()
 },[])
 const openHistoryModal = (emp) => {
-  setSelectedEmployee(emp._id);
+  
+  setSelectedEmployee(emp.employeeId);
   setShowHistoryModal(true);
 };
 

@@ -154,7 +154,9 @@ const MyLeaves = () => {
       
               
             </div>
+            <div className='flex justify-between items-center py-3'>
         <div className="flex gap-2 flex-wrap">
+        
           {['all', 'pending', 'approved', 'rejected'].map(status => (
             <button
               key={status}
@@ -176,6 +178,7 @@ const MyLeaves = () => {
           <Plus size={20} />
           Request Leave
         </button>
+        </div>
       </div>
 
       {/* Leave Cards */}
