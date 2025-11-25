@@ -37,6 +37,7 @@ import LeaveManagement from './pages/Leave/LeaveManagement'
 import LeaveIndexRedirect from './pages/Leave/LeaveIndexRedirect'
 import MyLeaves from './pages/Leave/MyLeaves'
 import TeamRequests from './pages/Leave/TeamRequests'
+import LeaveDetailPage from './pages/Leave/LeaveDetailPage'
 import LeaveLayout from './pages/Leave/LeaveLayout'
 import EmployeeRequestLeave from './pages/Leave/EmployeeRequestLeave'
 import EmployeeMyLeaves from './pages/Leave/EmployeeMyLeaves'
@@ -65,6 +66,7 @@ function App() {
           <Route path='' element={<ProjectPage/>}/>
           <Route path='leave-management' element={<LeaveManagement/>}>
           <Route index element={<LeaveIndexRedirect/>} />
+            <Route path='leave/:id' element={<LeaveDetailPage/>} />
             <Route path='my-leaves' element={<MyLeaves/>}/>
             <Route element={<RoleBasedRoute allowedRoles={['manager']}/>}>
               <Route path='manager-requests' element={<TeamRequests/>}/>

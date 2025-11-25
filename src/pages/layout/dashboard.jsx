@@ -190,7 +190,7 @@ const Dashboard = () => {
             sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
           }`}
         >
-          <div className="p-6">
+          <div className="px-6">
             <Outlet />
           </div>
         </main>
