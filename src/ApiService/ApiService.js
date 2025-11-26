@@ -261,6 +261,9 @@ GetTeamLeaveSummary(){
 },
 GetEMployeeLeavesDetailsById(employeeId){
   return apiClient(`/api/leave-management/employee-leaves/${employeeId}`)
+},
+GetLeaveDetailsByLeaveId(LeaveId){
+  return apiClient(`/api/leave-management/leave-details/${LeaveId}`)
 }
 }
 
