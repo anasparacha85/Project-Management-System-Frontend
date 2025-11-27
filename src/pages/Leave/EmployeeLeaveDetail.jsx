@@ -50,7 +50,9 @@ const EmployeeLeaveDetailsPage = () => {
       await ApiServices.CancelLeaveRequest(id)
       setCancelDialogOpen(false)
       // Refresh data after cancellation
+      navigate(-1)
       await fetchLeaveDetails()
+
     } catch (err) {
       console.error("Error cancelling leave:", err)
       alert("Failed to cancel leave request. Please try again.")
@@ -357,7 +359,7 @@ const EmployeeLeaveDetailsPage = () => {
 
       {/* Cancel Dialog */}
       {cancelDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full animate-in fade-in zoom-in">
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
               <AlertCircle className="w-6 h-6 text-red-600" />

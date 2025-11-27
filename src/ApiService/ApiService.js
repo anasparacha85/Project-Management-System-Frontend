@@ -264,6 +264,11 @@ GetEMployeeLeavesDetailsById(employeeId){
 },
 GetLeaveDetailsByLeaveId(LeaveId){
   return apiClient(`/api/leave-management/leave-details/${LeaveId}`)
+},
+CancelLeaveRequest(leaveId){
+  return apiClient(`/api/leave-management/cancel-leave/${leaveId}`,{
+    method:'DELETE'
+  })
 }
 }
 
