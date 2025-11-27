@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ApiServices from '../../ApiService/ApiService';
 import { Calendar, User, XCircle, CheckCircle } from 'lucide-react';
+import EmployeeLeaveDetailsPage from './EmployeeLeaveDetail';
+import { useSelector } from 'react-redux';
 
 const LeaveDetailPage = () => {
   const { id } = useParams();
@@ -12,7 +14,7 @@ const LeaveDetailPage = () => {
   const [error, setError] = useState('');
   const [newStatus, setNewStatus] = useState('');
   const [rejectionReasonInput, setRejectionReasonInput] = useState('');
-
+  const {user}=useSelector(state=>state.User)
   const fetchLeave = async () => {
 
 
@@ -114,6 +116,8 @@ const LeaveDetailPage = () => {
   if (!leave) return <div className="p-6">No leave found.</div>;
 
   return (
+    <>
+    {user.role==='manager'?
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
@@ -335,6 +339,10 @@ const LeaveDetailPage = () => {
         </div>
       </div>
     </div>
+    :
+    <EmployeeLeaveDetailsPage/>}
+    </>
+    
   );
 };
 

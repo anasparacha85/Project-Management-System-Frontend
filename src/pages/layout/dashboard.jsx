@@ -175,7 +175,7 @@ const Dashboard = () => {
       `}</style>
       <Header onToggleSidebar={toggleMobileMenu} isMobileMenuOpen={isMobileMenuOpen} />
       
-      <div className="flex pt-16">
+      <div className="flex pt-3">
         <Sidebar 
           activeItem={activeMenuItem} 
           setActiveItem={setActiveMenuItem}
@@ -186,7 +186,7 @@ const Dashboard = () => {
         
         {/* Main Content Area */}
         <main 
-          className={`flex-1 min-h-[calc(100vh-4rem)] overflow-y-auto  transition-all duration-300 ${
+          className={`flex-1 min-h-[calc(100vh-2rem)] overflow-y-auto  transition-all duration-300 ${
             sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
           }`}
         >

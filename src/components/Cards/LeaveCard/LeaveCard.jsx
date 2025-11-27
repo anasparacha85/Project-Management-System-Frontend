@@ -97,14 +97,23 @@
 // export default LeaveCard
 // LeaveCard.jsx
 import React from "react";
-import { Calendar, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, Clock, CheckCircle, XCircle, AlertCircle, Eye } from "lucide-react";
 
-const LeaveCard = ({ leave, leaveTypeColors, statusConfig }) => {
+const LeaveCard = ({ leave, leaveTypeColors, statusConfig, onViewDetails }) => {
   const StatusIcon = statusConfig[leave.status].icon;
 
   return (
-    <div className="border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
-      <div className="flex flex-col lg:flex-row justify-between gap-4">
+    <div className="border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50 relative">
+      {/* View Details Button - Top Right */}
+      <button
+        onClick={() => onViewDetails?.(leave._id)}
+        className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 text-gray-500 hover:text-blue-600 group"
+        aria-label="View details"
+      >
+        <Eye size={20} className="group-hover:scale-110 transition-transform duration-200" />
+      </button>
+
+      <div className="flex flex-col lg:flex-row justify-between gap-4 pr-10">
         <div className="flex-1">
           {/* Leave Type + Status */}
           <div className="flex items-center gap-3 mb-3 flex-wrap">

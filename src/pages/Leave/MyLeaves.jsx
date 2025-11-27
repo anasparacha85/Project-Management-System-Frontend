@@ -8,13 +8,15 @@ import RequestLeaveModal from '../../modals/RequestsModal';
 import { useSelector } from 'react-redux';
 import ApiServices from '../../ApiService/ApiService';
 import LeaveCard from '../../components/Cards/LeaveCard/LeaveCard';
+import { use } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const MyLeaves = () => {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [Managers, setManagers] = useState([]);
   const { user } = useSelector(state => state.User);
-
+  const navigate=useNavigate()
   const [myLeaves, setMyLeaves] = useState([]);
   
   const fetchEmployeeLeaves = async () => {
@@ -112,6 +114,11 @@ const MyLeaves = () => {
     setSearchTerm(value)
     // handleFilter(value, statusFilter)
   }
+  const handleViewDetails = (leaveId) => {
+    // Logic to view leave details can be implemented here
+    navigate(`/dashboard/leave-management/leave/${leaveId}`)
+    ;
+  }
 
 
   return (
@@ -191,6 +198,8 @@ const MyLeaves = () => {
       leave={leave}
       leaveTypeColors={leaveTypeColors}
       statusConfig={statusConfig}
+        onViewDetails={handleViewDetails}
+
     />
   ))}
 

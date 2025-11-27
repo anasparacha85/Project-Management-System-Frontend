@@ -73,15 +73,15 @@ function App() {
                 <Route path='manager-summary' element={<ManagerTeamSummary/>}/>
             </Route>
           </Route>
-          {/* <Route path="leave-management" element={<LeaveLayout />}>
-  <Route index element={<Navigate to="request" />} />
+    {/* <Route path="leave-management" element={<LeaveLayout />}>
+        <Route index element={<Navigate to="request" />} />
 
-  <Route path="request" element={<EmployeeRequestLeave />} />
-  <Route path="my-leaves" element={<EmployeeMyLeaves />} />
+        <Route path="request" element={<EmployeeRequestLeave />} />
+        <Route path="my-leaves" element={<EmployeeMyLeaves />} />
 
-  <Route path="manager-requests" element={<ManagerLeaveRequests />} />
-  <Route path="manager-summary" element={<ManagerTeamSummary />} />
-</Route> */}
+        <Route path="manager-requests" element={<ManagerLeaveRequests />} />
+        <Route path="manager-summary" element={<ManagerTeamSummary />} />
+           </Route> */}
 
           <Route path='project/:id' element={<ProjectLayout/>}>
             <Route index element={<ProjectReport/>}/>
