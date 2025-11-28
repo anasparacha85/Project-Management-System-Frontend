@@ -161,9 +161,6 @@ const ApiServices = {
   getEmployeeMilestonesByProjectid(projectId){
     return apiClient(`/api/employee/getEmployeeTasksByProject/${projectId}`)
   },
-   getEmployeeMilestonesByProjectid(projectId){
-    return apiClient(`/api/employee/getEmployeeTasksByProject/${projectId}`)
-  },
     getEmployeeSubTasksByTaskId(taskId){
     return apiClient(`/api/employee/getEmployeeSubTasksByTask/${taskId}`)
   },
@@ -189,6 +186,9 @@ const ApiServices = {
     })
     
 },
+  getEmployeesComparisonReportByProjectId(projectId){
+    return apiClient(`/api/employee/getEmployeesComparisonReport/${projectId}`)
+  },
   takeBreakForEmployee(subTaskId){
     return apiClient(`/api/employee/takeBreak`,{
       method:'POST',
@@ -269,7 +269,8 @@ CancelLeaveRequest(leaveId){
   return apiClient(`/api/leave-management/cancel-leave/${leaveId}`,{
     method:'DELETE'
   })
-}
+},
+
 }
 
 
