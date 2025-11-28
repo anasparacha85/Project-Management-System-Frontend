@@ -54,7 +54,7 @@ const LeaveDetailPage = () => {
       setLeave(prev => prev ? { ...prev, status: 'approved' } : prev);
     } catch (err) {
       console.error(err);
-      alert('Failed to approve');
+      alert(error.message || "failed to approved");
     } finally {
       setActionLoading(false);
     }
@@ -71,7 +71,7 @@ const LeaveDetailPage = () => {
       setLeave(prev => prev ? { ...prev, status: 'rejected', rejectionReason: reason } : prev);
     } catch (err) {
       console.error(err);
-      alert('Failed to reject');
+      alert(err.message ||'Failed to reject');
     } finally {
       setActionLoading(false);
     }
@@ -104,7 +104,7 @@ const LeaveDetailPage = () => {
                       alert('Status updated successfully!');
                     } catch (err) {
                       console.error(err);
-                      alert('Failed to change status');
+                      alert(error.message||'Failed to change status');
                     } finally {
                       setActionLoading(false);
                     }

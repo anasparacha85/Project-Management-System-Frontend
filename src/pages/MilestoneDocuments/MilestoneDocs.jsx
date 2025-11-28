@@ -234,7 +234,7 @@ const handleUpload = async () => {
               multiple
               className="hidden"
               onChange={(e) => handleFileSelect(e.target.files)}
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.zip,.rar"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
             />
           </div>
 

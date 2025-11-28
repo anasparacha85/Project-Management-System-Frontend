@@ -53,7 +53,12 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
     try {
       const savedForm = localStorage.getItem('create-subtask-form');
       if (savedForm) {
-        setSubTask(JSON.parse(savedForm));
+        const parsed = JSON.parse(savedForm);
+        // Cannot restore File objects from localStorage; drop attachments metadata
+        if (parsed) {
+          parsed.attachments = [];
+          setSubTask(parsed);
+        }
       }
     } catch (err) {
       console.error("Failed to load saved form data:", err);
@@ -63,7 +68,12 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
   // Save form data to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem('create-subtask-form', JSON.stringify(subTask));
+      // Do not store actual File objects in localStorage. Save only display metadata.
+      const toSave = {
+        ...subTask,
+        attachments: (subTask?.attachments || []).map(f => ({ name: f?.name, size: f?.size }))
+      };
+      localStorage.setItem('create-subtask-form', JSON.stringify(toSave));
     } catch (err) {
       console.error("Failed to save form data:", err);
     }
@@ -137,23 +147,29 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
 
   // Handle file uploads with validation
   const handleFileChange = useCallback((e) => {
+    console.log("file input clicked");
+
     const files = e.target.files;
     if (!files) return;
-    
+
     const newFiles = Array.from(files);
-    
+
     // Validate file size
     const oversizedFiles = newFiles.filter(file => file?.size > MAX_FILE_SIZE_MB * 1024 * 1024);
     if (oversizedFiles.length > 0) {
       dispatch(setError(`Some files exceed the maximum size of ${MAX_FILE_SIZE_MB}MB`));
       return;
     }
-    
-    setSubTask((prev) => ({
-      ...prev,
-      attachments: [...(prev?.attachments || []), ...newFiles]
-    }));
-    
+
+    setSubTask((prev) => {
+      const updated = {
+        ...prev,
+        attachments: [...(prev?.attachments || []), ...newFiles]
+      };
+      console.log('added files', newFiles.map(f => f.name));
+      return updated;
+    });
+
     // Clear the input to allow selecting the same file again
     e.target.value = null;
   }, [dispatch]);

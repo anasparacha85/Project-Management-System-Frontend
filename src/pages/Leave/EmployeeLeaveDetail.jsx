@@ -55,7 +55,7 @@ const EmployeeLeaveDetailsPage = () => {
 
     } catch (err) {
       console.error("Error cancelling leave:", err)
-      alert("Failed to cancel leave request. Please try again.")
+      alert(error.message || "Failed to cancel leave request. Please try again.")
     } finally {
       setIsCancelling(false)
     }
