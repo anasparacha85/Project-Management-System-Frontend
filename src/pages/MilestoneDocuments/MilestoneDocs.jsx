@@ -345,7 +345,7 @@ const handleUpload = async () => {
         <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
           <div className="flex items-start justify-between gap-5 p-6 pb-0">
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-slate-800 mb-1">{taskDetails?.name || "Project Files"}</h2>
+              <h2 className="text-xl font-semibold text-slate-800 mb-1">{taskDetails?.title || "Project Files"}</h2>
               <p className="text-slate-600 text-sm">
                 {taskDetails?.description || "All project related documents and files"}
               </p>

@@ -69,7 +69,8 @@ const projectSlice=createSlice(
             ProjectLoading:false,
             ProjectDocuments:{},
             ProjectDetails:{},
-            users:[]
+            users:[],
+            teamName:''
 
         },
         reducers:{
@@ -98,7 +99,8 @@ const projectSlice=createSlice(
                 state.ProjectLoading=true
             })
             .addCase(FetchTeamByProjectId.fulfilled,(state,action)=>{
-                state.team=action.payload,
+                state.team=action.payload.team,
+                state.teamName=action.payload.teamName,
                 state.ProjectLoading=false,
                 state.projectError=null
             })

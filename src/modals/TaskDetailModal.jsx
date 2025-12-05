@@ -239,7 +239,7 @@ const ChecklistSection = ({ subtasks, onUpdate, userRole, onDelete }) => {
               <div className="text-center py-12">
                 <Circle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-sm text-gray-500">No checkpoints yet</p>
-                <p className="text-xs text-gray-400 mt-1">Break down this task into smaller steps</p>
+                <p className="text-xs text-gray-400 mt-1">Break down this Milestone into smaller steps</p>
               </div>
             )}
           </div>
@@ -620,7 +620,7 @@ const playCommentSound = async () => {
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-gray-900 mb-5 flex items-center gap-2">
                 <Flag className="w-5 h-5 text-indigo-600" />
-                Task Properties
+                Milestone Properties
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InfoCard

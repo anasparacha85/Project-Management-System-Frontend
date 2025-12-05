@@ -9,7 +9,7 @@ export default function TeamPage() {
   const { projectError, team, ProjectLoading, ProjectDetails } = useSelector((state) => state.Project);
   const dispatch = useDispatch();
   const [selectedMember, setSelectedMember] = useState(null);
-  console.log(ProjectDetails);
+  console.log(ProjectDetails,"=====");
   const navigate = useNavigate();
   
   useEffect(() => {
