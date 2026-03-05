@@ -585,7 +585,7 @@ const SubTaskModal = ({ parentTask, onSubTaskCreated }) => {
   return (
     <div 
       className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-start justify-center p-4 z-50 animate-fadeIn"
-      onClick={handleBackdropClick}
+      // onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-slideUp">
         {/* Header */}

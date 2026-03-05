@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import ApiServices from "../../ApiService/ApiService"
 import { useNavigate, useParams } from "react-router-dom"
+import DeleteConfirmationModal from "../../modals/DeleteConfirmationModal"
 
 const EmployeeLeaveDetailsPage = () => {
   const { id } = useParams()
@@ -349,52 +350,20 @@ const EmployeeLeaveDetailsPage = () => {
               </button>
             )}
 
-            <button className="w-full flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 px-4 rounded-xl border border-blue-200 transition-all duration-200">
+            {/* <button className="w-full flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 px-4 rounded-xl border border-blue-200 transition-all duration-200">
               <Download size={18} />
               Download Details
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
 
       {/* Cancel Dialog */}
       {cancelDialogOpen && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full animate-in fade-in zoom-in">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-              <AlertCircle className="w-6 h-6 text-red-600" />
-            </div>
-
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Cancel Leave Request?</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to cancel this leave request? This action cannot be undone.
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setCancelDialogOpen(false)}
-                disabled={isCancelling}
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
-              >
-                Keep Request
-              </button>
-              <button
-                onClick={handleCancelLeave}
-                disabled={isCancelling}
-                className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {isCancelling ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-red-600 rounded-full animate-spin"></div>
-                    Cancelling...
-                  </>
-                ) : (
-                  "Cancel Request"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+        <>
+          <DeleteConfirmationModal heading={"Cancel Leave Request"} message={"Are you sure you want to cancel this leave request? This action cannot be undone."} onclose={()=>setCancelDialogOpen(false)} isDeleting={isCancelling} handleDelete={handleCancelLeave} DeleteLabel="Cancel Request" NotDeleteLabel="Keep Request" LoadingMessage={"Cancelling"}/>
+        </>
+       
       )}
     </div>
   )

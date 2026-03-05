@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, ChevronDown, Calendar, MessageSquare, Paperclip, User, Grid3X3, CheckCircle2, Users, Clock } from 'lucide-react';
+import { Search, Bell, ChevronDown, Calendar, MessageSquare, Paperclip, User, Grid3X3, CheckCircle2, Users, Clock, Zap } from 'lucide-react';
 import Header from '../../components/Header/Header';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ import { setUser } from '../../Slices/UserSlice';
 const Sidebar = ({ activeItem, setActiveItem, isCollapsed, isMobileOpen, onClose }) => {
   const menuItems = [
     { id: 'project', label: 'Projects', icon: Grid3X3, count: 12, link: '/dashboard' },
+    { id: 'ai', label: 'Create With Ai', icon: Zap, count: null, link: '/dashboard/ai-automation' },
     { id: 'leave', label: 'Leave Management', icon: CheckCircle2, count: 24, link: '/dashboard/leave-management' },
     // { id: 'workload', label: 'Workload', icon: Users, count: null, link: '/workload' },
     // { id: 'performance', label: 'Analytics', icon: Clock, count: null, link: '/performance' },

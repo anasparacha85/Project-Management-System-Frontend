@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProjectModal from "../../modals/ProjectCreationModal";
+import AIProjectAutomationModal from "../../modals/AIProjectAutomationModal";
 import ProjectCard from "../../components/Cards/ProjectCards/ProjectCard";
 import EmptyState from "../../components/states/projectemptystate";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import { FetchAllProjects, setProjectError, setProjects } from "../../Slices/Pro
 
 export default function ProjectPage() {
   const [showModal, setShowModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [Error, setError] = useState(null)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -91,12 +93,22 @@ export default function ProjectPage() {
         )}
         
         {role === 'manager' && projects.length > 0 && (
-          <button 
-            className="bg-blue-500 text-white border-none py-3 px-6 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
-            onClick={() => setShowModal(true)}
-          >
-            + New Project
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              className="bg-gradient-to-r from-purple-500 to-purple-700 text-white border-none py-3 px-6 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 flex items-center gap-2"
+              onClick={() => setShowAIModal(true)}
+              title="Generate projects and milestones using AI"
+            >
+              🤖 AI Generate
+            </button>
+            <button 
+              className="bg-blue-500 text-white border-none py-3 px-6 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
+              onClick={() => setShowModal(true)}
+               title="Create New Project Manually "
+            >
+              + New Project
+            </button>
+          </div>
         )}
       </div>
 
@@ -120,6 +132,12 @@ export default function ProjectPage() {
         <ProjectModal
           onClose={() => setShowModal(false)}
           onSubmit={handleProjectCreate}
+        />
+      )}
+
+      {showAIModal && (
+        <AIProjectAutomationModal
+          onClose={() => setShowAIModal(false)}
         />
       )}
     </div>

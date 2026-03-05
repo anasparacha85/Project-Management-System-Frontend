@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Plus, Filter, Search, ChevronDown, Edit3, Save, X, Target, Clock, Users } from "lucide-react";
+import { Calendar, Plus, Filter, Search, ChevronDown, Edit3, Save, X, Target, Clock, Users, Zap } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiServices from "../../ApiService/ApiService";
 import { useDispatch } from "react-redux";
 import { setTaskModalOpen } from "../../Slices/UiSlice";
 import TaskModal from "../../modals/TaskModal";
 import { useSelector } from "react-redux";
+import AIAddMilestonesModal from "../../modals/AIMilestoneModal";
 
 const EditableCell = ({ value, onSave, type = "text", options = [], placeholder = "Click to edit" }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -91,12 +92,13 @@ const EditableCell = ({ value, onSave, type = "text", options = [], placeholder 
   }
 
   return (
-    <div className="relative rounded-lg transition-all duration-200 cursor-pointer p-2 min-h-9 flex items-center justify-between bg-transparent hover:bg-slate-50 hover:border hover:border-slate-200" 
-         onClick={() => setIsEditing(true)}>
+    <div className="relative rounded-lg transition-all duration-200 p-2 min-h-9 flex items-center justify-between bg-transparent" 
+         // onClick={() => setIsEditing(true)}  // COMMENTED OUT: Disabled editing functionality
+         >
       <span className={`flex-1 font-medium ${!value ? 'text-gray-400 italic' : ''}`}>
         {value || placeholder}
       </span>
-      <Edit3 size={12} className="text-slate-500 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+      {/* <Edit3 size={12} className="text-slate-500 opacity-0 transition-opacity duration-200 group-hover:opacity-100" /> */}
     </div>
   );
 };
@@ -158,6 +160,7 @@ const ProjectMilestonesPage = () => {
   const { user } = useSelector((state) => state.User);
   const role = user.role;
   const navigate = useNavigate();
+  const [AiMilestoneModalOpen, setAiMilestoneModalOpen] = useState(false)
 
   const fetchMilestones = async () => {
     setLoading(true);
@@ -223,6 +226,11 @@ const ProjectMilestonesPage = () => {
     dispatch(setTaskModalOpen(true));
   };
 
+  const openAiMilestoneModal = () => {
+    setProjectId(params.id);
+    setAiMilestoneModalOpen(true);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -266,6 +274,7 @@ const ProjectMilestonesPage = () => {
           <p className="text-slate-800 text-base mt-2">Track and manage project milestones with real-time progress</p>
         </div>
         {role === 'manager' &&
+        <div className="flex  gap-3">
           <button 
             onClick={openMilestoneModal} 
             className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-none py-3.5 px-6 rounded-xl font-semibold text-sm cursor-pointer flex items-center gap-2 transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
@@ -274,6 +283,16 @@ const ProjectMilestonesPage = () => {
             <Plus size={16} />
             New Milestone
           </button>
+          <button
+            onClick={openAiMilestoneModal}
+            title="Create Milestone with Ai"
+            className="bg-white text-gray-900 border-none py-3.5 px-6 rounded-xl font-semibold text-sm cursor-pointer flex items-center gap-2 transition-all duration-300 shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
+         > 
+         <Zap size={16} />
+          Create With Ai
+         </button>
+          </div>
+          
         }
       </div>
 
@@ -527,24 +546,40 @@ const ProjectMilestonesPage = () => {
 
         {filteredMilestones.length === 0 && (
           role === "manager" ? (
-            <div className="text-center py-20 px-10 text-slate-500">
-              <Target size={48} className="text-slate-300 mb-4 mx-auto" />
-              <h3 className="text-xl mb-2 text-slate-700">No milestones found</h3>
-              <p className="mb-6 text-base">
+            <div className="text-center py-24 px-10 text-slate-500">
+              <div className="mb-8">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full blur-2xl opacity-20"></div>
+                  <Target size={56} className="text-slate-300 relative" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold mb-3 text-slate-700">No Milestones Yet</h3>
+              <p className="mb-10 text-slate-600 max-w-xl mx-auto leading-relaxed text-base">
                 {searchTerm 
-                  ? `No milestones match "${searchTerm}"`
+                  ? `No milestones match "${searchTerm}". Try adjusting your search.`
                   : filter !== "All" 
-                    ? `No milestones with status "${filter}"`
-                    : "Start by creating your first milestone"
+                    ? `No milestones with status "${filter}". Create one to get started.`
+                    : "Start by creating your first milestone to organize and track your project progress"
                 }
               </p>
-              <button 
-                onClick={openMilestoneModal} 
-                className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-none py-3 px-6 rounded-lg font-semibold cursor-pointer flex items-center gap-2 mx-auto transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-              >
-                <Plus size={16} />
-                Create First Milestone
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button 
+                  onClick={openMilestoneModal} 
+                  className="group w-full sm:w-auto bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white border-none py-3.5 px-8 rounded-xl font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-lg"
+                >
+                  <Plus size={18} className="group-hover:scale-110 transition-transform duration-300" />
+                  Create Milestone
+                </button>
+                <div className="hidden sm:block text-slate-300">•</div>
+                <button
+                  onClick={openAiMilestoneModal}
+                  title="Generate milestones with AI"
+                  className="group w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-purple-300 py-3.5 px-8 rounded-xl font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-md"
+                >
+                  <Zap size={18} className="text-purple-500 group-hover:scale-110 transition-transform duration-300" />
+                  Generate with AI
+                </button>
+              </div>
             </div>
           ) : (
             <div className="text-center py-20 px-10 text-slate-500">
@@ -586,7 +621,9 @@ const ProjectMilestonesPage = () => {
       </div>
       
       <TaskModal projectId={ProjectId} />
-
+      {AiMilestoneModalOpen && (
+        <AIAddMilestonesModal projectId={ProjectId} onClose={() => setAiMilestoneModalOpen(false)} />
+      )}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

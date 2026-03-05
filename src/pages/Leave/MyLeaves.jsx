@@ -102,8 +102,7 @@ const MyLeaves = () => {
       setFormData({ leaveType: 'casual', startDate: '', endDate: '', reason: '', attachments: [], managerId: '' });
     } catch (error) {
       console.error('Error submitting leave request:', error);
-      alert('Failed to submit leave request. Please try again.');
-      return;
+      alert(error.message || 'Failed to submit leave request');
     }
   };
 

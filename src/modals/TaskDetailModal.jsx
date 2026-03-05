@@ -366,7 +366,7 @@ const TaskDetailPage = () => {
   const { user } = useSelector((state) => state.User);
   const role = user.role;
   const [comments, setComments] = useState([]);
-  console.log(taskDetails,"===============taskDetails");
+  
   
   const fetchComments = async () => {
   try {

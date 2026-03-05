@@ -1,6 +1,6 @@
 // src/layouts/ProjectLayout.jsx
 import { NavLink, Outlet, useParams } from "react-router-dom";
-import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, Edit, Antenna } from "lucide-react";
+import { Users, Plus, Grid3X3, List, Filter, Search, Group, DatabaseIcon, Milestone, DownloadCloud, Edit, Antenna, Zap } from "lucide-react";
 import TaskModal from "../../../modals/TaskModal";
 import { useEffect, useState } from "react";
 import ApiServices from "../../../ApiService/ApiService";
@@ -9,12 +9,14 @@ import { FetchProjectDetailsById } from "../../../Slices/ProjectSlice";
 import EditProjectModal from "../../../modals/EditProjectModal";
 import AddTeamModal from "../../../modals/AddteamModal";
 import { setTaskModalOpen } from "../../../Slices/UiSlice";
+import AIAddMilestonesModal from "../../../modals/AIMilestoneModal";
 
 const ProjectLayout = () => {
     const [ShowTaskModal, setShowTaskModal] = useState(false)
     const [ProjectId, setProjectId] = useState('')
     const [showEditProjectModal, setShowEditProjectModal] = useState(false)
     const [InviteTeamModalOpen, setInviteTeamModalOpen] = useState(false)
+    const [AiTaskModalOpen, setAiTaskModalOpen] = useState(false)
     const {ProjectDetails,ProjectError,ProjectLoading}=useSelector((state)=>state.Project)
     // console.log(ProjectDetails);
     const {user}=useSelector((state)=>state.User)
@@ -34,6 +36,10 @@ setInviteTeamModalOpen(true)
     
     setProjectId(params.id)
     dispatch(setTaskModalOpen(true))
+  }
+  const OpenAiTaskModal=()=>{
+    setProjectId(params.id)
+    dispatch(setAiTaskModalOpen(true))
   }
   useEffect(()=>{
     dispatch(FetchProjectDetailsById(params.id))
@@ -88,6 +94,9 @@ if (!ProjectDetails) {
         {InviteTeamModalOpen && (
           <AddTeamModal onClose={()=>setInviteTeamModalOpen(false)} alreadySelected={ProjectDetails.team} />
         )}
+        {AiTaskModalOpen && (
+          <AIAddMilestonesModal projectId={ProjectId} onClose={()=>setAiTaskModalOpen(false)} />
+        )}
 
       {/* Page Header */}
       <div className="flex justify-between items-start mb-8 gap-6">
@@ -109,6 +118,13 @@ if (!ProjectDetails) {
             >
               <Users size={16} />
               <span>Invite Team</span>
+            </button>
+             <button 
+              onClick={OpenAiTaskModal} 
+              className="flex items-center gap-2 px-6 py-3 border-none rounded-xl text-sm font-semibold cursor-pointer transition-all duration-200 whitespace-nowrap bg-white text-gray-900 shadow-lg hover:shadow-xl hover:-translate-y-1"
+            >
+              <Zap size={16} />
+              <span>Create Milestones with Ai</span>
             </button>
             <button 
               onClick={onOpenTaskModal} 

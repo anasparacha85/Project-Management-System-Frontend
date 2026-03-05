@@ -259,8 +259,11 @@ RejectLeaveRequest({leaveId,rejectionReason}){
 GetTeamLeaveSummary(){
   return apiClient(`/api/leave-management/team-summary`)
 },
-GetEMployeeLeavesDetailsById(employeeId){
-  return apiClient(`/api/leave-management/employee-leaves/${employeeId}`)
+GetEMployeeLeavesDetailsById(employeeId, params = {}){
+  return apiClient(`/api/leave-management/employee-leaves/${employeeId}`, {
+    method: 'GET',
+    params
+  })
 },
 GetLeaveDetailsByLeaveId(LeaveId){
   return apiClient(`/api/leave-management/leave-details/${LeaveId}`)
@@ -270,6 +273,18 @@ CancelLeaveRequest(leaveId){
     method:'DELETE'
   })
 },
+  generateProjectBreakdown(data){
+    return apiClient('/api/ai/generate-project-breakdown',{
+      method:'POST',
+      body:data
+    })
+  },
+  generateTasksForProject(data){
+    return apiClient('/api/ai/generate-tasks',{
+      method:'POST',
+      body:data
+    })
+  },
 
 }
 

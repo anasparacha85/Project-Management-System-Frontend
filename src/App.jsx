@@ -6,6 +6,7 @@ import { Navigate, Route,Routes } from 'react-router-dom'
 import Dashboard from './pages/layout/dashboard'
 import TasksPage from './pages/TaskPage/page'
 import ProjectPage from './pages/projectPage/page'
+import AIProjectAutomationPage from './pages/AIProjectAutomation/page'
 import ManagerRegisterPage from './pages/Auth/managerAuth/signup/page'
 import ManagerLoginPage from './pages/Auth/managerAuth/login/page'
 import EmployeeRegisterPage from './pages/Auth/employeeAuth/signup/page'
@@ -91,6 +92,8 @@ function App() {
             <Route path='attachments' element={<DocumentsPage/>}/>
             <Route path='employees-report' element={<EmployeeReport/>}/>
           </Route>
+
+          <Route path='ai-automation' element={<AIProjectAutomationPage/>} />
           
           <Route path='milestone/:id' element={<MileStoneLayout/>}>
             <Route index element={<TaskDetailPage/>}/>

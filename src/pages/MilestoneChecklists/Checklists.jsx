@@ -122,16 +122,16 @@ const EditableField = ({
 
   return (
     <div
-      className="group cursor-pointer hover:bg-blue-50 px-2 py-1 rounded transition-colors flex items-center gap-2"
-      onClick={() => setIsEditing(true)}
+      className="group px-2 py-1 rounded transition-colors flex items-center gap-2"
+      // onClick={() => setIsEditing(true)}  // COMMENTED OUT: Disabled editing functionality
     >
       <span className={!value ? "text-slate-400 text-xs" : "text-xs font-medium"}>
         {value || placeholder}
       </span>
-      <Edit2
+      {/* <Edit2
         size={10}
         className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"
-      />
+      /> */}
     </div>
   );
 };

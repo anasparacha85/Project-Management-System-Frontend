@@ -81,7 +81,7 @@ export default function AddTeamModal({ onClose, onSave, alreadySelected = [] }) 
   };
 
   return (
-    <div className="add-team-modal-backdrop" onClick={handleBackdropClick}>
+    <div className="add-team-modal-backdrop" >
       <div className="add-team-modal-container">
         {/* Header */}
         <div className="add-team-modal-header">

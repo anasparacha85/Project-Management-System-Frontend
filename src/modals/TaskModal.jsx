@@ -184,12 +184,12 @@ const TaskModal = ({ projectId, onTaskCreated }) => {
           }
         }
         break;
-      case 3:
-        if (task.assigneeIds.length === 0) {
-          setError("Please assign at least one team member");
-          return false;
-        }
-        break;
+      // case 3:
+      //   if (task.assigneeIds.length === 0) {
+      //     setError("Please assign at least one team member");
+      //     return false;
+      //   }
+      //   break;
       default:
         return true;
     }
@@ -561,7 +561,7 @@ const TaskModal = ({ projectId, onTaskCreated }) => {
   return (
     <div 
       className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-start justify-center z-50 p-5 animate-fadeIn"
-      onClick={handleBackdropClick}
+      // onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-slideUp">
         {/* Header */}
